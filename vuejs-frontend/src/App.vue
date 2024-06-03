@@ -1,8 +1,10 @@
 <template>
   <div id="app">
     <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/home-page">Home</router-link> |
+      <router-link to="/clients">Clients</router-link> |
+      <router-link to="/projects">Projects</router-link> |
+      <router-link to="/estimations">Estimations</router-link>
     </nav>
     <router-view/>
   </div>
@@ -19,13 +21,15 @@
 
 nav {
   padding: 30px;
+  background-image: linear-gradient(to bottom, rgb(151, 151, 151), rgba(0, 0, 0, 0));
 
   a {
     font-weight: bold;
     color: #2c3e50;
+    text-decoration: none;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: #f8f8f8;
     }
   }
 }
