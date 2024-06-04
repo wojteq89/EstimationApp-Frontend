@@ -9,7 +9,7 @@
       <v-text-field v-model="email" label="Email" required></v-text-field>
       <v-container style="display: flex; flex-direction: row; justify-content: center;">
         <v-btn type="submit">Add Client</v-btn>
-        <v-btn @click="cancel">Cancel</v-btn>
+        <v-btn @click="cancelClient">Cancel</v-btn>
       </v-container>
     </v-form>
   </v-container>
@@ -28,14 +28,11 @@ export default {
   },
   methods: {
     addClient() {
-      // Sprawdzanie, czy wszystkie wymagane pola są wypełnione
       if (!this.name || !this.country || !this.email) {
-        // Jeśli pole jest puste, wyświetl komunikat błędu
         this.$toast.error('Please fill in all required fields.');
         return;
       }
 
-      // Replace with actual API call
       console.log('Client added:', {
         name: this.name,
         description: this.description,
@@ -44,17 +41,15 @@ export default {
         email: this.email
       });
 
-      // Resetowanie formularza
       this.name = '';
       this.description = '';
       this.logo = '';
       this.country = '';
       this.email = '';
 
-      // Przekierowanie użytkownika na stronę klientów
       this.$router.push('/clients');
     },
-    cancel() {
+    cancelClient() {
         this.$router.push('/clients');
     }
   }

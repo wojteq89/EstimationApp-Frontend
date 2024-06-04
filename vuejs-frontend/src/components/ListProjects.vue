@@ -1,52 +1,104 @@
-  <template>
-    <div>
-      <v-container>
-        <v-row>
-          <v-col cols="12">
-            <v-data-table :headers="headers" :items="projects" sort-by="name">
-              <template v-slot:top>
-                <v-toolbar flat>
-                  <v-toolbar-title>Projects</v-toolbar-title>
-                  <v-divider class="mx-4" inset vertical></v-divider>
-                  <v-spacer></v-spacer>
-                  <v-btn color="primary" @click="goToAddProject">Add Project</v-btn>
-                </v-toolbar>
-              </template>
-            </v-data-table>
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
-  </template>
+<template>
+  <div class="container">
+    <v-data-table
+      :headers="headers"
+      :items="projects"
+      item-key="name"
+      class="elevation-1"
+      :search="search"
+      :custom-filter="filterOnlyCapsText"
+    >
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title>Projects</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-spacer></v-spacer>
+          <v-btn @click="goToHome">↩</v-btn>
+          <v-btn @click="addProject">Add Project</v-btn>
+        </v-toolbar>
+        <v-text-field
+          v-model="search"
+          label="Search Projects (UPPER CASE ONLY)"
+          class="mx-4"
+        ></v-text-field>
+      </template>
+      <template v-slot:append>
+        <tr>
+          <td></td>
+          <td>
+            <v-text-field
+              v-model="client"
+              label="Client"
+            ></v-text-field>
+          </td>
+          <td>
+            <v-text-field
+              v-model="estimation"
+              label="Estimation"
+              type="number"
+              step="0.01"
+            ></v-text-field>
+          </td>
+          <td colspan="3"></td>
+        </tr>
+      </template>
+    </v-data-table>
+  </div>
+</template>
   
-  <script>
+<script>
   export default {
-    data() {
+    data () {
       return {
-        headers: [
-          { text: 'Name', value: 'name' },
-          { text: 'Client', value: 'client' },
-          { text: 'Actions', value: 'actions', sortable: false }
+        search: '',
+        client: '',
+        estimation: '',
+        projects: [
+          {
+            name: 'Project 1',
+            description: 'Description 1',
+            client: 'Client 1',
+            estimation: 1000.00,
+          },
+          {
+            name: 'Project 2',
+            description: 'Description 2',
+            client: 'Client 2',
+            estimation: 2000.00,
+          },
+          // Dodaj inne projekty tutaj...
         ],
-        projects: []
-      };
+      }
     },
-    mounted() {
-      this.fetchProjects();
+    computed: {
+      headers () {
+        return [
+          { text: 'Name', value: 'name' },
+          { text: 'Description', value: 'description' },
+          { text: 'Client', value: 'client' },
+          { text: 'Estimation', value: 'estimation' },
+        ]
+      },
     },
     methods: {
-      fetchProjects() {
-        // Replace with actual API call
-        this.projects = [
-          { id: 1, name: 'Project A', client: 'Client A' },
-          { id: 2, name: 'Project B', client: 'Client B' },
-          { id: 3, name: 'Project C', client: 'Client C' }
-        ];
+      filterOnlyCapsText (value, search) {
+        return value != null &&
+          search != null &&
+          typeof value === 'string' &&
+          value.toString().toLocaleUpperCase().indexOf(search) !== -1
       },
-      goToAddProject() {
+      addProject() {
         this.$router.push('/add-project');
+      },
+      goToHome() {
+        this.$router.push("/home-page");
       }
-    }
-  };
-  </script>
-  
+    },
+  }
+</script>
+
+<style>
+  .container {
+    padding: 25px;
+  }
+</style>

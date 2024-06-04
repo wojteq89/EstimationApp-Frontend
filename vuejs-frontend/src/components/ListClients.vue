@@ -14,7 +14,7 @@
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-btn @click="goToHome">↩</v-btn>
-          <v-btn @click="addClient">Add Clients</v-btn>
+          <v-btn @click="addClient">Add Client</v-btn>
         </v-toolbar>
         <v-text-field
           v-model="search"

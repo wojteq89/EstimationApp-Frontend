@@ -1,53 +1,146 @@
 <template>
-    <v-container>
-      <v-form @submit.prevent="addEstimation">
-        <v-text-field v-model="name" label="Estimation Name" required></v-text-field>
-        <v-select v-model="project" :items="projects" label="Project" required></v-select>
-        <v-select v-model="client" :items="clients" label="Client" required></v-select>
-        <v-select v-model="type" :items="['Hourly', 'Fixed Price']" label="Estimation Type" required></v-select>
-        <v-text-field v-model="value" label="Estimation Value" required></v-text-field>
-        <v-btn type="submit" color="primary">Add Estimation</v-btn>
-      </v-form>
-    </v-container>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        name: '',
-        project: '',
-        client: '',
-        type: '',
-        value: '',
-        projects: [],
-        clients: []
-      };
+  <v-container>
+    <v-card-text class="title" style="font-size: x-large;">Add Estimation</v-card-text>
+    <v-form @submit.prevent="addEstimation">
+      <v-text-field v-model="name" label="Estimation Name" required></v-text-field>
+      <v-textarea v-model="description" label="Description"></v-textarea>
+      <v-select 
+        v-model="project_id" 
+        :items="projects" 
+        item-text="name" 
+        item-value="id" 
+        label="Project" 
+        required
+      ></v-select>
+      <v-select 
+        v-model="client_id" 
+        :items="clients" 
+        item-text="name" 
+        item-value="id" 
+        label="Client" 
+        required
+      ></v-select>
+      <v-menu
+        ref="menu"
+        v-model="menu"
+        :close-on-content-click="false"
+        :nudge-right="40"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            v-model="date"
+            label="Date"
+            prepend-icon="mdi-calendar"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="date"
+          @input="menu = false"
+        ></v-date-picker>
+      </v-menu>
+      <v-select 
+        v-model="type" 
+        :items="['hourly', 'fixed']" 
+        label="Type" 
+        required
+      ></v-select>
+      <v-text-field 
+        v-model="amount" 
+        label="Amount" 
+        type="number" 
+        step="0.01" 
+        required
+      ></v-text-field>
+      <v-container style="display: flex; flex-direction: row; justify-content: center;">
+        <v-btn type="submit">Add Estimation</v-btn>
+        <v-btn @click="cancel">Cancel</v-btn>
+      </v-container>
+    </v-form>
+  </v-container>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      name: '',
+      description: '',
+      project_id: null,
+      client_id: null,
+      date: new Date().toISOString().substr(0, 10),
+      type: '',
+      amount: 0,
+      projects: [],
+      clients: [],
+      menu: false
+    };
+  },
+  created() {
+    this.fetchProjects();
+    this.fetchClients();
+  },
+  methods: {
+    fetchProjects() {
+      fetch('/api/projects')
+        .then(response => response.json())
+        .then(data => {
+          this.projects = data;
+        })
+        .catch(error => {
+          console.error('Error fetching projects:', error);
+        });
     },
-    mounted() {
-      this.fetchProjects();
-      this.fetchClients();
+    fetchClients() {
+      fetch('/api/clients')
+        .then(response => response.json())
+        .then(data => {
+          this.clients = data;
+        })
+        .catch(error => {
+          console.error('Error fetching clients:', error);
+        });
     },
-    methods: {
-      fetchProjects() {
-        // Replace with actual API call
-        this.projects = ['Project A', 'Project B', 'Project C'];
-      },
-      fetchClients() {
-        // Replace with actual API call
-        this.clients = ['Client A', 'Client B', 'Client C'];
-      },
-      addEstimation() {
-        // Replace with actual API call
-        console.log('Estimation added:', this.name, this.project, this.client, this.type, this.value);
-        this.name = '';
-        this.project = '';
-        this.client = '';
-        this.type = '';
-        this.value = '';
-        this.$router.push('/estimations');
+    addEstimation() {
+      if (!this.name || !this.project_id || !this.client_id || !this.type || !this.amount) {
+        this.$toast.error('Please fill in all required fields.');
+        return;
       }
+
+      console.log('Estimation added:', {
+        name: this.name,
+        description: this.description,
+        project_id: this.project_id,
+        client_id: this.client_id,
+        date: this.date,
+        type: this.type,
+        amount: this.amount
+      });
+
+      this.name = '';
+      this.description = '';
+      this.project_id = null;
+      this.client_id = null;
+      this.date = new Date().toISOString().substr(0, 10);
+      this.type = '';
+      this.amount = 0;
+
+      this.$router.push('/estimations');
+    },
+    cancel() {
+      this.$router.push('/estimations');
     }
-  };
-  </script>
-  
+  }
+};
+</script>
+
+<style>
+.v-btn {
+  margin-left: 15px;
+}
+</style>
