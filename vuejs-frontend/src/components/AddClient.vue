@@ -18,6 +18,14 @@
 </template>
 
 <script>
+import axios from 'axios';
+import Vue from 'vue';
+import VueNotification from 'vue-notification';
+
+Vue.use(VueNotification, {
+  timer: 5000
+});
+
 export default {
   data() {
     return {
@@ -31,26 +39,45 @@ export default {
   methods: {
     addClient() {
       if (!this.name || !this.country || !this.email) {
-        this.$toast.error('Please fill in all required fields.');
+        this.$notify({
+          title: 'Error',
+          text: 'Please fill in all required fields.',
+          type: 'error'
+        });
         return;
       }
 
-      console.log('Client added:', {
+      axios.post('http://localhost:8000/api/clients', {
         name: this.name,
         description: this.description,
         logo: this.logo,
         country: this.country,
         email: this.email
+      })
+      .then(response => {
+        console.log('Client added:', response.data);
+        this.$notify({
+          title: 'Success',
+          text: 'Client added successfully.',
+          type: 'success'
+        });
+        this.name = '';
+        this.description = '';
+        this.logo = '';
+        this.country = '';
+        this.email = '';
+        this.$router.push('/clients');
+      })
+      .catch(error => {
+        console.error('Error adding client:', error);
+        this.$notify({
+          title: 'Error',
+          text: 'Failed to add client.',
+          type: 'error'
+        });
       });
-
-      this.name = '';
-      this.description = '';
-      this.logo = '';
-      this.country = '';
-      this.email = '';
-
-      this.$router.push('/clients');
     },
+
     cancelClient() {
         this.$router.push('/clients');
     }
