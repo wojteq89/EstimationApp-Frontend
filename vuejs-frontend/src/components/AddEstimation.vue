@@ -1,71 +1,79 @@
 <template>
-  <v-container>
-    <v-card-text class="title" style="font-size: x-large;">Add Estimation</v-card-text>
-    <v-form @submit.prevent="addEstimation">
-      <v-text-field v-model="name" label="Estimation Name" required></v-text-field>
-      <v-textarea v-model="description" label="Description"></v-textarea>
-      <v-select 
-        v-model="project_id" 
-        :items="projects" 
-        item-text="name" 
-        item-value="id" 
-        label="Project" 
-        required
-      ></v-select>
-      <v-select 
-        v-model="client_id" 
-        :items="clients" 
-        item-text="name" 
-        item-value="id" 
-        label="Client" 
-        required
-      ></v-select>
-      <v-menu
-        ref="menu"
-        v-model="menu"
-        :close-on-content-click="false"
-        :nudge-right="40"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-text-field
+    <v-app>
+    <v-container>
+      <v-card-text class="title" style="font-size: x-large;">Add Estimation</v-card-text>
+      <v-form @submit.prevent="addEstimation">
+        <v-text-field v-model="name" label="Estimation Name" required></v-text-field>
+        <v-textarea v-model="description" label="Description"></v-textarea>
+        <v-combobox
+          v-model="project_id"
+          :items="projects"
+          item-text="name"
+          item-value="id"
+          label="Project"
+          required
+        ></v-combobox>
+        <v-combobox
+          v-model="client_id"
+          :items="clients"
+          item-text="name"
+          item-value="id"
+          label="Client"
+          required
+        ></v-combobox>
+        <v-menu
+          ref="menu"
+          v-model="menu"
+          :close-on-content-click="false"
+          :nudge-right="40"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="date"
+              label="Date"
+              prepend-icon="mdi-calendar"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker
             v-model="date"
-            label="Date"
-            prepend-icon="mdi-calendar"
-            readonly
-            v-bind="attrs"
-            v-on="on"
-          ></v-text-field>
-        </template>
-        <v-date-picker
-          v-model="date"
-          @input="menu = false"
-        ></v-date-picker>
-      </v-menu>
-      <v-select 
-        v-model="type" 
-        :items="['hourly', 'fixed']" 
-        label="Type" 
-        required
-      ></v-select>
-      <v-text-field 
-        v-model="amount" 
-        label="Amount" 
-        type="number" 
-        step="0.01" 
-        required
-      ></v-text-field>
-      <v-container style="display: flex; flex-direction: row; justify-content: center;">
-        <v-btn type="submit">Add Estimation</v-btn>
-        <v-btn @click="cancel">Cancel</v-btn>
-      </v-container>
-    </v-form>
-  </v-container>
+            @input="menu = false"
+          ></v-date-picker>
+        </v-menu>
+        <v-select 
+          v-model="type" 
+          :items="['hourly', 'fixed']" 
+          label="Type" 
+          required
+        ></v-select>
+        <v-text-field 
+          v-model="amount" 
+          label="Amount" 
+          type="number" 
+          step="0.01" 
+          required
+        ></v-text-field>
+        <v-container style="display: flex; flex-direction: row; justify-content: center;">
+          <v-btn type="submit">Add Estimation</v-btn>
+          <v-btn @click="cancel">Cancel</v-btn>
+        </v-container>
+      </v-form>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
+import Vue from 'vue';
+import Vuetify from 'vuetify/lib';
+import 'vuetify/dist/vuetify.min.css';
+
+Vue.use(Vuetify);
+
 export default {
   data() {
     return {
@@ -76,8 +84,20 @@ export default {
       date: new Date().toISOString().substr(0, 10),
       type: '',
       amount: 0,
-      projects: [],
-      clients: [],
+      projects: [
+        { id: 1, name: 'Project1' },
+        { id: 2, name: 'Project2' },
+        { id: 3, name: 'Project3' },
+        { id: 4, name: 'Project4' },
+        { id: 5, name: 'Project5' }
+      ],
+      clients: [
+        { id: 1, name: 'Client1' },
+        { id: 2, name: 'Client2' },
+        { id: 3, name: 'Client3' },
+        { id: 4, name: 'Client4' },
+        { id: 5, name: 'Client5' }
+      ],
       menu: false
     };
   },

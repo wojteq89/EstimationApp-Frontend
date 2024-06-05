@@ -6,7 +6,7 @@
       item-key="name"
       class="elevation-1"
       :search="search"
-      :custom-filter="filterOnlyCapsText"
+      :custom-filter="filterCaseInsensitive"
     >
       <template v-slot:top>
         <v-toolbar flat>
@@ -18,7 +18,7 @@
         </v-toolbar>
         <v-text-field
           v-model="search"
-          label="Search Projects (UPPER CASE ONLY)"
+          label="Search Projects"
           class="mx-4"
         ></v-text-field>
       </template>
@@ -45,7 +45,7 @@
     </v-data-table>
   </div>
 </template>
-  
+
 <script>
   export default {
     data () {
@@ -81,11 +81,11 @@
       },
     },
     methods: {
-      filterOnlyCapsText (value, search) {
+      filterCaseInsensitive (value, search) {
         return value != null &&
           search != null &&
           typeof value === 'string' &&
-          value.toString().toLocaleUpperCase().indexOf(search) !== -1
+          value.toLowerCase().indexOf(search.toLowerCase()) !== -1
       },
       addProject() {
         this.$router.push('/add-project');

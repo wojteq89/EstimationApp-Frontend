@@ -6,7 +6,7 @@
       item-key="name"
       class="elevation-1"
       :search="search"
-      :custom-filter="filterOnlyCapsText"
+      :custom-filter="filterCaseInsensitive"
     >
       <template v-slot:top>
         <v-toolbar flat>
@@ -18,7 +18,7 @@
         </v-toolbar>
         <v-text-field
           v-model="search"
-          label="Search Clients (UPPER CASE ONLY)"
+          label="Search Clients"
           class="mx-4"
         ></v-text-field>
       </template>
@@ -45,61 +45,61 @@
 </template>
   
 <script>
-  export default {
-    data () {
-      return {
-        search: '',
-        country: '',
-        email: '',
-        clients: [
-          {
-            name: 'Client 1',
-            description: 'Description 1',
-            logo: 'Logo 1',
-            country: 'Country 1',
-            email: 'email1@example.com',
-          },
-          {
-            name: 'Client 2',
-            description: 'Description 2',
-            logo: 'Logo 2',
-            country: 'Country 2',
-            email: 'email2@example.com',
-          },
-          // Dodaj inne klienty tutaj...
-        ],
-      }
+export default {
+  data () {
+    return {
+      search: '',
+      country: '',
+      email: '',
+      clients: [
+        {
+          name: 'Client 1',
+          description: 'Description 1',
+          logo: 'Logo 1',
+          country: 'Country 1',
+          email: 'email1@example.com',
+        },
+        {
+          name: 'Client 2',
+          description: 'Description 2',
+          logo: 'Logo 2',
+          country: 'Country 2',
+          email: 'email2@example.com',
+        },
+        // Dodaj inne klienty tutaj...
+      ],
+    }
+  },
+  computed: {
+    headers () {
+      return [
+        { text: 'Name', value: 'name' },
+        { text: 'Description', value: 'description' },
+        { text: 'Logo', value: 'logo' },
+        { text: 'Country', value: 'country' },
+        { text: 'Email', value: 'email' },
+      ]
     },
-    computed: {
-      headers () {
-        return [
-          { text: 'Name', value: 'name' },
-          { text: 'Description', value: 'description' },
-          { text: 'Logo', value: 'logo' },
-          { text: 'Country', value: 'country' },
-          { text: 'Email', value: 'email' },
-        ]
-      },
+  },
+  methods: {
+    filterCaseInsensitive (value, search) {
+      return value != null &&
+        search != null &&
+        typeof value === 'string' &&
+        value.toLowerCase().indexOf(search.toLowerCase()) !== -1
     },
-    methods: {
-      filterOnlyCapsText (value, search) {
-        return value != null &&
-          search != null &&
-          typeof value === 'string' &&
-          value.toString().toLocaleUpperCase().indexOf(search) !== -1
-      },
-      addClient() {
-        this.$router.push('/add-client');
-      },
-      goToHome() {
-        this.$router.push("/home-page")
-      }
+    addClient() {
+      this.$router.push('/add-client');
     },
-  }
+    goToHome() {
+      this.$router.push("/home-page")
+    }
+  },
+}
 </script>
 
 <style>
-  .container {
-    padding: 25px;
-  }
+.container {
+  padding: 25px;
+}
 </style>
