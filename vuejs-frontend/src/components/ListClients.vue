@@ -45,29 +45,15 @@
 </template>
   
 <script>
+import axios from 'axios';
+
 export default {
   data () {
     return {
       search: '',
       country: '',
       email: '',
-      clients: [
-        {
-          name: 'Client 1',
-          description: 'Description 1',
-          logo: 'Logo 1',
-          country: 'Country 1',
-          email: 'email1@example.com',
-        },
-        {
-          name: 'Client 2',
-          description: 'Description 2',
-          logo: 'Logo 2',
-          country: 'Country 2',
-          email: 'email2@example.com',
-        },
-        // Dodaj inne klienty tutaj...
-      ],
+      clients: []
     }
   },
   computed: {
@@ -79,7 +65,10 @@ export default {
         { text: 'Country', value: 'country' },
         { text: 'Email', value: 'email' },
       ]
-    },
+    }
+  },
+  created() {
+    this.fetchClients();
   },
   methods: {
     filterCaseInsensitive (value, search) {
@@ -93,8 +82,17 @@ export default {
     },
     goToHome() {
       this.$router.push("/home-page")
+    },
+    fetchClients() {
+      axios.get('http://localhost:8000/api/clients')
+        .then(response => {
+          this.clients = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching clients:', error);
+        });
     }
-  },
+  }
 }
 </script>
 
