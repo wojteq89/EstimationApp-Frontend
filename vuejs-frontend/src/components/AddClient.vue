@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+  <v-app>
     <v-container>
       <v-card-text class="title" style="font-size: x-large;">Add Client</v-card-text>
       <v-form @submit.prevent="addClient">
@@ -18,71 +18,71 @@
 </template>
 
 <script>
-import axios from 'axios';
-import Vue from 'vue';
-import VueNotification from 'vue-notification';
+  import axios from 'axios';
+  import Vue from 'vue';
+  import VueNotification from 'vue-notification';
 
-Vue.use(VueNotification, {
-  timer: 5000
-});
+  Vue.use(VueNotification, {
+    timer: 5000
+  });
 
-export default {
-  data() {
-    return {
-      name: '',
-      description: '',
-      logo: '',
-      country: '',
-      email: ''
-    };
-  },
-  methods: {
-    addClient() {
-      if (!this.name || !this.country || !this.email) {
-        this.$notify({
-          title: 'Error',
-          text: 'Please fill in all required fields.',
-          type: 'error'
-        });
-        return;
-      }
-
-      axios.post('http://localhost:8000/api/clients', {
-        name: this.name,
-        description: this.description,
-        logo: this.logo,
-        country: this.country,
-        email: this.email
-      })
-      .then(response => {
-        console.log('Client added:', response.data);
-        this.$notify({
-          title: 'Success',
-          text: 'Client added successfully.',
-          type: 'success'
-        });
-        this.name = '';
-        this.description = '';
-        this.logo = '';
-        this.country = '';
-        this.email = '';
-        this.$router.push('/clients');
-      })
-      .catch(error => {
-        console.error('Error adding client:', error);
-        this.$notify({
-          title: 'Error',
-          text: 'Failed to add client.',
-          type: 'error'
-        });
-      });
+  export default {
+    data() {
+      return {
+        name: '',
+        description: '',
+        logo: '',
+        country: '',
+        email: ''
+      };
     },
+    methods: {
+      addClient() {
+        if (!this.name || !this.country || !this.email) {
+          this.$notify({
+            title: 'Error',
+            text: 'Please fill in all required fields.',
+            type: 'error'
+          });
+          return;
+        }
 
-    cancelClient() {
-        this.$router.push('/clients');
+        axios.post('http://localhost:8000/api/clients', {
+          name: this.name,
+          description: this.description,
+          logo: this.logo,
+          country: this.country,
+          email: this.email
+        })
+        .then(response => {
+          console.log('Client added:', response.data);
+          this.$notify({
+            title: 'Success',
+            text: 'Client added successfully.',
+            type: 'success'
+          });
+          this.name = '';
+          this.description = '';
+          this.logo = '';
+          this.country = '';
+          this.email = '';
+          this.$router.push('/clients');
+        })
+        .catch(error => {
+          console.error('Error adding client:', error);
+          this.$notify({
+            title: 'Error',
+            text: 'Failed to add client.',
+            type: 'error'
+          });
+        });
+      },
+
+      cancelClient() {
+          this.$router.push('/clients');
+      }
     }
-  }
-};
+  };
 </script>
 
 <style>

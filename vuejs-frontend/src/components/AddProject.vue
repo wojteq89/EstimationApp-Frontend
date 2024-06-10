@@ -6,9 +6,9 @@
         <v-text-field v-model="name" label="Project Name" required></v-text-field>
         <v-textarea v-model="description" label="Description"></v-textarea>
         <v-combobox
-          v-model="client_id"
-          :items="clients"
-          item-text="name"
+          v-model="selectedClient"
+          :items="clientOptions"
+          item-text="displayText"
           item-value="id"
           label="Client"
           required
@@ -17,7 +17,7 @@
           v-model="estimation"
           label="Estimation"
           type="number"
-          step="0.01"
+          step="1"
           required
         ></v-text-field>
         <v-container style="display: flex; flex-direction: row; justify-content: center;">
@@ -30,11 +30,15 @@
 </template>
 
 <script>
+import axios from 'axios';
 import Vue from 'vue';
+import VueNotification from 'vue-notification';
 import Vuetify from 'vuetify/lib';
-import 'vuetify/dist/vuetify.min.css';
 
 Vue.use(Vuetify);
+Vue.use(VueNotification, {
+  timer: 5000
+});
 
 export default {
   vuetify: new Vuetify(),
@@ -42,38 +46,84 @@ export default {
     return {
       name: '',
       description: '',
-      client_id: null,
+      selectedClient: null,
       estimation: 0,
-      clients: [
-        { id: 1, name: 'Client1' },
-        { id: 2, name: 'Client2' },
-        { id: 3, name: 'Client3' },
-        { id: 4, name: 'Client4' },
-        { id: 5, name: 'Client5' }
-      ]
+      clients: [],
+      menu: false
     };
   },
+  computed: {
+    clientOptions() {
+      return this.clients.map(client => ({
+        id: client.id,
+        name: client.name,
+        displayText: `${client.name}`
+      }));
+    }
+  },
+  mounted() {
+    this.fetchClients();
+  },
   methods: {
+    fetchClients() {
+      axios.get('http://localhost:8000/api/clients')
+        .then(response => {
+          this.clients = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching clients:', error);
+          this.$notify({
+            title: 'Error',
+            text: 'Failed to load clients.',
+            type: 'error'
+          });
+        });
+    },
     addProject() {
-      if (!this.name || !this.client_id || !this.estimation) {
-        this.$toast.error('Please fill in all required fields.');
-        return;
-      }
+  if (!this.name || !this.selectedClient || !this.estimation) {
+    console.log('Form data:', this.name, this.selectedClient, this.estimation);
 
-      console.log('Project added:', {
-        name: this.name,
-        description: this.description,
-        client_id: this.client_id,
-        estimation: this.estimation
+    this.$notify({
+      title: 'Error',
+      text: 'Please fill in all required fields.',
+      type: 'error'
+    });
+    return;
+  }
+
+  const projectData = {
+    name: this.name,
+    description: this.description,
+    client_id: this.selectedClient.id,
+    estimation: this.estimation
+  };
+
+  console.log('Sending project data:', projectData);
+
+  axios.post('http://localhost:8000/api/projects', projectData)
+    .then(response => {
+      console.log('Project added:', response.data);
+      this.$notify({
+        title: 'Success',
+        text: 'Project added successfully.',
+        type: 'success'
       });
-
       this.name = '';
       this.description = '';
-      this.client_id = null;
+      this.selectedClient = null;
       this.estimation = 0;
-
       this.$router.push('/projects');
-    },
+    })
+    .catch(error => {
+      console.error('Error adding project:', error.response ? error.response.data : error.message);
+      this.$notify({
+        title: 'Error',
+        text: error.response?.data?.message || 'Failed to add project.',
+        type: 'error'
+      });
+    });
+},
+
     cancel() {
       this.$router.push('/projects');
     }

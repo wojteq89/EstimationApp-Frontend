@@ -47,27 +47,15 @@
 </template>
 
 <script>
+  import axios from 'axios';
+
   export default {
     data () {
       return {
         search: '',
         client: '',
         estimation: '',
-        projects: [
-          {
-            name: 'Project 1',
-            description: 'Description 1',
-            client: 'Client 1',
-            estimation: 1000.00,
-          },
-          {
-            name: 'Project 2',
-            description: 'Description 2',
-            client: 'Client 2',
-            estimation: 2000.00,
-          },
-          // Dodaj inne projekty tutaj...
-        ],
+        projects: []
       }
     },
     computed: {
@@ -75,10 +63,13 @@
         return [
           { text: 'Name', value: 'name' },
           { text: 'Description', value: 'description' },
-          { text: 'Client', value: 'client' },
+          { text: 'Client', value: 'client_name' },
           { text: 'Estimation', value: 'estimation' },
         ]
-      },
+      }
+    },
+    created() {
+      this.fetchProjects();
     },
     methods: {
       filterCaseInsensitive (value, search) {
@@ -91,9 +82,31 @@
         this.$router.push('/add-project');
       },
       goToHome() {
-        this.$router.push("/home-page");
+        this.$router.push("/home-page")
+      },
+      fetchProjects() {
+        axios.get('http://localhost:8000/api/projects')
+          .then(async response => {
+            let projects = response.data;
+            const clientRequests = projects.map(project => {
+              return axios.get(`http://localhost:8000/api/clients/${project.client_id}`);
+            });
+
+            const clientResponses = await Promise.all(clientRequests);
+            projects = projects.map((project, index) => {
+              // Przekonwertuj wycenę na liczbę
+              const estimation = parseFloat(project.estimation);
+              // Dodaj client_name do projektu
+              return { ...project, client_name: clientResponses[index].data.name, estimation };
+            });
+
+            this.projects = projects;
+          })
+          .catch(error => {
+            console.error('Error fetching projects:', error);
+          });
       }
-    },
+    }
   }
 </script>
 

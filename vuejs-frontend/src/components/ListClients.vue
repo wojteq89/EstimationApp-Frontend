@@ -6,8 +6,7 @@
       item-key="name"
       class="elevation-1"
       :search="search"
-      :custom-filter="filterCaseInsensitive"
-    >
+      :custom-filter="filterCaseInsensitive">
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Clients</v-toolbar-title>
@@ -45,55 +44,55 @@
 </template>
   
 <script>
-import axios from 'axios';
+  import axios from 'axios';
 
-export default {
-  data () {
-    return {
-      search: '',
-      country: '',
-      email: '',
-      clients: []
-    }
-  },
-  computed: {
-    headers () {
-      return [
-        { text: 'Name', value: 'name' },
-        { text: 'Description', value: 'description' },
-        { text: 'Logo', value: 'logo' },
-        { text: 'Country', value: 'country' },
-        { text: 'Email', value: 'email' },
-      ]
-    }
-  },
-  created() {
-    this.fetchClients();
-  },
-  methods: {
-    filterCaseInsensitive (value, search) {
-      return value != null &&
-        search != null &&
-        typeof value === 'string' &&
-        value.toLowerCase().indexOf(search.toLowerCase()) !== -1
+  export default {
+    data () {
+      return {
+        search: '',
+        country: '',
+        email: '',
+        clients: []
+      }
     },
-    addClient() {
-      this.$router.push('/add-client');
+    computed: {
+      headers () {
+        return [
+          { text: 'Name', value: 'name' },
+          { text: 'Description', value: 'description' },
+          { text: 'Logo', value: 'logo' },
+          { text: 'Country', value: 'country' },
+          { text: 'Email', value: 'email' },
+        ]
+      }
     },
-    goToHome() {
-      this.$router.push("/home-page")
+    created() {
+      this.fetchClients();
     },
-    fetchClients() {
-      axios.get('http://localhost:8000/api/clients')
-        .then(response => {
-          this.clients = response.data;
-        })
-        .catch(error => {
-          console.error('Error fetching clients:', error);
-        });
+    methods: {
+      filterCaseInsensitive (value, search) {
+        return value != null &&
+          search != null &&
+          typeof value === 'string' &&
+          value.toLowerCase().indexOf(search.toLowerCase()) !== -1
+      },
+      addClient() {
+        this.$router.push('/add-client');
+      },
+      goToHome() {
+        this.$router.push("/home-page")
+      },
+      fetchClients() {
+        axios.get('http://localhost:8000/api/clients')
+          .then(response => {
+            this.clients = response.data;
+          })
+          .catch(error => {
+            console.error('Error fetching clients:', error);
+          });
+      }
     }
   }
-}
 </script>
 
 <style>
