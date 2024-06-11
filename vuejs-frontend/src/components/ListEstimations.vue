@@ -6,8 +6,7 @@
       item-key="name"
       class="elevation-1"
       :search="search"
-      :custom-filter="filterCaseInsensitive"
-    >
+      :custom-filter="filterCaseInsensitive">
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Estimations</v-toolbar-title>
@@ -53,61 +52,82 @@
 </template>
 
 <script>
-export default {
-  data () {
-    return {
-      search: '',
-      project: '',
-      client: '',
-      amount: '',
-      estimations: [],
-    }
-  },
-  created() {
-    this.fetchEstimations();
-  },
-  computed: {
-    headers () {
-      return [
-        { text: 'Name', value: 'name' },
-        { text: 'Description', value: 'description' },
-        { text: 'Project', value: 'project' },
-        { text: 'Client', value: 'client' },
-        { text: 'Type', value: 'type' },
-        { text: 'Amount', value: 'amount' },
-        { text: 'Date', value: 'date' },
-      ]
+  import axios from 'axios';
+
+  export default {
+    data () {
+      return {
+        search: '',
+        project: '',
+        client: '',
+        amount: '',
+        estimations: [],
+      }
     },
-  },
-  methods: {
-    fetchEstimations() {
-      fetch('/api/estimations')
-        .then(response => response.json())
-        .then(data => {
-          this.estimations = data;
-        })
-        .catch(error => {
+    created() {
+      this.fetchEstimations();
+    },
+    computed: {
+      headers () {
+        return [
+          { text: 'Name', value: 'name' },
+          { text: 'Description', value: 'description' },
+          { text: 'Project', value: 'project_name' },
+          { text: 'Client', value: 'client_name' },
+          { text: 'Type', value: 'type' },
+          { text: 'Amount', value: 'amount' },
+          { text: 'Date', value: 'date' },
+        ]
+      }
+    },
+    methods: {
+      async fetchEstimations() {
+        try {
+          const response = await axios.get('http://localhost:8000/api/estimations');
+          let estimations = response.data;
+
+          const projectRequests = estimations.map(estimation => {
+            return axios.get(`http://localhost:8000/api/projects/${estimation.project_id}`);
+          });
+
+          const clientRequests = estimations.map(estimation => {
+            return axios.get(`http://localhost:8000/api/clients/${estimation.client_id}`);
+          });
+
+          const projectResponses = await Promise.all(projectRequests);
+          const clientResponses = await Promise.all(clientRequests);
+
+          estimations = estimations.map((estimation, index) => {
+            return { 
+              ...estimation, 
+              project_name: projectResponses[index].data.name,
+              client_name: clientResponses[index].data.name 
+            };
+          });
+
+          this.estimations = estimations;
+        } catch (error) {
           console.error('Error fetching estimations:', error);
-        });
-    },
-    filterCaseInsensitive(value, search) {
-      return value != null &&
-        search != null &&
-        typeof value === 'string' &&
-        value.toLowerCase().indexOf(search.toLowerCase()) !== -1
-    },
-    addEstimation() {
-      this.$router.push('/add-estimation');
-    },
-    goToHome() {
-      this.$router.push("/home-page");
+        }
+      },
+      filterCaseInsensitive(value, search) {
+        return value != null &&
+          search != null &&
+          typeof value === 'string' &&
+          value.toLowerCase().indexOf(search.toLowerCase()) !== -1
+      },
+      addEstimation() {
+        this.$router.push('/add-estimation');
+      },
+      goToHome() {
+        this.$router.push("/home-page");
+      }
     }
-  },
-}
+  }
 </script>
 
 <style>
-.container {
-  padding: 25px;
-}
+  .container {
+    padding: 25px;
+  }
 </style>

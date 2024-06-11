@@ -94,9 +94,7 @@
 
             const clientResponses = await Promise.all(clientRequests);
             projects = projects.map((project, index) => {
-              // Przekonwertuj wycenę na liczbę
               const estimation = parseFloat(project.estimation);
-              // Dodaj client_name do projektu
               return { ...project, client_name: clientResponses[index].data.name, estimation };
             });
 
