@@ -16,30 +16,30 @@
           <v-btn @click="goToHome">↩</v-btn>
           <v-btn @click="addProject">Add Project</v-btn>
         </v-toolbar>
-        <v-text-field
-          v-model="search"
-          label="Search Projects"
-          class="mx-4"
-        ></v-text-field>
+        <v-text-field v-model="search" label="Search Projects" class="mx-4"></v-text-field>
       </template>
       <template v-slot:append>
         <tr>
           <td></td>
           <td>
-            <v-text-field
-              v-model="client"
-              label="Client"
-            ></v-text-field>
+            <v-text-field v-model="client" label="Client"></v-text-field>
           </td>
           <td>
-            <v-text-field
-              v-model="estimation"
-              label="Estimation"
-              type="number"
-              step="0.01"
-            ></v-text-field>
+            <v-text-field v-model="estimation" label="Estimation" type="number" step="0.01"></v-text-field>
           </td>
           <td colspan="3"></td>
+        </tr>
+      </template>
+      <template v-slot:item="{ item }">
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.description }}</td>
+          <td>{{ item.client_name }}</td>
+          <td>{{ item.estimation }}</td>
+          <td>
+            <v-btn @click="editProject(item)">Edit</v-btn>
+            <v-btn @click="deleteProject(item)">Delete</v-btn>
+          </td>
         </tr>
       </template>
     </v-data-table>

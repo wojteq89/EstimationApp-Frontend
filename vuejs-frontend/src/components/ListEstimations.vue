@@ -6,7 +6,8 @@
       item-key="name"
       class="elevation-1"
       :search="search"
-      :custom-filter="filterCaseInsensitive">
+      :custom-filter="filterCaseInsensitive"
+    >
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Estimations</v-toolbar-title>
@@ -15,119 +16,129 @@
           <v-btn @click="goToHome">↩</v-btn>
           <v-btn @click="addEstimation">Add Estimation</v-btn>
         </v-toolbar>
-        <v-text-field
-          v-model="search"
-          label="Search Estimations"
-          class="mx-4"
-        ></v-text-field>
+        <v-text-field v-model="search" label="Search Estimations" class="mx-4"></v-text-field>
       </template>
-      <template v-slot:append>
+      
+      <template v-slot:item="{ item }">
         <tr>
-          <td></td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.description }}</td>
+          <td>{{ item.project_name }}</td>
+          <td>{{ item.client_name }}</td>
+          <td>{{ item.type }}</td>
+          <td>{{ item.amount }}</td>
+          <td>{{ item.date }}</td>
           <td>
-            <v-text-field
-              v-model="project"
-              label="Project"
-            ></v-text-field>
+            <v-btn @click="editEstimation(item)">Edit</v-btn>
+            <v-btn @click="deleteEstimation(item)">Delete</v-btn>
           </td>
-          <td>
-            <v-text-field
-              v-model="client"
-              label="Client"
-            ></v-text-field>
-          </td>
-          <td>
-            <v-text-field
-              v-model="amount"
-              label="Amount"
-              type="number"
-              step="0.01"
-            ></v-text-field>
-          </td>
-          <td colspan="3"></td>
         </tr>
       </template>
+      
     </v-data-table>
+    
+    <v-dialog v-model="editDialog" max-width="500">
+      <v-card>
+        <v-card-title>Edit Estimation</v-card-title>
+        <v-card-text>
+          <v-text-field v-model="editedEstimation.name" label="Name"></v-text-field>
+          <v-text-field v-model="editedEstimation.description" label="Description"></v-text-field>
+          <v-text-field v-model="editedEstimation.project_name" label="Project"></v-text-field>
+          <v-text-field v-model="editedEstimation.client_name" label="Client"></v-text-field>
+          <v-text-field v-model="editedEstimation.type" label="Type"></v-text-field>
+          <v-text-field v-model="editedEstimation.amount" label="Amount"></v-text-field>
+          <v-text-field v-model="editedEstimation.date" label="Date"></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue" @click="saveChanges">Save</v-btn>
+          <v-btn color="red" @click="cancelEdit">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-  import axios from 'axios';
+import axios from 'axios';
 
-  export default {
-    data () {
-      return {
-        search: '',
-        project: '',
-        client: '',
-        amount: '',
-        estimations: [],
+export default {
+  data () {
+    return {
+      search: '',
+      estimations: [],
+      editDialog: false,
+      editedEstimation: {},
+    }
+  },
+  created() {
+    this.fetchEstimations();
+  },
+  computed: {
+    headers () {
+      return [
+        { text: 'Name', value: 'name' },
+        { text: 'Description', value: 'description' },
+        { text: 'Project', value: 'project_name' },
+        { text: 'Client', value: 'client_name' },
+        { text: 'Type', value: 'type' },
+        { text: 'Amount', value: 'amount' },
+        { text: 'Date', value: 'date' },
+        { text: 'Actions', value: 'actions', sortable: false }
+      ]
+    }
+  },
+  methods: {
+    async fetchEstimations() {
+      try {
+        const response = await axios.get('http://localhost:8000/api/estimations');
+        this.estimations = response.data;
+      } catch (error) {
+        console.error('Error fetching estimations:', error);
       }
     },
-    created() {
-      this.fetchEstimations();
+    async editEstimation(estimation) {
+      this.editedEstimation = { ...estimation };
+      this.editDialog = true;
     },
-    computed: {
-      headers () {
-        return [
-          { text: 'Name', value: 'name' },
-          { text: 'Description', value: 'description' },
-          { text: 'Project', value: 'project_name' },
-          { text: 'Client', value: 'client_name' },
-          { text: 'Type', value: 'type' },
-          { text: 'Amount', value: 'amount' },
-          { text: 'Date', value: 'date' },
-        ]
+    async saveChanges() {
+      try {
+        await axios.put(`http://localhost:8000/api/estimations/${this.editedEstimation.id}`, this.editedEstimation);
+        this.fetchEstimations();
+        this.editDialog = false;
+      } catch (error) {
+        console.error('Error saving changes:', error);
       }
     },
-    methods: {
-      async fetchEstimations() {
-        try {
-          const response = await axios.get('http://localhost:8000/api/estimations');
-          let estimations = response.data;
-
-          const projectRequests = estimations.map(estimation => {
-            return axios.get(`http://localhost:8000/api/projects/${estimation.project_id}`);
-          });
-
-          const clientRequests = estimations.map(estimation => {
-            return axios.get(`http://localhost:8000/api/clients/${estimation.client_id}`);
-          });
-
-          const projectResponses = await Promise.all(projectRequests);
-          const clientResponses = await Promise.all(clientRequests);
-
-          estimations = estimations.map((estimation, index) => {
-            return { 
-              ...estimation, 
-              project_name: projectResponses[index].data.name,
-              client_name: clientResponses[index].data.name 
-            };
-          });
-
-          this.estimations = estimations;
-        } catch (error) {
-          console.error('Error fetching estimations:', error);
-        }
-      },
-      filterCaseInsensitive(value, search) {
-        return value != null &&
-          search != null &&
-          typeof value === 'string' &&
-          value.toLowerCase().indexOf(search.toLowerCase()) !== -1
-      },
-      addEstimation() {
-        this.$router.push('/add-estimation');
-      },
-      goToHome() {
-        this.$router.push("/home-page");
+    cancelEdit() {
+      this.editDialog = false;
+    },
+    async deleteEstimation(estimation) {
+      try {
+        await axios.delete(`http://localhost:8000/api/estimations/${estimation.id}`);
+        const index = this.estimations.findIndex(item => item.id === estimation.id);
+        this.estimations.splice(index, 1);
+      } catch (error) {
+        console.error('Error deleting estimation:', error);
       }
+    },
+    filterCaseInsensitive(value, search) {
+      return value != null &&
+        search != null &&
+        typeof value === 'string' &&
+        value.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    },
+    addEstimation() {
+      this.$router.push('/add-estimation');
+    },
+    goToHome() {
+      this.$router.push("/home-page");
     }
   }
+}
 </script>
 
 <style>
-  .container {
-    padding: 25px;
-  }
+.container {
+  padding: 25px;
+}
 </style>
