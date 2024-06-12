@@ -20,7 +20,7 @@
       </template>
       
       <template v-slot:item="{ item }">
-        <tr>
+        <tr class="table-row">
           <td>{{ item.name }}</td>
           <td>{{ item.description }}</td>
           <td>{{ item.project_name }}</td>
@@ -29,12 +29,11 @@
           <td>{{ item.amount }}</td>
           <td>{{ item.date }}</td>
           <td>
-            <v-btn @click="editEstimation(item)">Edit</v-btn>
-            <v-btn @click="deleteEstimation(item)">Delete</v-btn>
+            <v-btn class="button" @click="editEstimation(item)">Edit</v-btn>
+            <v-btn class="button" @click="deleteEstimation(item)">Delete</v-btn>
           </td>
         </tr>
       </template>
-      
     </v-data-table>
     
     <v-dialog v-model="editDialog" max-width="500">
@@ -50,8 +49,8 @@
           <v-text-field v-model="editedEstimation.date" label="Date"></v-text-field>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="blue" @click="saveChanges">Save</v-btn>
-          <v-btn color="red" @click="cancelEdit">Cancel</v-btn>
+          <v-btn class="button" @click="saveChanges">Save</v-btn>
+          <v-btn class="button" @click="cancelEdit">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -91,7 +90,15 @@ export default {
     async fetchEstimations() {
       try {
         const response = await axios.get('http://localhost:8000/api/estimations');
-        this.estimations = response.data;
+        this.estimations = await Promise.all(response.data.map(async estimation => {
+          const projectResponse = await axios.get(`http://localhost:8000/api/projects/${estimation.project_id}`);
+          const clientResponse = await axios.get(`http://localhost:8000/api/clients/${estimation.client_id}`);
+          return {
+            ...estimation,
+            project_name: projectResponse.data.name,
+            client_name: clientResponse.data.name
+          };
+        }));
       } catch (error) {
         console.error('Error fetching estimations:', error);
       }
@@ -102,7 +109,12 @@ export default {
     },
     async saveChanges() {
       try {
-        await axios.put(`http://localhost:8000/api/estimations/${this.editedEstimation.id}`, this.editedEstimation);
+        const estimationToSave = {
+          ...this.editedEstimation,
+          project_id: this.editedEstimation.project_id,
+          client_id: this.editedEstimation.client_id
+        };
+        await axios.put(`http://localhost:8000/api/estimations/${this.editedEstimation.id}`, estimationToSave);
         this.fetchEstimations();
         this.editDialog = false;
       } catch (error) {
@@ -140,5 +152,11 @@ export default {
 <style>
 .container {
   padding: 25px;
+}
+.table-row {
+  height: 100px;
+}
+.button {
+  margin-bottom: 5px
 }
 </style>

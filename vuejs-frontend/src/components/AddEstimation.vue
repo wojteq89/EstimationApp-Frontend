@@ -181,6 +181,7 @@ export default {
           this.date = '';
           this.type = '';
           this.amount = 0;
+          this.$router.push('/estimations');
         })
         .catch(error => {
           console.error('Error adding estimation:', error.response ? error.response.data : error.message);
