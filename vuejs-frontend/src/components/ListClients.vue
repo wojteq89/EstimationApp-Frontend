@@ -23,7 +23,7 @@
         <tr class="table-row">
           <td>{{ item.name }}</td>
           <td>{{ item.description }}</td>
-          <td>{{ item.logo }}</td>
+          <td><img :src="item.logo" alt="Logo" style="max-width: 60px; max-height: 60px;"></td>
           <td>{{ item.country }}</td>
           <td>{{ item.email }}</td>
           <td>

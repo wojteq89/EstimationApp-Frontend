@@ -11,7 +11,7 @@ import HomePage from '@/components/HomePage.vue';
 Vue.use(Router);
 
 export default new Router({
-  mode: 'history', // Use history mode for clean URLs
+  mode: 'history',
   routes: [
     { path: '/home-page', name: 'HomePage', component: HomePage },
     { path: '/clients', name: 'ListClients', component: ListClients },
@@ -20,6 +20,6 @@ export default new Router({
     { path: '/add-project', name: 'AddProject', component: AddProject },
     { path: '/estimations', name: 'ListEstimations', component: ListEstimations },
     { path: '/add-estimation', name: 'AddEstimation', component: AddEstimation },
-    { path: '*', redirect: '/home-page' } // Redirect to clients list for undefined routes
+    { path: '*', redirect: '/home-page' }
   ]
 });
