@@ -1,7 +1,6 @@
 <template>
   <v-app>
     <v-container>
-      <v-card-text class="title" style="font-size: x-large;">Add Estimation</v-card-text>
       <v-form @submit.prevent="addEstimation">
         <v-text-field v-model="name" label="Estimation Name" required></v-text-field>
         <v-textarea v-model="description" label="Description"></v-textarea>
@@ -193,7 +192,7 @@ export default {
         });
     },
     cancel() {
-      this.$router.push('/projects');
+      this.$router.push('/estimations');
     }
   }
 };

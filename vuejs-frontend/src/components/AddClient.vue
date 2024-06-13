@@ -1,8 +1,8 @@
 <template>
   <v-app>
     <v-container>
-      <v-card-text class="title" style="font-size: x-large;">Add Client</v-card-text>
       <v-form @submit.prevent="addClient">
+        <v-img v-if="previewImage" :src="previewImage" class="editLogo" contain></v-img>
         <v-text-field v-model="name" label="Client Name" required></v-text-field>
         <v-textarea v-model="description" label="Description"></v-textarea>
         <v-select
@@ -18,7 +18,6 @@
           @change="previewLogo"
           append-icon="mdi-paperclip"
         ></v-file-input>
-        <v-img v-if="previewImage" :src="previewImage" class="my-4" contain></v-img>
         <v-container style="display: flex; flex-direction: row; justify-content: center;">
           <v-btn type="submit">Add Client</v-btn>
           <v-btn @click="cancelClient">Cancel</v-btn>
@@ -60,9 +59,9 @@ export default {
           img.onload = () => {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = 100;
-            canvas.height = 100;
-            ctx.drawImage(img, 0, 0, 100, 100);
+            canvas.width = 200;
+            canvas.height = 200;
+            ctx.drawImage(img, 0, 0, 200, 200);
             resolve(canvas.toDataURL('image/jpeg'));
           };
         };
@@ -154,4 +153,12 @@ export default {
 .v-btn {
   margin-left: 15px;
 }
+.editLogo {
+  border-radius: 200px;
+  height: auto;
+  width: auto;
+  margin: 50px;
+  margin-top: 0;  
+}
+
 </style>

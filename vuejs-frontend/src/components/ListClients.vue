@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="list">
     <v-data-table
       :headers="headers"
       :items="clients"
@@ -21,9 +21,9 @@
 
       <template v-slot:item="{ item }">
         <tr class="table-row">
+          <td><img :src="item.logo" class="logo" alt="Logo" style="max-width: 60px; max-height: 60px;"></td>
           <td>{{ item.name }}</td>
           <td>{{ item.description }}</td>
-          <td><img :src="item.logo" alt="Logo" style="max-width: 60px; max-height: 60px;"></td>
           <td>{{ item.country }}</td>
           <td>{{ item.email }}</td>
           <td>
@@ -37,11 +37,23 @@
     <v-dialog v-model="editDialog" max-width="500">
       <v-card>
         <v-card-title>Edit Client</v-card-title>
+        <v-img v-if="previewImage" :src="previewImage" class="my-4 editLogo" contain></v-img>
         <v-card-text>
           <v-text-field v-model="editedClient.name" label="Name"></v-text-field>
           <v-text-field v-model="editedClient.description" label="Description"></v-text-field>
-          <v-text-field v-model="editedClient.logo" label="Logo"></v-text-field>
-          <v-text-field v-model="editedClient.country" label="Country"></v-text-field>
+          <v-file-input
+            v-model="editedClient.logo"
+            label="Logo"
+            accept="image/*"
+            @change="previewLogo"
+            append-icon="mdi-paperclip"
+          ></v-file-input>
+          <v-select
+            v-model="editedClient.country"
+            :items="countries"
+            label="Country"
+            required
+          ></v-select>
           <v-text-field v-model="editedClient.email" label="Email"></v-text-field>
         </v-card-text>
         <v-card-actions>
@@ -54,7 +66,8 @@
     <v-dialog v-model="deleteDialog" max-width="500">
       <v-card>
         <v-card-title>Confirm Delete</v-card-title>
-        <v-card-text>Are you sure you want to delete this client?</v-card-text>
+        <v-card-text>Are you sure you want to delete this client? This action will 
+          remove all customer-related projects and valuations.</v-card-text>
         <v-card-actions>
           <v-btn class="button" @click="deleteClient">Yes</v-btn>
           <v-btn class="button" @click="cancelDelete">No</v-btn>
@@ -74,7 +87,11 @@ export default {
       clients: [],
       editDialog: false,
       deleteDialog: false,
+      countries: ['Poland', 'Germany', 'France', 'USA', 'UK', 'Spain', 'Italy', 
+      'Canada', 'Australia', 'Japan', 'China', 'Brazil', 'India', 'Russia'],
+      previewImage: null,
       editedClient: {
+        id: null,
         name: '',
         description: '',
         logo: '',
@@ -87,9 +104,9 @@ export default {
   computed: {
     headers() {
       return [
+        { text: 'Logo', value: 'logo' },
         { text: 'Name', value: 'name' },
         { text: 'Description', value: 'description' },
-        { text: 'Logo', value: 'logo' },
         { text: 'Country', value: 'country' },
         { text: 'Email', value: 'email' },
         { text: 'Actions', value: 'actions', sortable: false }
@@ -125,6 +142,7 @@ export default {
     },
     editClient(client) {
       this.editedClient = { ...client };
+      this.previewImage = client.logo;
       this.editDialog = true;
     },
     async saveChanges() {
@@ -133,12 +151,14 @@ export default {
         await axios.put(`http://localhost:8000/api/clients/${this.editedClient.id}`, clientToSave);
         this.fetchClients();
         this.editDialog = false;
+        this.previewImage = null;
       } catch (error) {
         console.error('Error saving changes:', error);
       }
     },
     cancelEdit() {
       this.editDialog = false;
+      this.previewImage = null;
     },
     confirmDeleteClient(client) {
       this.clientToDelete = client;
@@ -156,6 +176,11 @@ export default {
     cancelDelete() {
       this.deleteDialog = false;
     },
+    previewLogo(file) {
+      if (file) {
+        this.previewImage = URL.createObjectURL(file);
+      }
+    },
   },
 };
 </script>
@@ -164,10 +189,24 @@ export default {
 .container {
   padding: 25px;
 }
+.list {
+  margin-left: 100px;
+  margin-right: 100px;
+  padding: 20px;
+  border: 3px solid black;
+  border-radius: 50px;
+}
 .table-row {
   height: 100px;
 }
 .button {
   margin-bottom: 5px;
+}
+.logo {
+  border-radius: 30px;
+}
+.editLogo {
+  border-radius: 30px;
+  height: 250px;
 }
 </style>

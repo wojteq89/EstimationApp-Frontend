@@ -1,8 +1,8 @@
 <template>
-  <v-container>
+  <div class="panels">
     <v-row>
         <v-col>
-            <v-card class="clients-card">
+            <v-card class="card">
                 <v-img
                     src="@/assets/clients.svg"
                     alt="Client Icon"
@@ -22,7 +22,7 @@
             </v-card>
         </v-col>
         <v-col>
-            <v-card class="clients-card">
+            <v-card class="card">
                 <v-img
                     src="@/assets/projects.svg"
                     alt="Client Icon"
@@ -44,7 +44,7 @@
     </v-row>
     <v-row>
         <v-col>
-            <v-card class="clients-card">
+            <v-card class="card">
                 <v-img
                     src="@/assets/estimations.svg"
                     alt="Client Icon"
@@ -64,7 +64,7 @@
             </v-card>
         </v-col>
     </v-row>
-  </v-container>
+</div>
   </template>
   
   <script>
@@ -93,11 +93,21 @@
   </script>
   
   <style>
-    .clients-card .title {
+    .panels {
+        border: 3px solid black;
+        border-radius: 25px;
+        padding: 20px;
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+    .row {
+        padding: 10px;
+    }
+    .card .title {
         font-size: x-large;
         font-weight: bold;
     }
-    .clients-card .description {
+    .card .description {
         padding-left: 20%;
         padding-right: 20%
     }
@@ -110,11 +120,9 @@
     }
     .button {
         margin-left: 10px;
-    }
-    .buttons-text {
         text-decoration: none;
     }
-    .clients-card {
+    .card {
         padding: 15px
     }
 

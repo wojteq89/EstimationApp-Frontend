@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="list">
     <v-data-table
       :headers="headers"
       :items="projects"
@@ -184,5 +184,12 @@ export default {
 }
 .button {
   margin-bottom: 5px;
+}
+.list {
+  margin-left: 100px;
+  margin-right: 100px;
+  padding: 20px;
+  border: 3px solid black;
+  border-radius: 50px;
 }
 </style>

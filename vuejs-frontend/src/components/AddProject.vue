@@ -1,7 +1,6 @@
 <template>
   <v-app>
     <v-container>
-      <v-card-text class="title" style="font-size: x-large;">Add Project</v-card-text>
       <v-form @submit.prevent="addProject">
         <v-text-field v-model="name" label="Project Name" required></v-text-field>
         <v-textarea v-model="description" label="Description"></v-textarea>
