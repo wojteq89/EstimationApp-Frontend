@@ -1,22 +1,22 @@
 <template>
-    <v-app>
+  <v-app>
     <v-container>
       <v-card-text class="title" style="font-size: x-large;">Add Estimation</v-card-text>
       <v-form @submit.prevent="addEstimation">
         <v-text-field v-model="name" label="Estimation Name" required></v-text-field>
         <v-textarea v-model="description" label="Description"></v-textarea>
         <v-combobox
-          v-model="project_id"
-          :items="projects"
-          item-text="name"
+          v-model="selectedProject"
+          :items="projectOptions"
+          item-text="displayText"
           item-value="id"
           label="Project"
           required
         ></v-combobox>
         <v-combobox
-          v-model="client_id"
-          :items="clients"
-          item-text="name"
+          v-model="selectedClient"
+          :items="clientOptions"
+          item-text="displayText"
           item-value="id"
           label="Client"
           required
@@ -28,8 +28,7 @@
           :nudge-right="40"
           transition="scale-transition"
           offset-y
-          min-width="auto"
-        >
+          min-width="auto">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
               v-model="date"
@@ -51,11 +50,11 @@
           label="Type" 
           required
         ></v-select>
-        <v-text-field 
-          v-model="amount" 
-          label="Amount" 
-          type="number" 
-          step="0.01" 
+        <v-text-field
+          v-model="amount"
+          label="Amount"
+          type="number"
+          step="0.01"
           required
         ></v-text-field>
         <v-container style="display: flex; flex-direction: row; justify-content: center;">
@@ -68,92 +67,133 @@
 </template>
 
 <script>
+import axios from 'axios';
 import Vue from 'vue';
+import VueNotification from 'vue-notification';
 import Vuetify from 'vuetify/lib';
-import 'vuetify/dist/vuetify.min.css';
 
 Vue.use(Vuetify);
+Vue.use(VueNotification, {
+  timer: 5000
+});
 
 export default {
+  vuetify: new Vuetify(),
   data() {
     return {
       name: '',
       description: '',
-      project_id: null,
-      client_id: null,
+      selectedProject: null,
+      selectedClient: null,
       date: new Date().toISOString().substr(0, 10),
       type: '',
       amount: 0,
-      projects: [
-        { id: 1, name: 'Project1' },
-        { id: 2, name: 'Project2' },
-        { id: 3, name: 'Project3' },
-        { id: 4, name: 'Project4' },
-        { id: 5, name: 'Project5' }
-      ],
-      clients: [
-        { id: 1, name: 'Client1' },
-        { id: 2, name: 'Client2' },
-        { id: 3, name: 'Client3' },
-        { id: 4, name: 'Client4' },
-        { id: 5, name: 'Client5' }
-      ],
+      projects: [],
+      clients: [],
       menu: false
     };
   },
-  created() {
+  computed: {
+    projectOptions() {
+      return this.projects.map(project => ({
+        id: project.id,
+        name: project.name,
+        displayText: `${project.name}`
+      }));
+    },
+    clientOptions() {
+      return this.clients.map(client => ({
+        id: client.id,
+        name: client.name,
+        displayText: `${client.name}`
+      }));
+    }
+  },
+  mounted() {
     this.fetchProjects();
     this.fetchClients();
   },
   methods: {
     fetchProjects() {
-      fetch('/api/projects')
-        .then(response => response.json())
-        .then(data => {
-          this.projects = data;
+      axios.get('http://localhost:8000/api/projects')
+        .then(response => {
+          this.projects = response.data;
         })
         .catch(error => {
           console.error('Error fetching projects:', error);
+          this.$notify({
+            title: 'Error',
+            text: 'Failed to load projects.',
+            type: 'error'
+          });
         });
     },
     fetchClients() {
-      fetch('/api/clients')
-        .then(response => response.json())
-        .then(data => {
-          this.clients = data;
+      axios.get('http://localhost:8000/api/clients')
+        .then(response => {
+          this.clients = response.data;
         })
         .catch(error => {
           console.error('Error fetching clients:', error);
+          this.$notify({
+            title: 'Error',
+            text: 'Failed to load clients.',
+            type: 'error'
+          });
         });
     },
     addEstimation() {
-      if (!this.name || !this.project_id || !this.client_id || !this.type || !this.amount) {
-        this.$toast.error('Please fill in all required fields.');
+      if (!this.name || !this.selectedProject || !this.selectedClient || !this.date || !this.type || !this.amount) {
+        console.log('Form data:', this.name, this.selectedProject, this.selectedClient, this.date, this.type, this.amount);
+
+        this.$notify({
+          title: 'Error',
+          text: 'Please fill in all required fields.',
+          type: 'error'
+        });
         return;
       }
 
-      console.log('Estimation added:', {
+      const estimationData = {
         name: this.name,
         description: this.description,
-        project_id: this.project_id,
-        client_id: this.client_id,
+        project_id: this.selectedProject.id,
+        client_id: this.selectedClient.id,
         date: this.date,
         type: this.type,
         amount: this.amount
-      });
+      };
 
-      this.name = '';
-      this.description = '';
-      this.project_id = null;
-      this.client_id = null;
-      this.date = new Date().toISOString().substr(0, 10);
-      this.type = '';
-      this.amount = 0;
+      console.log('Sending estimation data:', estimationData);
 
-      this.$router.push('/estimations');
+      axios.post('http://localhost:8000/api/estimations', estimationData)
+        .then(response => {
+          console.log('Estimation added:', response.data);
+          this.$notify({
+            title: 'Success',
+            text: 'Estimation added successfully.',
+            type: 'success'
+          });
+          this.name = '';
+          this.description = '';
+          this.selectedProject = null;
+          this.selectedClient = null;
+          this.date = '';
+          this.type = '';
+          this.amount = 0;
+          this.$router.push('/estimations');
+        })
+        .catch(error => {
+          console.error('Error adding estimation:', error.response ? error.response.data : error.message);
+          this.$notify({
+            title: 'Error',
+            text: error.response?.data?.message || 'Failed to add estimation.',
+            type: 'error'
+          });
+        });
     },
     cancel() {
-      this.$router.push('/estimations');
+      this.$router.push('/projects');
     }
   }
 };

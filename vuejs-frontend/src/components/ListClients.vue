@@ -16,90 +16,158 @@
           <v-btn @click="goToHome">↩</v-btn>
           <v-btn @click="addClient">Add Client</v-btn>
         </v-toolbar>
-        <v-text-field
-          v-model="search"
-          label="Search Clients"
-          class="mx-4"
-        ></v-text-field>
+        <v-text-field v-model="search" label="Search Clients" class="mx-4"></v-text-field>
       </template>
-      <template v-slot:append>
-        <tr>
-          <td></td>
+
+      <template v-slot:item="{ item }">
+        <tr class="table-row">
+          <td>{{ item.name }}</td>
+          <td>{{ item.description }}</td>
+          <td><img :src="item.logo" alt="Logo" style="max-width: 60px; max-height: 60px;"></td>
+          <td>{{ item.country }}</td>
+          <td>{{ item.email }}</td>
           <td>
-            <v-text-field
-              v-model="country"
-              label="Country"
-            ></v-text-field>
+            <v-btn class="button" @click="editClient(item)">Edit</v-btn>
+            <v-btn class="button" @click="confirmDeleteClient(item)">Delete</v-btn>
           </td>
-          <td>
-            <v-text-field
-              v-model="email"
-              label="Email"
-            ></v-text-field>
-          </td>
-          <td colspan="3"></td>
         </tr>
       </template>
     </v-data-table>
+
+    <v-dialog v-model="editDialog" max-width="500">
+      <v-card>
+        <v-card-title>Edit Client</v-card-title>
+        <v-card-text>
+          <v-text-field v-model="editedClient.name" label="Name"></v-text-field>
+          <v-text-field v-model="editedClient.description" label="Description"></v-text-field>
+          <v-text-field v-model="editedClient.logo" label="Logo"></v-text-field>
+          <v-text-field v-model="editedClient.country" label="Country"></v-text-field>
+          <v-text-field v-model="editedClient.email" label="Email"></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn class="button" @click="saveChanges">Save</v-btn>
+          <v-btn class="button" @click="cancelEdit">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="deleteDialog" max-width="500">
+      <v-card>
+        <v-card-title>Confirm Delete</v-card-title>
+        <v-card-text>Are you sure you want to delete this client?</v-card-text>
+        <v-card-actions>
+          <v-btn class="button" @click="deleteClient">Yes</v-btn>
+          <v-btn class="button" @click="cancelDelete">No</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
-  
+
 <script>
+import axios from 'axios';
+
 export default {
-  data () {
+  data() {
     return {
       search: '',
-      country: '',
-      email: '',
-      clients: [
-        {
-          name: 'Client 1',
-          description: 'Description 1',
-          logo: 'Logo 1',
-          country: 'Country 1',
-          email: 'email1@example.com',
-        },
-        {
-          name: 'Client 2',
-          description: 'Description 2',
-          logo: 'Logo 2',
-          country: 'Country 2',
-          email: 'email2@example.com',
-        },
-        // Dodaj inne klienty tutaj...
-      ],
-    }
+      clients: [],
+      editDialog: false,
+      deleteDialog: false,
+      editedClient: {
+        name: '',
+        description: '',
+        logo: '',
+        country: '',
+        email: ''
+      },
+      clientToDelete: null,
+    };
   },
   computed: {
-    headers () {
+    headers() {
       return [
         { text: 'Name', value: 'name' },
         { text: 'Description', value: 'description' },
         { text: 'Logo', value: 'logo' },
         { text: 'Country', value: 'country' },
         { text: 'Email', value: 'email' },
-      ]
+        { text: 'Actions', value: 'actions', sortable: false }
+      ];
     },
   },
+  created() {
+    this.fetchClients();
+  },
   methods: {
-    filterCaseInsensitive (value, search) {
-      return value != null &&
+    filterCaseInsensitive(value, search) {
+      return (
+        value != null &&
         search != null &&
         typeof value === 'string' &&
         value.toLowerCase().indexOf(search.toLowerCase()) !== -1
+      );
     },
     addClient() {
       this.$router.push('/add-client');
     },
     goToHome() {
-      this.$router.push("/home-page")
-    }
+      this.$router.push("/home-page");
+    },
+    fetchClients() {
+      axios.get('http://localhost:8000/api/clients')
+        .then(response => {
+          this.clients = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching clients:', error);
+        });
+    },
+    editClient(client) {
+      this.editedClient = { ...client };
+      this.editDialog = true;
+    },
+    async saveChanges() {
+      try {
+        const clientToSave = { ...this.editedClient };
+        await axios.put(`http://localhost:8000/api/clients/${this.editedClient.id}`, clientToSave);
+        this.fetchClients();
+        this.editDialog = false;
+      } catch (error) {
+        console.error('Error saving changes:', error);
+      }
+    },
+    cancelEdit() {
+      this.editDialog = false;
+    },
+    confirmDeleteClient(client) {
+      this.clientToDelete = client;
+      this.deleteDialog = true;
+    },
+    async deleteClient() {
+      try {
+        await axios.delete(`http://localhost:8000/api/clients/${this.clientToDelete.id}`);
+        this.fetchClients();
+        this.deleteDialog = false;
+      } catch (error) {
+        console.error('Error deleting client:', error);
+      }
+    },
+    cancelDelete() {
+      this.deleteDialog = false;
+    },
   },
-}
+};
 </script>
 
 <style>
 .container {
   padding: 25px;
+}
+.table-row {
+  height: 100px;
+}
+.button {
+  margin-bottom: 5px;
 }
 </style>

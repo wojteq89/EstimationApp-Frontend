@@ -3,8 +3,12 @@ import App from './App.vue';
 import router from './router';
 import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
+import VueNotification from 'vue-notification';
+import '@mdi/font/css/materialdesignicons.css'
+
 
 Vue.use(Vuetify);
+Vue.use(VueNotification);
 
 new Vue({
   vuetify: new Vuetify(),

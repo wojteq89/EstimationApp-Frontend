@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" data-app>
     <nav>
       <router-link to="/home-page">Home</router-link> |
       <router-link to="/clients">Clients</router-link> |
