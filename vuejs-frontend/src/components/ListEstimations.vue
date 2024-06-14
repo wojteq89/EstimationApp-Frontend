@@ -4,17 +4,17 @@
       :headers="headers"
       :items="estimations"
       item-key="name"
-      class="elevation-1"
+      class="elevation-1 data-table"
       :search="search"
       :custom-filter="filterCaseInsensitive"
     >
       <template v-slot:top>
-        <v-toolbar flat>
+        <v-toolbar flat class="table-toolbar">
           <v-toolbar-title>Estimations</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn @click="goToHome">↩</v-btn>
-          <v-btn @click="addEstimation">Add Estimation</v-btn>
+          <v-btn class="button" @click="goToHome">↩</v-btn>
+          <v-btn class="button" @click="addEstimation">Add Estimation</v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Estimations" class="mx-4"></v-text-field>
       </template>
@@ -149,21 +149,36 @@ export default {
 }
 </script>
 
-<style>
-.container {
-  padding: 25px;
+<style scoped>
+
+.list {
+  padding: 20px;
+}
+.table-toolbar {
+  background-color: #EDE8F5 !important;
+  color: #48599a !important;
+}
+.data-table {
+  border-radius: 50px !important;
+  background-color: #EDE8F5 !important;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px 4px 8px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 20px
+}
+.v-data-table {
+  border-radius: 50px !important;
 }
 .table-row {
   height: 100px;
 }
 .button {
-  margin-bottom: 5px
+  margin-bottom: 5px;
 }
-.list {
-  margin-left: 100px;
-  margin-right: 100px;
-  padding: 20px;
-  border: 3px solid black;
-  border-radius: 50px;
+.logo {
+  border-radius: 30px;
+}
+.editLogo {
+  border-radius: 30px;
+  height: 250px;
 }
 </style>

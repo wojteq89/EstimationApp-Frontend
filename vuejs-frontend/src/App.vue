@@ -41,30 +41,29 @@ export default {
 }
 
 nav {
-  padding: 30px;
-  background-image: linear-gradient(to bottom, rgb(151, 151, 151), rgba(0, 0, 0, 0));
+  padding-top: 20px;
+  padding-bottom: 40px;
+  background-image: linear-gradient(to bottom, #7091E6, #7091e600);
 }
 
 .bookmarks {
-  border: 2px solid black;
-  border-radius: 20px;
   width: 60% !important;
   padding: 10px;
 }
 
 .bookmarks a {
   font-weight: bold;
-  color: #2c3e50;
+  color: #3D52A0;
   text-decoration: none;
   transition: color 0.3s ease, font-size 0.3s ease;
 }
 
 .bookmarks a:hover {
-  color: #f8f8f8;
+  color: #ffffff;
 }
 
 .bookmarks a.router-link-exact-active {
-  color: #f8f8f8;
+  color: #ffffff;
   font-size: 25px;
 }
 </style>

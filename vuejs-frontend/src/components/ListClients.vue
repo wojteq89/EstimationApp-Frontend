@@ -4,17 +4,17 @@
       :headers="headers"
       :items="clients"
       item-key="name"
-      class="elevation-1"
+      class="elevation-1 data-table"
       :search="search"
       :custom-filter="filterCaseInsensitive"
     >
       <template v-slot:top>
-        <v-toolbar flat>
+        <v-toolbar flat class="table-toolbar">
           <v-toolbar-title>Clients</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn @click="goToHome">↩</v-btn>
-          <v-btn @click="addClient">Add Client</v-btn>
+          <v-btn class="button" @click="goToHome">↩</v-btn>
+          <v-btn class="button" @click="addClient">Add Client</v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Clients" class="mx-4"></v-text-field>
       </template>
@@ -27,8 +27,8 @@
           <td>{{ item.country }}</td>
           <td>{{ item.email }}</td>
           <td>
-            <v-btn class="button" @click="editClient(item)">Edit</v-btn>
-            <v-btn class="button" @click="confirmDeleteClient(item)">Delete</v-btn>
+            <v-icon class="action-button" @click="editClient(item)">mdi-pencil</v-icon>
+            <v-icon class="action-button" @click="confirmDeleteClient(item)">mdi-delete</v-icon>
           </td>
         </tr>
       </template>
@@ -185,22 +185,41 @@ export default {
 };
 </script>
 
-<style>
-.container {
-  padding: 25px;
-}
+<style scoped>
+
 .list {
-  margin-left: 100px;
-  margin-right: 100px;
   padding: 20px;
-  border: 3px solid black;
-  border-radius: 50px;
+}
+.table-toolbar {
+  background-color: #EDE8F5 !important;
+  color: #48599a !important;
+}
+.data-table {
+  border-radius: 50px !important;
+  background-color: #EDE8F5 !important;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px 4px 8px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 20px
 }
 .table-row {
   height: 100px;
 }
 .button {
+  border-radius: 50px;
   margin-bottom: 5px;
+}
+.action-button {
+  border-radius: 50px;
+  margin-left: 10px;
+  text-decoration: none;
+  background-color: transparent !important;
+  color: #48599a !important;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+  padding: 5px;
+}
+.action-button:hover {
+  background-color: #3D52A0 !important;
+  color: rgb(236, 236, 236) !important;
 }
 .logo {
   border-radius: 30px;

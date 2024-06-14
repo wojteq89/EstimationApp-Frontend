@@ -18,7 +18,7 @@
               <v-card-actions class="buttons">
                 <v-btn @click="goToClients" class="button">Search Clients</v-btn>
                 <v-btn @click="addClient" class="button">Add Client</v-btn>
-              </v-card-actions>
+            </v-card-actions>
             </v-card>
         </v-col>
         <v-col>
@@ -93,27 +93,35 @@
   </script>
   
   <style>
+    body {
+        background-color: #ebe8f0;
+    }
     .panels {
-        border: 3px solid black;
-        border-radius: 25px;
         padding: 20px;
         margin-left: 5%;
         margin-right: 5%;
+        margin-bottom: 5%;
     }
-    .row {
-        padding: 10px;
+    .card {
+        border-radius: 50px !important;
+        background-color: #EDE8F5 !important;
+        padding: 25px;
+        overflow: hidden;
     }
     .card .title {
         font-size: x-large;
         font-weight: bold;
+        color: #2643a9 !important;
     }
     .card .description {
         padding-left: 20%;
-        padding-right: 20%
+        padding-right: 20%;
+        color: #48599a !important;
     }
     .icon {
         width: 100px;
         margin: 0 auto;
+        border-radius: 0 !important;
     }
     .buttons {
         justify-content: center;
@@ -121,9 +129,13 @@
     .button {
         margin-left: 10px;
         text-decoration: none;
+        background-color: transparent !important;
+        color: #48599a !important;
+        transition: background-color 0.3s ease, color 0.3s ease !important;
     }
-    .card {
-        padding: 15px
+    .button:hover {
+        background-color: #3D52A0 !important;
+        color: rgb(236, 236, 236) !important;
     }
 
   </style>
