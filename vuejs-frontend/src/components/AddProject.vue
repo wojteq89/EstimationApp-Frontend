@@ -11,13 +11,6 @@
         label="Client"
         required
         ></v-combobox>
-        <v-text-field
-        v-model="estimation"
-        label="Estimation"
-        type="number"
-        step="1"
-        required
-        ></v-text-field>
         <v-textarea v-model="description" label="Description"></v-textarea>
         <v-container style="display: flex; flex-direction: row; justify-content: center;">
           <v-btn class="button" type="submit">Add Project</v-btn>
@@ -46,7 +39,6 @@ export default {
       name: '',
       description: '',
       selectedClient: null,
-      estimation: 0,
       clients: [],
       menu: false
     };
@@ -79,8 +71,8 @@ export default {
         });
     },
     addProject() {
-  if (!this.name || !this.selectedClient || !this.estimation) {
-    console.log('Form data:', this.name, this.selectedClient, this.estimation);
+  if (!this.name || !this.selectedClient) {
+    console.log('Form data:', this.name, this.selectedClient);
 
     this.$notify({
       title: 'Error',
@@ -94,7 +86,6 @@ export default {
     name: this.name,
     description: this.description,
     client_id: this.selectedClient.id,
-    estimation: this.estimation
   };
 
   console.log('Sending project data:', projectData);
@@ -110,7 +101,6 @@ export default {
       this.name = '';
       this.description = '';
       this.selectedClient = null;
-      this.estimation = 0;
       this.$router.push('/projects');
     })
     .catch(error => {
