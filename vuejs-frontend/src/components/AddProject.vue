@@ -1,27 +1,27 @@
 <template>
-  <v-app>
-    <v-container>
+  <v-app class="add-page">
+    <v-container class="add-form">
       <v-form @submit.prevent="addProject">
         <v-text-field v-model="name" label="Project Name" required></v-text-field>
-        <v-textarea v-model="description" label="Description"></v-textarea>
         <v-combobox
-          v-model="selectedClient"
-          :items="clientOptions"
-          item-text="displayText"
-          item-value="id"
-          label="Client"
-          required
+        v-model="selectedClient"
+        :items="clientOptions"
+        item-text="displayText"
+        item-value="id"
+        label="Client"
+        required
         ></v-combobox>
         <v-text-field
-          v-model="estimation"
-          label="Estimation"
-          type="number"
-          step="1"
-          required
+        v-model="estimation"
+        label="Estimation"
+        type="number"
+        step="1"
+        required
         ></v-text-field>
+        <v-textarea v-model="description" label="Description"></v-textarea>
         <v-container style="display: flex; flex-direction: row; justify-content: center;">
-          <v-btn type="submit">Add Project</v-btn>
-          <v-btn @click="cancel">Cancel</v-btn>
+          <v-btn class="button" type="submit">Add Project</v-btn>
+          <v-btn class="button" @click="cancel">Cancel</v-btn>
         </v-container>
       </v-form>
     </v-container>
@@ -129,9 +129,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.v-btn {
-  margin-left: 15px;
-}
-</style>

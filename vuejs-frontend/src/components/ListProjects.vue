@@ -37,8 +37,8 @@
           <td>{{ item.client_name }}</td>
           <td>{{ item.estimation }}</td>
           <td>
-            <v-btn class="button" @click="editProject(item)">Edit</v-btn>
-            <v-btn class="button" @click="confirmDeleteProject(item)">Delete</v-btn>
+            <v-icon class="action-button" @click="editProject(item)">mdi-pencil</v-icon>
+            <v-icon class="action-button" @click="confirmDeleteProject(item)">mdi-delete</v-icon>
           </td>
         </tr>
       </template>
@@ -96,6 +96,7 @@ export default {
         { text: 'Description', value: 'description' },
         { text: 'Client', value: 'client_name' },
         { text: 'Estimation', value: 'estimation' },
+        { text: 'Actions', value: 'actions', sortable: false }
       ];
     },
   },
@@ -174,37 +175,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-.list {
-  padding: 20px;
-}
-.table-toolbar {
-  background-color: #EDE8F5 !important;
-  color: #48599a !important;
-}
-.data-table {
-  border-radius: 50px !important;
-  background-color: #EDE8F5 !important;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px 4px 8px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  padding: 20px
-}
-.v-data-table {
-  border-radius: 50px !important;
-}
-.table-row {
-  height: 100px;
-}
-.button {
-  margin-bottom: 5px;
-}
-.logo {
-  border-radius: 30px;
-}
-.editLogo {
-  border-radius: 30px;
-  height: 250px;
-}
-</style>

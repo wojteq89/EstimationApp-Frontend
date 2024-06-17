@@ -1,26 +1,26 @@
 <template>
-  <v-app>
-    <v-container>
+  <v-app class="add-page">
+    <v-container class="add-form">
       <v-form @submit.prevent="addClient">
-        <v-img v-if="previewImage" :src="previewImage" class="editLogo" contain></v-img>
-        <v-text-field v-model="name" label="Client Name" required></v-text-field>
-        <v-textarea v-model="description" label="Description"></v-textarea>
-        <v-select
-          v-model="selectedCountry"
-          :items="countries"
-          label="Country"
-          required
-        ></v-select>
-        <v-text-field v-model="email" label="Email" required></v-text-field>
+        <v-img v-if="previewImage" :src="previewImage" class="addLogo" contain></v-img>
         <v-file-input
           label="Logo"
           accept="image/*"
           @change="previewLogo"
           append-icon="mdi-paperclip"
         ></v-file-input>
+        <v-text-field v-model="name" label="Client Name" required></v-text-field>
+        <v-text-field v-model="email" label="Email" required></v-text-field>
+        <v-select
+          v-model="selectedCountry"
+          :items="countries"
+          label="Country"
+          required
+        ></v-select>
+        <v-textarea v-model="description" label="Description"></v-textarea>
         <v-container style="display: flex; flex-direction: row; justify-content: center;">
-          <v-btn type="submit">Add Client</v-btn>
-          <v-btn @click="cancelClient">Cancel</v-btn>
+          <v-btn class="button" type="submit">Add Client</v-btn>
+          <v-btn class="button" @click="cancelClient">Cancel</v-btn>
         </v-container>
       </v-form>
     </v-container>
@@ -148,17 +148,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.v-btn {
-  margin-left: 15px;
-}
-.editLogo {
-  border-radius: 200px;
-  height: auto;
-  width: auto;
-  margin: 50px;
-  margin-top: 0;  
-}
-
-</style>

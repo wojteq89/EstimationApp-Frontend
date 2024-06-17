@@ -29,8 +29,8 @@
           <td>{{ item.amount }}</td>
           <td>{{ item.date }}</td>
           <td>
-            <v-btn class="button" @click="editEstimation(item)">Edit</v-btn>
-            <v-btn class="button" @click="deleteEstimation(item)">Delete</v-btn>
+            <v-icon class="action-button" @click="editEstimation(item)">mdi-pencil</v-icon>
+            <v-icon class="action-button" @click="confirmDeleteEstimation(item)">mdi-delete</v-icon>
           </td>
         </tr>
       </template>
@@ -54,6 +54,18 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="deleteDialog" max-width="500">
+      <v-card>
+        <v-card-title>Confirm Delete</v-card-title>
+        <v-card-text>Are you sure you want to delete this estimation? This action will remove it permanently.</v-card-text>
+        <v-card-actions>
+          <v-btn class="button" @click="deleteEstimation">Yes</v-btn>
+          <v-btn class="button" @click="cancelDelete">No</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -66,7 +78,9 @@ export default {
       search: '',
       estimations: [],
       editDialog: false,
+      deleteDialog: false,
       editedEstimation: {},
+      estimationToDelete: null,
     }
   },
   created() {
@@ -124,14 +138,22 @@ export default {
     cancelEdit() {
       this.editDialog = false;
     },
-    async deleteEstimation(estimation) {
+    confirmDeleteEstimation(estimation) {
+      this.estimationToDelete = estimation;
+      this.deleteDialog = true;
+    },
+    async deleteEstimation() {
       try {
-        await axios.delete(`http://localhost:8000/api/estimations/${estimation.id}`);
-        const index = this.estimations.findIndex(item => item.id === estimation.id);
+        await axios.delete(`http://localhost:8000/api/estimations/${this.estimationToDelete.id}`);
+        const index = this.estimations.findIndex(item => item.id === this.estimationToDelete.id);
         this.estimations.splice(index, 1);
+        this.deleteDialog = false;
       } catch (error) {
         console.error('Error deleting estimation:', error);
       }
+    },
+    cancelDelete() {
+      this.deleteDialog = false;
     },
     filterCaseInsensitive(value, search) {
       return value != null &&
@@ -148,37 +170,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-.list {
-  padding: 20px;
-}
-.table-toolbar {
-  background-color: #EDE8F5 !important;
-  color: #48599a !important;
-}
-.data-table {
-  border-radius: 50px !important;
-  background-color: #EDE8F5 !important;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px 4px 8px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  padding: 20px
-}
-.v-data-table {
-  border-radius: 50px !important;
-}
-.table-row {
-  height: 100px;
-}
-.button {
-  margin-bottom: 5px;
-}
-.logo {
-  border-radius: 30px;
-}
-.editLogo {
-  border-radius: 30px;
-  height: 250px;
-}
-</style>

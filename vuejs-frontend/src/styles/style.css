@@ -1,0 +1,109 @@
+body {
+    background-color: #ebe8f0;
+}
+.v-btn {
+    margin-left: 15px;
+}
+.addLogo {
+    height: 100px;
+    width: 100px;
+    border-radius: 50px;
+    border: 1px solid #3D52A0;
+    margin: auto;
+}  
+.editLogo {
+    border-radius: 200px;
+    height: auto;
+    width: auto;
+    margin: 50px;
+    margin-top: 0;  
+}
+.panels {
+    padding: 20px;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 5%;
+}
+.card {
+    border-radius: 50px !important;
+    background-color: #EDE8F5 !important;
+    padding: 25px;
+    overflow: hidden;
+}
+.card .title {
+    font-size: x-large;
+    font-weight: bold;
+    color: #2643a9 !important;
+}
+.card .description {
+    padding-left: 20%;
+    padding-right: 20%;
+    color: #48599a !important;
+}
+.icon {
+    width: 100px;
+    margin: 0 auto;
+    border-radius: 0 !important;
+}
+.buttons {
+    justify-content: center;
+}
+.button {
+    margin-left: 10px;
+    text-decoration: none;
+    background-color: transparent !important;
+    color: #48599a !important;
+    transition: background-color 0.3s ease, color 0.3s ease !important;
+    border-radius: 50px;
+}
+.button:hover {
+    background-color: #3D52A0 !important;
+    color: rgb(236, 236, 236) !important;
+}
+.list {
+    padding: 50px;
+}
+.table-toolbar {
+    background-color: #EDE8F5 !important;
+    color: #48599a !important;
+}
+.data-table {
+    border-radius: 50px !important;
+    background-color: #EDE8F5 !important;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px 4px 8px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 20px
+}
+.logo {
+    border-radius: 30px;
+}
+.table-row {
+    height: 100px;
+}
+.action-button {
+    border-radius: 50px;
+    margin-left: 10px;
+    text-decoration: none;
+    background-color: transparent !important;
+    color: #48599a !important;
+    transition: background-color 0.3s ease, color 0.3s ease !important;
+    padding: 5px;
+}
+.action-button:hover {
+    background-color: #3D52A0 !important;
+    color: rgb(236, 236, 236) !important;
+}
+.add-page {
+    margin-left: 0px;
+    margin-right: 0px;
+    background-color: #EDE8F5 !important;
+}
+.add-form {
+    margin: auto;
+    margin-top: 20px;
+    border-radius: 50px !important;
+    background-color: #EDE8F5 !important;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px 4px 8px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 20px
+}
