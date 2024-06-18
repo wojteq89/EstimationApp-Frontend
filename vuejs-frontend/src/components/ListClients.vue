@@ -27,48 +27,35 @@
           <td>{{ item.country }}</td>
           <td>{{ item.email }}</td>
           <td>
-            <v-icon class="action-button" @click="editClient(item)">mdi-pencil</v-icon>
-            <v-icon class="action-button" @click="confirmDeleteClient(item)">mdi-delete</v-icon>
+            <v-icon 
+              class="action-button" 
+              @click="editClient(item)" 
+              title="Edit"
+            >mdi-pencil</v-icon>
+            <v-icon 
+              class="action-button" 
+              @click="confirmDeleteClient(item)" 
+              title="Delete"
+            >mdi-delete</v-icon>
           </td>
         </tr>
       </template>
     </v-data-table>
 
-    <v-dialog v-model="editDialog" max-width="500">
-      <v-card>
-        <v-card-title>Edit Client</v-card-title>
-        <v-img v-if="previewImage" :src="previewImage" class="my-4 editLogo" contain></v-img>
-        <v-card-text>
-          <v-text-field v-model="editedClient.name" label="Name"></v-text-field>
-          <v-text-field v-model="editedClient.description" label="Description"></v-text-field>
-          <v-file-input
-            v-model="editedClient.logo"
-            label="Logo"
-            accept="image/*"
-            @change="previewLogo"
-            append-icon="mdi-paperclip"
-          ></v-file-input>
-          <v-select
-            v-model="editedClient.country"
-            :items="countries"
-            label="Country"
-            required
-          ></v-select>
-          <v-text-field v-model="editedClient.email" label="Email"></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn class="button" @click="saveChanges">Save</v-btn>
-          <v-btn class="button" @click="cancelEdit">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <EditClientModal
+      :editDialog.sync="editDialog"
+      :editedClient="editedClient"
+      :countries="countries"
+      @save-changes="handleSaveChanges"
+      @cancel-edit="cancelEdit"
+    />
 
     <v-dialog v-model="deleteDialog" max-width="500">
-      <v-card>
-        <v-card-title>Confirm Delete</v-card-title>
+      <v-card class="card">
+        <v-card-title class="center-content">Confirm Delete</v-card-title>
         <v-card-text>Are you sure you want to delete this client? This action will 
-          remove all customer-related projects and valuations.</v-card-text>
-        <v-card-actions>
+          remove all customer-related projects and estimations.</v-card-text>
+        <v-card-actions class="center-content">
           <v-btn class="button" @click="deleteClient">Yes</v-btn>
           <v-btn class="button" @click="cancelDelete">No</v-btn>
         </v-card-actions>
@@ -79,8 +66,12 @@
 
 <script>
 import axios from 'axios';
+import EditClientModal from './EditClientModal.vue';
 
 export default {
+  components: {
+    EditClientModal,
+  },
   data() {
     return {
       search: '',
@@ -89,7 +80,6 @@ export default {
       deleteDialog: false,
       countries: ['Poland', 'Germany', 'France', 'USA', 'UK', 'Spain', 'Italy', 
       'Canada', 'Australia', 'Japan', 'China', 'Brazil', 'India', 'Russia'],
-      previewImage: null,
       editedClient: {
         id: null,
         name: '',
@@ -142,23 +132,19 @@ export default {
     },
     editClient(client) {
       this.editedClient = { ...client };
-      this.previewImage = client.logo;
       this.editDialog = true;
     },
-    async saveChanges() {
+    async handleSaveChanges(updatedClient) {
       try {
-        const clientToSave = { ...this.editedClient };
-        await axios.put(`http://localhost:8000/api/clients/${this.editedClient.id}`, clientToSave);
+        await axios.put(`http://localhost:8000/api/clients/${updatedClient.id}`, updatedClient);
         this.fetchClients();
         this.editDialog = false;
-        this.previewImage = null;
       } catch (error) {
         console.error('Error saving changes:', error);
       }
     },
     cancelEdit() {
       this.editDialog = false;
-      this.previewImage = null;
     },
     confirmDeleteClient(client) {
       this.clientToDelete = client;
@@ -175,11 +161,6 @@ export default {
     },
     cancelDelete() {
       this.deleteDialog = false;
-    },
-    previewLogo(file) {
-      if (file) {
-        this.previewImage = URL.createObjectURL(file);
-      }
     },
   },
 };

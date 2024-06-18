@@ -37,34 +37,33 @@
           <td>{{ item.client_name }}</td>
           <td>{{ item.estimation }}</td>
           <td>
-            <v-icon class="action-button" @click="editProject(item)">mdi-pencil</v-icon>
-            <v-icon class="action-button" @click="confirmDeleteProject(item)">mdi-delete</v-icon>
+            <v-icon 
+              class="action-button" 
+              @click="editProject(item)"
+              title="Edit"
+            >mdi-pencil</v-icon>
+            <v-icon 
+              class="action-button" 
+              @click="confirmDeleteProject(item)"
+              title="Delete"
+            >mdi-delete</v-icon>
           </td>
         </tr>
       </template>
     </v-data-table>
 
-    <v-dialog v-model="editDialog" max-width="500">
-      <v-card>
-        <v-card-title>Edit Project</v-card-title>
-        <v-card-text>
-          <v-text-field v-model="editedProject.name" label="Name"></v-text-field>
-          <v-text-field v-model="editedProject.description" label="Description"></v-text-field>
-          <v-text-field v-model="editedProject.client_name" label="Client"></v-text-field>
-          <v-text-field v-model="editedProject.estimation" label="Estimation" type="number" step="0.01"></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn class="button" @click="saveChanges">Save</v-btn>
-          <v-btn class="button" @click="cancelEdit">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <EditProjectModal
+      :editDialog.sync="editDialog"
+      :editedProject="editedProject"
+      @save-changes="handleSaveChanges"
+      @update:editDialog="updateEditDialog"
+    />
 
     <v-dialog v-model="deleteDialog" max-width="500">
-      <v-card>
-        <v-card-title>Confirm Delete</v-card-title>
-        <v-card-text>Are you sure you want to delete this project?</v-card-text>
-        <v-card-actions>
+      <v-card class="card">
+        <v-card-title class="center-content">Confirm Delete</v-card-title>
+        <v-card-text>Are you sure you want to delete this project? This will delete all related estimations.</v-card-text>
+        <v-card-actions class="center-content">
           <v-btn class="button" @click="deleteProject">Yes</v-btn>
           <v-btn class="button" @click="cancelDelete">No</v-btn>
         </v-card-actions>
@@ -75,8 +74,12 @@
 
 <script>
 import axios from 'axios';
+import EditProjectModal from './EditProjectModal.vue';
 
 export default {
+  components: {
+    EditProjectModal,
+  },
   data() {
     return {
       search: '',
@@ -116,42 +119,44 @@ export default {
     goToHome() {
       this.$router.push('/home-page');
     },
-    fetchProjects() {
-      axios.get('http://localhost:8000/api/projects')
-        .then(async response => {
-          let projects = response.data;
-          const clientRequests = projects.map(project => {
-            return axios.get(`http://localhost:8000/api/clients/${project.client_id}`);
-          });
-
-          const clientResponses = await Promise.all(clientRequests);
-          projects = projects.map((project, index) => {
-            const estimation = parseFloat(project.estimation);
-            return { ...project, client_name: clientResponses[index].data.name, estimation };
-          });
-
-          this.projects = projects;
-        })
-        .catch(error => {
-          console.error('Error fetching projects:', error);
+    async fetchProjects() {
+      try {
+        const response = await axios.get('http://localhost:8000/api/projects');
+        let projects = response.data;
+        const clientRequests = projects.map(project => {
+          return axios.get(`http://localhost:8000/api/clients/${project.client_id}`);
         });
+
+        const clientResponses = await Promise.all(clientRequests);
+        projects = projects.map((project, index) => {
+          const estimation = parseFloat(project.estimation);
+          return { ...project, client_name: clientResponses[index].data.name, estimation };
+        });
+
+        this.projects = projects;
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
     },
     editProject(project) {
       this.editedProject = { ...project };
       this.editDialog = true;
     },
-    async saveChanges() {
+    async handleSaveChanges(updatedProject) {
       try {
         const projectToSave = {
-          ...this.editedProject,
-          client_id: this.editedProject.client_id
+          ...updatedProject,
+          client_id: updatedProject.client_id
         };
-        await axios.put(`http://localhost:8000/api/projects/${this.editedProject.id}`, projectToSave);
+        await axios.put(`http://localhost:8000/api/projects/${updatedProject.id}`, projectToSave);
         this.fetchProjects();
         this.editDialog = false;
       } catch (error) {
         console.error('Error saving changes:', error);
       }
+    },
+    updateEditDialog(val) {
+      this.editDialog = val;
     },
     cancelEdit() {
       this.editDialog = false;
