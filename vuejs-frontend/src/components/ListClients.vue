@@ -14,7 +14,7 @@
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-btn class="button" @click="goToHome">↩</v-btn>
-          <v-btn class="button" @click="addClient">Add Client</v-btn>
+          <v-btn class="button" @click="openAddClientModal">Add Client</v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Clients" class="mx-4"></v-text-field>
       </template>
@@ -43,11 +43,19 @@
     </v-data-table>
 
     <EditClientModal
+      v-if="editDialog"
       :editDialog.sync="editDialog"
       :editedClient="editedClient"
       :countries="countries"
       @save-changes="handleSaveChanges"
       @cancel-edit="cancelEdit"
+    />
+
+    <AddClientModal
+      v-if="addDialog"
+      :addDialog.sync="addDialog"
+      :countries="countries"
+      @client-added="fetchClients"
     />
 
     <v-dialog v-model="deleteDialog" max-width="500">
@@ -67,16 +75,19 @@
 <script>
 import axios from 'axios';
 import EditClientModal from './EditClientModal.vue';
+import AddClientModal from './AddClient.vue';
 
 export default {
   components: {
     EditClientModal,
+    AddClientModal,
   },
   data() {
     return {
       search: '',
       clients: [],
       editDialog: false,
+      addDialog: false,
       deleteDialog: false,
       countries: ['Poland', 'Germany', 'France', 'USA', 'UK', 'Spain', 'Italy', 
       'Canada', 'Australia', 'Japan', 'China', 'Brazil', 'India', 'Russia'],
@@ -114,9 +125,6 @@ export default {
         typeof value === 'string' &&
         value.toLowerCase().indexOf(search.toLowerCase()) !== -1
       );
-    },
-    addClient() {
-      this.$router.push('/add-client');
     },
     goToHome() {
       this.$router.push("/home-page");
@@ -161,6 +169,9 @@ export default {
     },
     cancelDelete() {
       this.deleteDialog = false;
+    },
+    openAddClientModal() {
+      this.addDialog = true;
     },
   },
 };

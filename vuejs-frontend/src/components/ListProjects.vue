@@ -14,7 +14,7 @@
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-btn class="button" @click="goToHome">↩</v-btn>
-          <v-btn class="button" @click="addProject">Add Project</v-btn>
+          <v-btn class="button" @click="openAddProjectModal">Add Project</v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Projects" class="mx-4"></v-text-field>
       </template>
@@ -59,6 +59,13 @@
       @update:editDialog="updateEditDialog"
     />
 
+    <AddProjectModal
+      v-if="addDialog"
+      :addDialog.sync="addDialog"
+      :clients="clients"
+      @project-added="fetchProjects"
+    />
+
     <v-dialog v-model="deleteDialog" max-width="500">
       <v-card class="card">
         <v-card-title class="center-content">Confirm Delete</v-card-title>
@@ -75,10 +82,12 @@
 <script>
 import axios from 'axios';
 import EditProjectModal from './EditProjectModal.vue';
+import AddProjectModal from './AddProject.vue';
 
 export default {
   components: {
     EditProjectModal,
+    AddProjectModal,
   },
   data() {
     return {
@@ -87,9 +96,11 @@ export default {
       estimation: '',
       projects: [],
       editDialog: false,
+      addDialog: false,
       deleteDialog: false,
       editedProject: {},
       projectToDelete: null,
+      clients: [],
     };
   },
   computed: {
@@ -105,6 +116,7 @@ export default {
   },
   created() {
     this.fetchProjects();
+    this.fetchClients();
   },
   methods: {
     filterCaseInsensitive(value, search) {
@@ -112,12 +124,6 @@ export default {
         search != null &&
         typeof value === 'string' &&
         value.toLowerCase().indexOf(search.toLowerCase()) !== -1;
-    },
-    addProject() {
-      this.$router.push('/add-project');
-    },
-    goToHome() {
-      this.$router.push('/home-page');
     },
     async fetchProjects() {
       try {
@@ -137,6 +143,17 @@ export default {
       } catch (error) {
         console.error('Error fetching projects:', error);
       }
+    },
+    async fetchClients() {
+      try {
+        const response = await axios.get('http://localhost:8000/api/clients');
+        this.clients = response.data;
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+      }
+    },
+    goToHome() {
+      this.$router.push('/home-page');
     },
     editProject(project) {
       this.editedProject = { ...project };
@@ -158,9 +175,6 @@ export default {
     updateEditDialog(val) {
       this.editDialog = val;
     },
-    cancelEdit() {
-      this.editDialog = false;
-    },
     confirmDeleteProject(project) {
       this.projectToDelete = project;
       this.deleteDialog = true;
@@ -176,6 +190,9 @@ export default {
     },
     cancelDelete() {
       this.deleteDialog = false;
+    },
+    openAddProjectModal() {
+      this.addDialog = true;
     },
   },
 };

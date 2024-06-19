@@ -16,7 +16,7 @@
           <v-btn class="button" @click="goToHome" title="Go to home">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
-          <v-btn class="button" @click="addEstimation" title="Add Estimation">
+          <v-btn class="button" @click="openAddEstimationModal" title="Add Estimation">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </v-toolbar>
@@ -55,6 +55,14 @@
       @update:editDialog="updateEditDialog"
     />
 
+    <AddEstimationModal
+      v-if="addDialog"
+      :addDialog.sync="addDialog"
+      :projects="projects"
+      :clients="clients"
+      @estimation-added="fetchEstimations"
+    />
+
     <v-dialog v-model="deleteDialog" max-width="500">
       <v-card class="card">
         <v-card-title class="center-content">Confirm Delete</v-card-title>
@@ -72,10 +80,12 @@
 <script>
 import axios from 'axios';
 import EditEstimationModal from './EditEstimationModal.vue';
+import AddEstimationModal from './AddEstimation.vue';
 
 export default {
   components: {
     EditEstimationModal,
+    AddEstimationModal,
   },
   data() {
     return {
@@ -85,10 +95,15 @@ export default {
       deleteDialog: false,
       editedEstimation: {},
       estimationToDelete: null,
+      addDialog: false,
+      projects: [],
+      clients: [],
     };
   },
   created() {
     this.fetchEstimations();
+    this.fetchProjects();
+    this.fetchClients();
   },
   computed: {
     headers() {
@@ -168,11 +183,27 @@ export default {
         typeof value === 'string' &&
         value.toLowerCase().indexOf(search.toLowerCase()) !== -1;
     },
-    addEstimation() {
-      this.$router.push('/add-estimation');
+    openAddEstimationModal() {
+      this.addDialog = true;
     },
     goToHome() {
       this.$router.push('/home-page');
+    },
+    async fetchProjects() {
+      try {
+        const response = await axios.get('http://localhost:8000/api/projects');
+        this.projects = response.data;
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    },
+    async fetchClients() {
+      try {
+        const response = await axios.get('http://localhost:8000/api/clients');
+        this.clients = response.data;
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+      }
     },
   },
 };

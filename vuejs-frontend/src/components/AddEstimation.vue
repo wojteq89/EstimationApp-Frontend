@@ -1,150 +1,134 @@
 <template>
-  <v-app class="add-page">
-    <v-container class="add-form">
-      <v-form @submit.prevent="addEstimation">
-        <v-text-field v-model="name" label="Estimation Name" required></v-text-field>
-        <v-combobox
-          v-model="selectedProject"
-          :items="projectOptions"
-          item-text="displayText"
-          item-value="id"
-          label="Project"
-          required
-        ></v-combobox>
-        <v-combobox
-          v-model="selectedClient"
-          :items="clientOptions"
-          item-text="displayText"
-          item-value="id"
-          label="Client"
-          required
-        ></v-combobox>
-        <v-menu
-          ref="menu"
-          v-model="menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto">
-          <template v-slot:activator="{ on, attrs }">
+  <v-dialog v-model="localAddDialog" max-width="600" @click:outside="cancel">
+    <v-card class="card">
+      <v-card-title class="center-content">Add Estimation</v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-form @submit.prevent="addEstimation">
+            <v-text-field v-model="localName" label="Estimation Name" required></v-text-field>
+            <v-combobox
+              v-model="localSelectedProject"
+              :items="projectOptions"
+              item-text="name"
+              item-value="id"
+              label="Project"
+              required
+            ></v-combobox>
+            <v-combobox
+              v-model="localSelectedClient"
+              :items="clientOptions"
+              item-text="name"
+              item-value="id"
+              label="Client"
+              required
+            ></v-combobox>
+            <v-menu
+              ref="menu"
+              v-model="menu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto">
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="localDate"
+                  label="Date"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="localDate"
+                @input="menu = false"
+              ></v-date-picker>
+            </v-menu>
             <v-text-field
-              v-model="date"
-              label="Date"
-              prepend-icon="mdi-calendar"
-              readonly
-              v-bind="attrs"
-              v-on="on"
+              v-model="localAmount"
+              label="Amount"
+              type="number"
+              step="1"
+              required
             ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="date"
-            @input="menu = false"
-          ></v-date-picker>
-        </v-menu>
-        <v-text-field
-          v-model="amount"
-          label="Amount"
-          type="number"
-          step="1"
-          required
-        ></v-text-field>
-        <v-select 
-          v-model="type" 
-          :items="['hourly', 'fixed']" 
-          label="Type" 
-          required
-        ></v-select>
-        <v-textarea v-model="description" label="Description"></v-textarea>
-        <v-container style="display: flex; flex-direction: row; justify-content: center;">
-          <v-btn class="button" type="submit">Add Estimation</v-btn>
-          <v-btn class="button" @click="cancel">Cancel</v-btn>
+            <v-select 
+              v-model="localType" 
+              :items="['hourly', 'fixed']" 
+              label="Type" 
+              required
+            ></v-select>
+            <v-textarea v-model="localDescription" label="Description"></v-textarea>
+            <v-container style="display: flex; flex-direction: row; justify-content: center;">
+              <v-btn type="submit" class="button">Add Estimation</v-btn>
+              <v-btn class="button" @click="cancel">Cancel</v-btn>
+            </v-container>
+          </v-form>
         </v-container>
-      </v-form>
-    </v-container>
-  </v-app>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
 import axios from 'axios';
-import Vue from 'vue';
-import VueNotification from 'vue-notification';
-import Vuetify from 'vuetify/lib';
-
-Vue.use(Vuetify);
-Vue.use(VueNotification, {
-  timer: 5000
-});
 
 export default {
-  vuetify: new Vuetify(),
+  props: {
+    addDialog: {
+      type: Boolean,
+      required: true
+    },
+    projects: {
+      type: Array,
+      required: true
+    },
+    clients: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
-      name: '',
-      description: '',
-      selectedProject: null,
-      selectedClient: null,
-      date: new Date().toISOString().substr(0, 10),
-      type: '',
-      amount: 0,
-      projects: [],
-      clients: [],
-      menu: false
+      localAddDialog: false,
+      localName: '',
+      localDescription: '',
+      localSelectedProject: null,
+      localSelectedClient: null,
+      localDate: new Date().toISOString().substr(0, 10),
+      localType: '',
+      localAmount: 0,
+      menu: false,
     };
+  },
+  watch: {
+    addDialog: {
+      immediate: true,
+      handler(newVal) {
+        this.localAddDialog = newVal;
+        if (!newVal) {
+          this.resetForm();
+        }
+      }
+    }
   },
   computed: {
     projectOptions() {
       return this.projects.map(project => ({
         id: project.id,
-        name: project.name,
-        displayText: `${project.name}`
+        name: project.name
       }));
     },
     clientOptions() {
       return this.clients.map(client => ({
         id: client.id,
-        name: client.name,
-        displayText: `${client.name}`
+        name: client.name
       }));
     }
   },
-  mounted() {
-    this.fetchProjects();
-    this.fetchClients();
-  },
   methods: {
-    fetchProjects() {
-      axios.get('http://localhost:8000/api/projects')
-        .then(response => {
-          this.projects = response.data;
-        })
-        .catch(error => {
-          console.error('Error fetching projects:', error);
-          this.$notify({
-            title: 'Error',
-            text: 'Failed to load projects.',
-            type: 'error'
-          });
-        });
-    },
-    fetchClients() {
-      axios.get('http://localhost:8000/api/clients')
-        .then(response => {
-          this.clients = response.data;
-        })
-        .catch(error => {
-          console.error('Error fetching clients:', error);
-          this.$notify({
-            title: 'Error',
-            text: 'Failed to load clients.',
-            type: 'error'
-          });
-        });
-    },
     addEstimation() {
-      if (!this.name || !this.selectedProject || !this.selectedClient || !this.date || !this.type || !this.amount) {
-        console.log('Form data:', this.name, this.selectedProject, this.selectedClient, this.date, this.type, this.amount);
-
+      if (!this.localName || !this.localSelectedProject || !this.localSelectedClient || !this.localDate || !this.localType || !this.localAmount) {
         this.$notify({
           title: 'Error',
           text: 'Please fill in all required fields.',
@@ -154,16 +138,14 @@ export default {
       }
 
       const estimationData = {
-        name: this.name,
-        description: this.description,
-        project_id: this.selectedProject.id,
-        client_id: this.selectedClient.id,
-        date: this.date,
-        type: this.type,
-        amount: this.amount
+        name: this.localName,
+        description: this.localDescription,
+        project_id: this.localSelectedProject.id,
+        client_id: this.localSelectedClient.id,
+        date: this.localDate,
+        type: this.localType,
+        amount: this.localAmount
       };
-
-      console.log('Sending estimation data:', estimationData);
 
       axios.post('http://localhost:8000/api/estimations', estimationData)
         .then(response => {
@@ -173,14 +155,9 @@ export default {
             text: 'Estimation added successfully.',
             type: 'success'
           });
-          this.name = '';
-          this.description = '';
-          this.selectedProject = null;
-          this.selectedClient = null;
-          this.date = '';
-          this.type = '';
-          this.amount = 0;
-          this.$router.push('/estimations');
+          this.$emit('estimation-added');
+          this.localAddDialog = false;
+          this.resetForm();
         })
         .catch(error => {
           console.error('Error adding estimation:', error.response ? error.response.data : error.message);
@@ -191,8 +168,18 @@ export default {
           });
         });
     },
+    resetForm() {
+      this.localName = '';
+      this.localDescription = '';
+      this.localSelectedProject = null;
+      this.localSelectedClient = null;
+      this.localDate = new Date().toISOString().substr(0, 10);
+      this.localType = '';
+      this.localAmount = 0;
+    },
     cancel() {
-      this.$router.push('/estimations');
+      this.localAddDialog = false;
+      this.$emit('update:addDialog', false);
     }
   }
 };

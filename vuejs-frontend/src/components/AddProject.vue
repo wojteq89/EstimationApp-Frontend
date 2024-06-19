@@ -1,120 +1,116 @@
 <template>
-  <v-app class="add-page">
-    <v-container class="add-form">
-      <v-form @submit.prevent="addProject">
-        <v-text-field v-model="name" label="Project Name" required></v-text-field>
-        <v-combobox
-        v-model="selectedClient"
-        :items="clientOptions"
-        item-text="displayText"
-        item-value="id"
-        label="Client"
-        required
-        ></v-combobox>
-        <v-textarea v-model="description" label="Description"></v-textarea>
-        <v-container style="display: flex; flex-direction: row; justify-content: center;">
-          <v-btn class="button" type="submit">Add Project</v-btn>
-          <v-btn class="button" @click="cancel">Cancel</v-btn>
+  <v-dialog v-model="localAddDialog" max-width="600" @click:outside="cancel">
+    <v-card class="card">
+      <v-card-title class="center-content">Add Project</v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-form @submit.prevent="addProject">
+            <v-text-field v-model="localName" label="Project Name" required></v-text-field>
+            <v-combobox
+              v-model="localSelectedClient"
+              :items="clientOptions"
+              item-text="name"
+              item-value="id"
+              label="Client"
+              required
+            ></v-combobox>
+            <v-textarea v-model="localDescription" label="Description"></v-textarea>
+            <v-btn type="submit" class="button">Add Project</v-btn>
+            <v-btn class="button" @click="cancel">Cancel</v-btn>
+          </v-form>
         </v-container>
-      </v-form>
-    </v-container>
-  </v-app>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
 import axios from 'axios';
-import Vue from 'vue';
-import VueNotification from 'vue-notification';
-import Vuetify from 'vuetify/lib';
-
-Vue.use(Vuetify);
-Vue.use(VueNotification, {
-  timer: 5000
-});
 
 export default {
-  vuetify: new Vuetify(),
+  props: {
+    addDialog: {
+      type: Boolean,
+      required: true
+    },
+    clients: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
-      name: '',
-      description: '',
-      selectedClient: null,
-      clients: [],
-      menu: false
+      localAddDialog: false,
+      localName: '',
+      localDescription: '',
+      localSelectedClient: null,
     };
+  },
+  watch: {
+    addDialog: {
+      immediate: true,
+      handler(newVal) {
+        this.localAddDialog = newVal;
+        if (!newVal) {
+          this.resetForm();
+        }
+      }
+    }
   },
   computed: {
     clientOptions() {
       return this.clients.map(client => ({
         id: client.id,
-        name: client.name,
-        displayText: `${client.name}`
+        name: client.name
       }));
     }
   },
-  mounted() {
-    this.fetchClients();
-  },
   methods: {
-    fetchClients() {
-      axios.get('http://localhost:8000/api/clients')
+    addProject() {
+      if (!this.localName || !this.localSelectedClient) {
+        this.$notify({
+          title: 'Error',
+          text: 'Please fill in all required fields.',
+          type: 'error'
+        });
+        return;
+      }
+
+      const projectData = {
+        name: this.localName,
+        description: this.localDescription,
+        client_id: this.localSelectedClient.id,
+      };
+
+      axios.post('http://localhost:8000/api/projects', projectData)
         .then(response => {
-          this.clients = response.data;
+          console.log('Project added:', response.data);
+          this.$notify({
+            title: 'Success',
+            text: 'Project added successfully.',
+            type: 'success'
+          });
+          this.$emit('project-added');
+          this.localAddDialog = false;
+          this.resetForm();
         })
         .catch(error => {
-          console.error('Error fetching clients:', error);
+          console.error('Error adding project:', error);
           this.$notify({
             title: 'Error',
-            text: 'Failed to load clients.',
+            text: error.response ? error.response.data.message : 'Failed to add project.',
             type: 'error'
           });
         });
     },
-    addProject() {
-  if (!this.name || !this.selectedClient) {
-    console.log('Form data:', this.name, this.selectedClient);
-
-    this.$notify({
-      title: 'Error',
-      text: 'Please fill in all required fields.',
-      type: 'error'
-    });
-    return;
-  }
-
-  const projectData = {
-    name: this.name,
-    description: this.description,
-    client_id: this.selectedClient.id,
-  };
-
-  console.log('Sending project data:', projectData);
-
-  axios.post('http://localhost:8000/api/projects', projectData)
-    .then(response => {
-      console.log('Project added:', response.data);
-      this.$notify({
-        title: 'Success',
-        text: 'Project added successfully.',
-        type: 'success'
-      });
-      this.name = '';
-      this.description = '';
-      this.selectedClient = null;
-      this.$router.push('/projects');
-    })
-    .catch(error => {
-      console.error('Error adding project:', error.response ? error.response.data : error.message);
-      this.$notify({
-        title: 'Error',
-        text: error.response?.data?.message || 'Failed to add project.',
-        type: 'error'
-      });
-    });
-},
-
+    resetForm() {
+      this.localName = '';
+      this.localDescription = '';
+      this.localSelectedClient = null;
+    },
     cancel() {
-      this.$router.push('/projects');
+      this.localAddDialog = false;
+      this.$emit('update:addDialog', false);
     }
   }
 };

@@ -1,30 +1,32 @@
 <template>
-  <v-app class="add-page">
-    <v-container class="add-form">
-      <v-form @submit.prevent="addClient">
-        <v-img v-if="previewImage" :src="previewImage" class="addLogo" contain></v-img>
+  <v-dialog v-model="localAddDialog" max-width="500" @click:outside="cancel">
+    <v-card class="card">
+      <v-card-title class="center-content">Add Client</v-card-title>
+      <v-img v-if="previewImage" :src="previewImage" class="my-4 addLogo" contain></v-img>
+      <v-card-text>
+        <v-text-field v-model="localClient.name" label="Client Name" required></v-text-field>
+        <v-text-field v-model="localClient.email" label="Email" required></v-text-field>
         <v-file-input
+          v-model="localClient.logo"
           label="Logo"
           accept="image/*"
           @change="previewLogo"
           append-icon="mdi-paperclip"
         ></v-file-input>
-        <v-text-field v-model="name" label="Client Name" required></v-text-field>
-        <v-text-field v-model="email" label="Email" required></v-text-field>
         <v-select
-          v-model="selectedCountry"
+          v-model="localClient.country"
           :items="countries"
           label="Country"
           required
         ></v-select>
-        <v-textarea v-model="description" label="Description"></v-textarea>
-        <v-container style="display: flex; flex-direction: row; justify-content: center;">
-          <v-btn class="button" type="submit">Add Client</v-btn>
-          <v-btn class="button" @click="cancelClient">Cancel</v-btn>
-        </v-container>
-      </v-form>
-    </v-container>
-  </v-app>
+        <v-textarea v-model="localClient.description" label="Description"></v-textarea>
+      </v-card-text>
+      <v-card-actions class="center-content">
+        <v-btn class="button" @click="addClient">Add Client</v-btn>
+        <v-btn class="button" @click="cancel">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -37,18 +39,52 @@ Vue.use(VueNotification, {
 });
 
 export default {
+  props: {
+    addDialog: {
+      type: Boolean,
+      required: true
+    },
+    countries: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
-      name: '',
-      description: '',
-      logo: null,
-      countries: ['Poland', 'Germany', 'France', 'USA', 'UK', 'Spain', 'Italy', 'Canada', 'Australia', 'Japan', 'China', 'Brazil', 'India', 'Russia'],
-      selectedCountry: '',
-      email: '',
+      localAddDialog: false,
+      localClient: {
+        name: '',
+        description: '',
+        logo: null,
+        country: '',
+        email: ''
+      },
       previewImage: null
     };
   },
+  watch: {
+    addDialog: {
+      immediate: true,
+      handler(newVal) {
+        this.localAddDialog = newVal;
+        if (!newVal) {
+          this.resetForm();
+        }
+      }
+    },
+    localAddDialog(newVal) {
+      if (!newVal) {
+        this.$emit('update:addDialog', false);
+      }
+    }
+  },
   methods: {
+    previewLogo(file) {
+      if (file) {
+        this.localClient.logo = file;
+        this.previewImage = URL.createObjectURL(file);
+      }
+    },
     resizeImage(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -68,9 +104,8 @@ export default {
         reader.onerror = error => reject(error);
       });
     },
-
     addClient() {
-      if (!this.name || !this.selectedCountry || !this.email) {
+      if (!this.localClient.name || !this.localClient.country || !this.localClient.email) {
         this.$notify({
           title: 'Error',
           text: 'Please fill in all required fields.',
@@ -80,13 +115,13 @@ export default {
       }
 
       const formData = new FormData();
-      formData.append('name', this.name);
-      formData.append('description', this.description);
-      formData.append('country', this.selectedCountry);
-      formData.append('email', this.email);
+      formData.append('name', this.localClient.name);
+      formData.append('description', this.localClient.description);
+      formData.append('country', this.localClient.country);
+      formData.append('email', this.localClient.email);
 
-      if (this.logo) {
-        this.resizeImage(this.logo)
+      if (this.localClient.logo) {
+        this.resizeImage(this.localClient.logo)
           .then(base64Image => {
             formData.append('logo', base64Image);
             this.sendFormData(formData);
@@ -103,7 +138,6 @@ export default {
         this.sendFormData(formData);
       }
     },
-
     sendFormData(formData) {
       axios.post('http://localhost:8000/api/clients', formData)
         .then(response => {
@@ -114,7 +148,7 @@ export default {
             type: 'success'
           });
           this.resetForm();
-          this.$router.push('/clients');
+          this.$emit('client-added');
         })
         .catch(error => {
           console.error('Error adding client:', error);
@@ -125,26 +159,20 @@ export default {
           });
         });
     },
-
     resetForm() {
-      this.name = '';
-      this.description = '';
-      this.logo = null;
-      this.selectedCountry = '';
-      this.email = '';
+      this.localClient = {
+        name: '',
+        description: '',
+        logo: null,
+        country: '',
+        email: ''
+      };
       this.previewImage = null;
     },
-
-    cancelClient() {
-      this.$router.push('/clients');
+    cancel() {
+      this.localAddDialog = false;
+      this.$emit('update:addDialog', false);
     },
-
-    previewLogo(file) {
-      if (file) {
-        this.logo = file;
-        this.previewImage = URL.createObjectURL(file);
-      }
-    }
   }
 };
 </script>
