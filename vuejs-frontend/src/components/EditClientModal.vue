@@ -5,21 +5,21 @@
       <v-img v-if="previewImage" :src="previewImage" class="my-4 editLogo" contain></v-img>
       <v-card-text>
         <v-text-field v-model="localEditedClient.name" label="Name"></v-text-field>
-        <v-text-field v-model="localEditedClient.description" label="Description"></v-text-field>
         <v-file-input
-          v-model="localEditedClient.logo"
-          label="Logo"
+        v-model="localEditedClient.logo"
+        label="Logo"
           accept="image/*"
           @change="previewLogo"
           append-icon="mdi-paperclip"
-        ></v-file-input>
+          ></v-file-input>
         <v-select
           v-model="localEditedClient.country"
           :items="countries"
           label="Country"
           required
-        ></v-select>
-        <v-text-field v-model="localEditedClient.email" label="Email"></v-text-field>
+          ></v-select>
+          <v-text-field v-model="localEditedClient.email" label="Email"></v-text-field>
+          <v-text-field v-model="localEditedClient.description" label="Description"></v-text-field>
       </v-card-text>
       <v-card-actions class="center-content">
         <v-btn class="button" @click="saveChanges">Save</v-btn>
@@ -88,9 +88,47 @@ export default {
         this.previewImage = URL.createObjectURL(file);
       }
     },
+    resizeImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          const img = new Image();
+          img.src = reader.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 200;
+            canvas.height = 200;
+            ctx.drawImage(img, 0, 0, 200, 200);
+            resolve(canvas.toDataURL('image/jpeg'));
+          };
+        };
+        reader.onerror = error => reject(error);
+      });
+    },
     saveChanges() {
-      this.$emit('save-changes', this.localEditedClient);
-      this.localEditDialog = false;
+      const clientData = { ...this.localEditedClient };
+
+      if (this.localEditedClient.logo && this.localEditedClient.logo instanceof File) {
+        this.resizeImage(this.localEditedClient.logo)
+          .then(base64Image => {
+            clientData.logo = base64Image;
+            this.$emit('save-changes', clientData);
+            this.localEditDialog = false;
+          })
+          .catch(error => {
+            console.error('Error resizing image:', error);
+            this.$notify({
+              title: 'Error',
+              text: 'Failed to edit client.',
+              type: 'error'
+            });
+          });
+      } else {
+        this.$emit('save-changes', clientData);
+        this.localEditDialog = false;
+      }
     },
     cancelEdit() {
       this.$emit('cancel-edit');

@@ -51,6 +51,8 @@
     <EditEstimationModal
       :editDialog.sync="editDialog"
       :editedEstimation="editedEstimation"
+      :projects="projects"
+      :clients="clients"
       @save-changes="handleSaveChanges"
       @update:editDialog="updateEditDialog"
     />
@@ -80,7 +82,7 @@
 <script>
 import axios from 'axios';
 import EditEstimationModal from './EditEstimationModal.vue';
-import AddEstimationModal from './AddEstimation.vue';
+import AddEstimationModal from './AddEstimationModal.vue';
 
 export default {
   components: {

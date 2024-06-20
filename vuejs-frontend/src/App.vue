@@ -6,30 +6,11 @@
         <router-link to="/clients">Clients</router-link> |
         <router-link to="/projects">Projects</router-link> |
         <router-link to="/estimations">Estimations</router-link>
-        <br>
-        <router-link v-for="page in additionalPages" :key="page.to" :to="page.to">{{ page.label }}</router-link>
       </v-container>
     </nav>
     <router-view/>
   </div>
 </template>
-
-<script>
-export default {
-  computed: {
-    additionalPages() {
-      const currentPath = this.$route.path;
-      const pages = [
-        { to: '/add-client', label: 'Add Client' },
-        { to: '/add-project', label: 'Add Project' },
-        { to: '/add-estimation', label: 'Add Estimation' }
-      ];
-      const filteredPages = pages.filter(page => currentPath.includes(page.to));
-      return filteredPages;
-    }
-  }
-}
-</script>
 
 <style>
 #app {

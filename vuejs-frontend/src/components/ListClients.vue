@@ -75,7 +75,7 @@
 <script>
 import axios from 'axios';
 import EditClientModal from './EditClientModal.vue';
-import AddClientModal from './AddClient.vue';
+import AddClientModal from './AddClientModal.vue';
 
 export default {
   components: {

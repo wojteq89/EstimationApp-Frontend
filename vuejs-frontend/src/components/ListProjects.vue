@@ -22,10 +22,10 @@
         <tr>
           <td></td>
           <td>
-            <v-text-field v-model="client" label="Client"></v-text-field>
+            <v-text-field v-model="clientFilter" label="Client"></v-text-field>
           </td>
           <td>
-            <v-text-field v-model="estimation" label="Estimation" type="number" step="0.01"></v-text-field>
+            <v-text-field v-model="estimationFilter" label="Estimation" type="number" step="0.01"></v-text-field>
           </td>
           <td colspan="3"></td>
         </tr>
@@ -55,6 +55,7 @@
     <EditProjectModal
       :editDialog.sync="editDialog"
       :editedProject="editedProject"
+      :clients="clients"
       @save-changes="handleSaveChanges"
       @update:editDialog="updateEditDialog"
     />
@@ -82,7 +83,7 @@
 <script>
 import axios from 'axios';
 import EditProjectModal from './EditProjectModal.vue';
-import AddProjectModal from './AddProject.vue';
+import AddProjectModal from './AddProjectModal.vue';
 
 export default {
   components: {
@@ -92,8 +93,8 @@ export default {
   data() {
     return {
       search: '',
-      client: '',
-      estimation: '',
+      clientFilter: '',
+      estimationFilter: '',
       projects: [],
       editDialog: false,
       addDialog: false,
