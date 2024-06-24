@@ -15,8 +15,10 @@
               required
             ></v-combobox>
             <v-textarea v-model="localDescription" label="Description"></v-textarea>
-            <v-btn type="submit" class="button">Add Project</v-btn>
-            <v-btn class="button" @click="cancel">Cancel</v-btn>
+            <v-card-actions class="center-content">
+              <v-btn type="submit" class="button">Add</v-btn>
+              <v-btn class="button" @click="cancel">Cancel</v-btn>
+            </v-card-actions>
           </v-form>
         </v-container>
       </v-card-text>

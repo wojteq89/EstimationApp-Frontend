@@ -13,13 +13,13 @@
           <v-toolbar-title>Estimations</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn class="button" @click="goToHome" title="Go to home" @mouseover="showTooltipGoToHome = true" @mouseleave="showTooltipGoToHome = false">
-            <v-icon>mdi-arrow-left</v-icon>
-            <span v-if="showTooltipGoToHome">Go to home</span>
+          <v-btn class="button" @click="goToHome"  @mouseover="showTooltipGoToHome = true" @mouseleave="showTooltipGoToHome = false">
+            <v-icon class="button-icon">mdi-arrow-left</v-icon>
+            <span v-if="showTooltipGoToHome" class="button-text">Go to home</span>
           </v-btn>
-          <v-btn class="button" @click="openAddEstimationModal" title="Add Estimation" @mouseover="showTooltipAddEstimation = true" @mouseleave="showTooltipAddEstimation = false">
-            <v-icon>mdi-plus</v-icon>
-            <span v-if="showTooltipAddEstimation">Add Estimation</span>
+          <v-btn class="button" @click="openAddEstimationModal" @mouseover="showTooltipAddEstimation = true" @mouseleave="showTooltipAddEstimation = false">
+            <v-icon class="button-icon">mdi-plus</v-icon>
+            <span v-if="showTooltipAddEstimation" class="button-text">Add Estimation</span>
           </v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Estimations" class="mx-4"></v-text-field>
@@ -36,12 +36,12 @@
           <td>{{ item.date }}</td>
           <td>
             <v-icon 
-              class="action-button" 
+              class="action-edit-button" 
               @click="editEstimation(item)"
               title="Edit"
             >mdi-pencil</v-icon>
             <v-icon 
-              class="action-button" 
+              class="action-delete-button" 
               @click="confirmDeleteEstimation(item)"
               title="Delete"
             >mdi-delete</v-icon>
@@ -72,7 +72,7 @@
         <v-card-title class="center-content">Confirm Delete</v-card-title>
         <v-card-text>Are you sure you want to delete this estimation? This action will remove it permanently.</v-card-text>
         <v-card-actions class="center-content">
-          <v-btn class="warning-button" @click="deleteEstimation">Yes</v-btn>
+          <v-btn class="button" @click="deleteEstimation">Yes</v-btn>
           <v-btn class="button" @click="cancelDelete">No</v-btn>
         </v-card-actions>
       </v-card>

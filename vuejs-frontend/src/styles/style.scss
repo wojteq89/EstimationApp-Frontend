@@ -10,11 +10,12 @@ body {
 }
 
 .addLogo {
-    height: 100px;
-    width: 100px;
-    border-radius: 50px;
+    height: 200px;
+    width: 200px;
+    border-radius: 100px;
     border: 1px solid $add-logo-border;
     margin: auto;
+    background-color: $add-logo;
 }  
 
 .editLogo {
@@ -59,11 +60,15 @@ body {
 }
 
 .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-left: 10px;
     text-decoration: none;
     background-color: transparent !important;
     color: $button-font !important;
-    transition: background-color 0.3s ease, color 0.3s ease !important;
+    width: 20px;
+    transition: background-color 0.6s ease, color 0.6s ease, width 0.6s ease-in-out !important;
     border-radius: 50px;
     text-transform: none;
 }
@@ -71,21 +76,28 @@ body {
 .button:hover {
     background-color: $button-hover !important;
     color:$button-hover-font !important;
+    width: 170px;
 }
 
-.warning-button {
-    margin-left: 10px;
-    text-decoration: none;
-    background-color: transparent !important;
-    color: $warning-button-font !important;
-    transition: background-color 0.3s ease, color 0.3s ease !important;
-    border-radius: 50px;
-    text-transform: none;
+.button-text {
+    text-align: center;
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.6s ease-in-out;
+    width: 100%;
+    padding: 45px;
 }
 
-.warning-button:hover {
-    background-color: $warning-button-hover !important;
-    color: $button-hover-font !important;
+.button-text:hover{
+    opacity: 1;
+}
+
+.button-icon {
+    display: block;
+}
+
+.button:hover .button-icon {
+    display: none;
 }
 
 .list {
@@ -113,18 +125,33 @@ body {
     height: 100px;
 }
 
-.action-button {
+.action-edit-button {
     border-radius: 50px;
     margin-left: 10px;
     text-decoration: none;
     background-color: transparent !important;
-    color: $action-button !important;
+    color: $action-edit-button !important;
     transition: background-color 0.3s ease, color 0.3s ease !important;
     padding: 5px;
 }
 
-.action-button:hover {
-    background-color: $action-button-hover !important;
+.action-edit-button:hover {
+    background-color: $action-edit-button-hover !important;
+    color: $action-button-hover-font !important;
+}
+
+.action-delete-button {
+    border-radius: 50px;
+    margin-left: 10px;
+    text-decoration: none;
+    background-color: transparent !important;
+    color: $action-delete-button !important;
+    transition: background-color 0.3s ease, color 0.3s ease !important;
+    padding: 5px;
+}
+
+.action-delete-button:hover {
+    background-color: $action-delete-button-hover !important;
     color: $action-button-hover-font !important;
 }
 
@@ -157,9 +184,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: $bookmarks-spacing;
+  color: $bookmarks-font;
 }
-
+c
 nav {
   padding-top: 20px;
   padding-bottom: 20px;
@@ -176,7 +203,7 @@ nav {
 
 .bookmarks a {
   font-weight: bold;
-  color: #3D52A0;
+  color: $bookmarks-font;
   padding: 10px;
   border-radius: 10px;
   text-decoration: none;
@@ -185,16 +212,16 @@ nav {
 }
 
 .bookmarks a:hover {
-  color: #ffffff;
-  background-color: #3D52A0;
+  color: $bookmarks-font-hover;
+  background-color: $bookmarks-background-hover;
   font-size: 25px;
 }
 
 .bookmarks a.router-link-exact-active {
   color: $card-title;
   font-size: 25px;
-  color: #ffffff;
-  background-color: #3D52A0;
+  color: $bookmarks-font-active;
+  background-color: $bookmarks-background-active;
 }
   
   @media (max-width: 500px) {

@@ -53,7 +53,7 @@ export default {
     },
     editedProject(val) {
       this.localEditedProject = { ...val };
-      this.selectedClientName = val.client_name; // Update selectedClientName when editedProject changes
+      this.selectedClientName = val.client_name;
     }
   },
   computed: {
@@ -71,12 +71,10 @@ export default {
     updateClient(selectedClientName) {
       console.log('Selected client:', selectedClientName);
 
-      // Find the client object based on selected client_name
       const client = this.clients.find(c => c.name === selectedClientName);
       console.log('Found client:', client);
 
       if (client) {
-        // Update localEditedProject with the selected client's id
         this.localEditedProject.client_id = client.id;
         console.log('Updated client_id:', this.localEditedProject.client_id);
       }

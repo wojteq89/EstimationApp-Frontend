@@ -85,9 +85,10 @@ export default {
       localEditDialog: this.editDialog,
       localEditedEstimation: { ...this.editedEstimation },
       selectedProjectName: null,
-      selectedClientName: null, // Dodaj to pole
+      selectedClientName: null,
       selectedProjectId: null,
       selectedClientId: null,
+      menu: false,
     };
   },
   watch: {
@@ -124,14 +125,14 @@ export default {
       const selectedProject = this.projects.find(p => p.name === this.selectedProjectName);
       if (selectedProject) {
         this.selectedProjectId = selectedProject.id;
-        this.localEditedEstimation.project_id = selectedProject.id; // Dodaj tę linię
+        this.localEditedEstimation.project_id = selectedProject.id;
       }
     },
     updateClientId() {
       const selectedClient = this.clients.find(c => c.name === this.selectedClientName);
       if (selectedClient) {
         this.selectedClientId = selectedClient.id;
-        this.localEditedEstimation.client_id = selectedClient.id; // Dodaj tę linię
+        this.localEditedEstimation.client_id = selectedClient.id;
       }
     },
     saveChanges() {

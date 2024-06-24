@@ -59,8 +59,8 @@
               required
             ></v-combobox>
             <v-textarea v-model="localDescription" label="Description"></v-textarea>
-            <v-container style="display: flex; flex-direction: row; justify-content: center;">
-              <v-btn type="submit" class="button">Add Estimation</v-btn>
+            <v-container class="center-content">
+              <v-btn type="submit" class="button">Add</v-btn>
               <v-btn class="button" @click="cancel">Cancel</v-btn>
             </v-container>
           </v-form>

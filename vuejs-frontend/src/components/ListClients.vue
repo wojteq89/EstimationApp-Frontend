@@ -13,13 +13,13 @@
           <v-toolbar-title>Clients</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn class="button" @click="goToHome" title="Go to home" @mouseover="showTooltipGoToHome = true" @mouseleave="showTooltipGoToHome = false">
-            <v-icon>mdi-arrow-left</v-icon>
-            <span v-if="showTooltipGoToHome">Go to home</span>
+          <v-btn class="button" @click="goToHome" @mouseover="showTooltipGoToHome = true" @mouseleave="showTooltipGoToHome = false">
+            <v-icon class="button-icon">mdi-arrow-left</v-icon>
+            <span v-if="showTooltipGoToHome" class="button-text" >Go to home</span>
           </v-btn>
-          <v-btn class="button" @click="openAddClientModal" title="Add Client" @mouseover="showTooltipAddClient = true" @mouseleave="showTooltipAddClient = false">
-            <v-icon>mdi-plus</v-icon>
-            <span v-if="showTooltipAddClient">Add Client</span>
+          <v-btn class="button" @click="openAddClientModal" @mouseover="showTooltipAddClient = true" @mouseleave="showTooltipAddClient = false">
+            <v-icon class="button-icon">mdi-plus</v-icon>
+            <span v-if="showTooltipAddClient" class="button-text" >Add Client</span>
           </v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Clients" class="mx-4"></v-text-field>
@@ -34,12 +34,12 @@
           <td>{{ item.email }}</td>
           <td>
             <v-icon 
-              class="action-button" 
+              class="action-edit-button" 
               @click="editClient(item)" 
               title="Edit"
             >mdi-pencil</v-icon>
             <v-icon 
-              class="action-button" 
+              class="action-delete-button" 
               @click="confirmDeleteClient(item)" 
               title="Delete"
             >mdi-delete</v-icon>

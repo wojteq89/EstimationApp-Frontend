@@ -17,8 +17,8 @@
                     </v-card-text>
                     <v-card-actions class="buttons">
                         <v-btn @mouseover="showTooltipClients = true" @mouseleave="showTooltipClients = false" class="button" @click="goToClients">
-                            <v-icon>mdi-magnify</v-icon>
-                            <span v-if="showTooltipClients">Search Clients</span>
+                            <v-icon class="button-icon">mdi-magnify</v-icon>
+                            <span v-if="showTooltipClients" class="button-text">Search Clients</span>
                         </v-btn>
                     </v-card-actions>
                 </v-card>
@@ -39,8 +39,8 @@
                     </v-card-text>
                     <v-card-actions class="buttons">
                         <v-btn @mouseover="showTooltipProjects = true" @mouseleave="showTooltipProjects = false" class="button" @click="goToProjects">
-                            <v-icon>mdi-magnify</v-icon>
-                            <span v-if="showTooltipProjects">Search Projects</span>
+                            <v-icon class="button-icon">mdi-magnify</v-icon>
+                            <span v-if="showTooltipProjects" class="button-text">Search Projects</span>
                         </v-btn>
                     </v-card-actions>
                 </v-card>
@@ -63,8 +63,8 @@
                     </v-card-text>
                     <v-card-actions class="buttons">
                         <v-btn @mouseover="showTooltipEstimations = true" @mouseleave="showTooltipEstimations = false" class="button" @click="goToEstimations">
-                            <v-icon>mdi-magnify</v-icon>
-                            <span v-if="showTooltipEstimations">Search Estimations</span>
+                            <v-icon class="button-icon">mdi-magnify</v-icon>
+                            <span v-if="showTooltipEstimations" class="button-text">Search Estimations</span>
                         </v-btn>
                     </v-card-actions>
                 </v-card>
@@ -72,7 +72,7 @@
             <div class="col-md-6 mb-4">
                 <v-card class="card">
                     <v-img
-                        src="@/assets/clients.svg"
+                        src="@/assets/estimations.svg"
                         alt="Admin Icon"
                         class="icon"
                     ></v-img>
@@ -85,8 +85,8 @@
                     </v-card-text>
                     <v-card-actions class="buttons">
                         <v-btn @mouseover="showTooltipEstimations = true" @mouseleave="showTooltipEstimations = false" class="button" @click="goToEstimations">
-                            <v-icon>mdi-magnify</v-icon>
-                            <span v-if="showTooltipEstimations">Search Estimations</span>
+                            <v-icon class="button-icon">mdi-magnify</v-icon>
+                            <span v-if="showTooltipEstimations" class="button-text">Search Estimations</span>
                         </v-btn>
                     </v-card-actions>
                 </v-card>

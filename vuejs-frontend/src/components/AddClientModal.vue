@@ -2,7 +2,7 @@
   <v-dialog v-model="localAddDialog" max-width="500" @click:outside="cancel">
     <v-card class="card">
       <v-card-title class="center-content">Add Client</v-card-title>
-      <v-img v-if="previewImage" :src="previewImage" class="my-4 addLogo" contain></v-img>
+      <v-img v-if="previewImage" :src="previewImage" class="addLogo" contain></v-img>
       <v-card-text>
         <v-text-field v-model="localClient.name" label="Client Name" required></v-text-field>
         <v-text-field v-model="localClient.email" label="Email" required></v-text-field>
@@ -22,7 +22,7 @@
         <v-textarea v-model="localClient.description" label="Description"></v-textarea>
       </v-card-text>
       <v-card-actions class="center-content">
-        <v-btn class="button" @click="addClient">Add Client</v-btn>
+        <v-btn class="button" @click="addClient">Add</v-btn>
         <v-btn class="button" @click="cancel">Cancel</v-btn>
       </v-card-actions>
     </v-card>
