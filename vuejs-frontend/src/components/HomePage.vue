@@ -17,7 +17,6 @@
               </v-card-text>
               <v-card-actions class="buttons">
                 <v-btn @click="goToClients" class="button">Search Clients</v-btn>
-                <v-btn @click="addClient" class="button">Add Client</v-btn>
             </v-card-actions>
             </v-card>
         </v-col>
@@ -37,7 +36,6 @@
               </v-card-text>
               <v-card-actions class="buttons">
                 <v-btn @click="goToProjects" class="button">Search Projects</v-btn>
-                <v-btn @click="addProject" class="button">Add Project</v-btn>
               </v-card-actions>
             </v-card>
         </v-col>
@@ -59,7 +57,6 @@
               </v-card-text>
               <v-card-actions class="buttons">
                 <v-btn @click="goToEstimations" class="button">Search Estimations</v-btn>
-                <v-btn @click="addEstimation" class="button">Add Estimation</v-btn>
               </v-card-actions>
             </v-card>
         </v-col>
@@ -73,21 +70,12 @@
         goToClients() {
             this.$router.push('/clients');
         },
-        addClient() {
-            this.$router.push('/add-client');
-        },
         goToProjects() {
             this.$router.push('/projects');
-        },
-        addProject() {
-            this.$router.push('/add-project');
         },
         goToEstimations() {
             this.$router.push('/estimations');
         },
-        addEstimation() {
-            this.$router.push('/add-estimation');
-        }
     },
 }
   </script>  

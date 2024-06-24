@@ -12,12 +12,12 @@
           @change="previewLogo"
           append-icon="mdi-paperclip"
           ></v-file-input>
-        <v-select
+        <v-combobox
           v-model="localEditedClient.country"
           :items="countries"
           label="Country"
           required
-          ></v-select>
+          ></v-combobox>
           <v-text-field v-model="localEditedClient.email" label="Email"></v-text-field>
           <v-text-field v-model="localEditedClient.description" label="Description"></v-text-field>
       </v-card-text>

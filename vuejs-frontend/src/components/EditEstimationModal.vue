@@ -16,9 +16,37 @@
           label="Client"
           @input="updateClientId"
         ></v-combobox>
-        <v-text-field v-model="localEditedEstimation.type" label="Type"></v-text-field>
+        <v-combobox 
+          v-model="localEditedEstimation.type" 
+          :items="['hourly', 'fixed']" 
+          label="Type" 
+          required
+        ></v-combobox>
         <v-text-field v-model="localEditedEstimation.amount" label="Amount"></v-text-field>
-        <v-text-field v-model="localEditedEstimation.date" label="Date"></v-text-field>
+        <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="auto">
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="localDate"
+                label="Date"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="localEditedEstimation.date"
+              @input="menu = false"
+              label="Date"
+            ></v-date-picker>
+          </v-menu>
         <v-text-field v-model="localEditedEstimation.description" label="Description"></v-text-field>
       </v-card-text>
       <v-card-actions class="center-content">

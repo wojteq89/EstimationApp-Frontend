@@ -13,8 +13,12 @@
           <v-toolbar-title>Projects</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn class="button" @click="goToHome">↩</v-btn>
-          <v-btn class="button" @click="openAddProjectModal">Add Project</v-btn>
+          <v-btn class="button" @click="goToHome" title="Go to home">
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+          <v-btn class="button" @click="openAddProjectModal" title="Add Project">
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Projects" class="mx-4"></v-text-field>
       </template>

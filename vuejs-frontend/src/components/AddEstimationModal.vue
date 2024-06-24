@@ -52,12 +52,12 @@
               step="1"
               required
             ></v-text-field>
-            <v-select 
+            <v-combobox 
               v-model="localType" 
               :items="['hourly', 'fixed']" 
               label="Type" 
               required
-            ></v-select>
+            ></v-combobox>
             <v-textarea v-model="localDescription" label="Description"></v-textarea>
             <v-container style="display: flex; flex-direction: row; justify-content: center;">
               <v-btn type="submit" class="button">Add Estimation</v-btn>

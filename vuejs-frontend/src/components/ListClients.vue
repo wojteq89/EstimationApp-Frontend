@@ -13,8 +13,12 @@
           <v-toolbar-title>Clients</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn class="button" @click="goToHome">↩</v-btn>
-          <v-btn class="button" @click="openAddClientModal">Add Client</v-btn>
+          <v-btn class="button" @click="goToHome" title="Go to home">
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+          <v-btn class="button" @click="openAddClientModal" title="Add Client">
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Clients" class="mx-4"></v-text-field>
       </template>
