@@ -13,11 +13,13 @@
           <v-toolbar-title>Estimations</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn class="button" @click="goToHome" title="Go to home">
+          <v-btn class="button" @click="goToHome" title="Go to home" @mouseover="showTooltipGoToHome = true" @mouseleave="showTooltipGoToHome = false">
             <v-icon>mdi-arrow-left</v-icon>
+            <span v-if="showTooltipGoToHome">Go to home</span>
           </v-btn>
-          <v-btn class="button" @click="openAddEstimationModal" title="Add Estimation">
+          <v-btn class="button" @click="openAddEstimationModal" title="Add Estimation" @mouseover="showTooltipAddEstimation = true" @mouseleave="showTooltipAddEstimation = false">
             <v-icon>mdi-plus</v-icon>
+            <span v-if="showTooltipAddEstimation">Add Estimation</span>
           </v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Estimations" class="mx-4"></v-text-field>
@@ -91,6 +93,8 @@ export default {
   },
   data() {
     return {
+      showTooltipGoToHome: false,
+      showTooltipAddEstimation: false,
       search: '',
       estimations: [],
       editDialog: false,

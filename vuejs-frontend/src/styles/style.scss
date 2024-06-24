@@ -4,9 +4,11 @@
 body {
     background-color: $primary-color;
 }
+
 .v-btn {
     margin-left: 15px;
 }
+
 .addLogo {
     height: 100px;
     width: 100px;
@@ -14,42 +16,48 @@ body {
     border: 1px solid $add-logo-border;
     margin: auto;
 }  
+
 .editLogo {
     width: 200px;
     height: 200px;
     margin: 0 auto;
     border-radius: 100px;
 }
+
 .panels {
+    display: flex;
+    flex-direction: column;
     padding: 20px;
-    margin-left: 5%;
-    margin-right: 5%;
-    margin-bottom: 5%;
+    margin: 20px;
 }
+
 .card {
     border-radius: 50px !important;
     background-color: $card-background !important;
     padding: 25px;
     overflow: hidden;
 }
+
 .card .title {
     font-size: x-large;
     font-weight: bold;
     color: $card-title !important;
 }
+
 .card .description {
-    padding-left: 20%;
-    padding-right: 20%;
     color: $card-description !important;
 }
+
 .icon {
     width: 100px;
     margin: 0 auto;
     border-radius: 0 !important;
 }
+
 .buttons {
     justify-content: center;
 }
+
 .button {
     margin-left: 10px;
     text-decoration: none;
@@ -59,10 +67,12 @@ body {
     border-radius: 50px;
     text-transform: none;
 }
+
 .button:hover {
     background-color: $button-hover !important;
     color:$button-hover-font !important;
 }
+
 .warning-button {
     margin-left: 10px;
     text-decoration: none;
@@ -72,17 +82,21 @@ body {
     border-radius: 50px;
     text-transform: none;
 }
+
 .warning-button:hover {
     background-color: $warning-button-hover !important;
     color: $button-hover-font !important;
 }
+
 .list {
     padding: 50px;
 }
+
 .table-toolbar {
     background-color: $data-table-toolbar !important;
     color: $data-table-toolbar-font !important;
 }
+
 .data-table {
     border-radius: 50px !important;
     background-color: $data-table !important;
@@ -90,12 +104,15 @@ body {
     overflow: hidden;
     padding: 20px
 }
+
 .logo {
     border-radius: 30px;
 }
+
 .table-row {
     height: 100px;
 }
+
 .action-button {
     border-radius: 50px;
     margin-left: 10px;
@@ -105,14 +122,17 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease !important;
     padding: 5px;
 }
+
 .action-button:hover {
     background-color: $action-button-hover !important;
     color: $action-button-hover-font !important;
 }
+
 .add-page {
     padding: 50px;
     background-color: $add-page-background !important;
 }
+
 .add-form {
     margin:auto;
     margin-top: 0px;
@@ -127,6 +147,61 @@ body {
     display: flex;
     justify-content: center;
 }
+
 .v-dialog {
     box-shadow: none;
 }
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: $bookmarks-spacing;
+}
+
+nav {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: $primary-color;
+  box-shadow: $shadow;
+}
+
+.bookmarks {
+  display: flex;
+  flex-direction: row;  flex-wrap: wrap;
+  justify-content: center;
+  width: 100% !important;
+}
+
+.bookmarks a {
+  font-weight: bold;
+  color: #3D52A0;
+  padding: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  margin-left: 10px;
+  transition: color 0.3s ease, font-size 0.3s ease, background-color 0.3s ease, margin 0.3s ease;
+}
+
+.bookmarks a:hover {
+  color: #ffffff;
+  background-color: #3D52A0;
+  font-size: 25px;
+}
+
+.bookmarks a.router-link-exact-active {
+  color: $card-title;
+  font-size: 25px;
+  color: #ffffff;
+  background-color: #3D52A0;
+}
+  
+  @media (max-width: 500px) {
+    .bookmarks {
+      flex-direction: column;
+    }
+    .bookmarks a {
+        margin-bottom: 5px;
+    }
+  }

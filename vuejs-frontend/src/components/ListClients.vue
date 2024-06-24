@@ -13,11 +13,13 @@
           <v-toolbar-title>Clients</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn class="button" @click="goToHome" title="Go to home">
+          <v-btn class="button" @click="goToHome" title="Go to home" @mouseover="showTooltipGoToHome = true" @mouseleave="showTooltipGoToHome = false">
             <v-icon>mdi-arrow-left</v-icon>
+            <span v-if="showTooltipGoToHome">Go to home</span>
           </v-btn>
-          <v-btn class="button" @click="openAddClientModal" title="Add Client">
+          <v-btn class="button" @click="openAddClientModal" title="Add Client" @mouseover="showTooltipAddClient = true" @mouseleave="showTooltipAddClient = false">
             <v-icon>mdi-plus</v-icon>
+            <span v-if="showTooltipAddClient">Add Client</span>
           </v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Clients" class="mx-4"></v-text-field>
@@ -88,6 +90,8 @@ export default {
   },
   data() {
     return {
+      showTooltipGoToHome: false,
+      showTooltipAddClient: false,
       search: '',
       clients: [],
       editDialog: false,

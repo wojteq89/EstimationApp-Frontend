@@ -13,11 +13,13 @@
           <v-toolbar-title>Projects</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn class="button" @click="goToHome" title="Go to home">
+          <v-btn class="button" @click="goToHome" title="Go to home" @mouseover="showTooltipGoToHome = true" @mouseleave="showTooltipGoToHome = false">
             <v-icon>mdi-arrow-left</v-icon>
+            <span v-if="showTooltipGoToHome">Go to home</span>
           </v-btn>
-          <v-btn class="button" @click="openAddProjectModal" title="Add Project">
+          <v-btn class="button" @click="openAddProjectModal" title="Add Project" @mouseover="showTooltipAddProject = true" @mouseleave="showTooltipAddProject = false">
             <v-icon>mdi-plus</v-icon>
+            <span v-if="showTooltipAddProject">Add Project</span>
           </v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Projects" class="mx-4"></v-text-field>
@@ -96,6 +98,8 @@ export default {
   },
   data() {
     return {
+      showTooltipGoToHome: false,
+      showTooltipAddProject: false,
       search: '',
       clientFilter: '',
       estimationFilter: '',
