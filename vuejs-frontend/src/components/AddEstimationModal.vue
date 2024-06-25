@@ -6,22 +6,24 @@
         <v-container>
           <v-form @submit.prevent="addEstimation">
             <v-text-field v-model="localName" label="Estimation Name" required></v-text-field>
-            <v-combobox
-              v-model="localSelectedProject"
-              :items="projectOptions"
-              item-text="name"
-              item-value="id"
-              label="Project"
-              required
-            ></v-combobox>
-            <v-combobox
-              v-model="localSelectedClient"
-              :items="clientOptions"
-              item-text="name"
-              item-value="id"
-              label="Client"
-              required
-            ></v-combobox>
+            <v-container class="center-content">
+              <v-combobox
+                v-model="localSelectedProject"
+                :items="projectOptions"
+                item-text="name"
+                item-value="id"
+                label="Project"
+                required
+              ></v-combobox>
+              <v-btn class="button" 
+                @click="openAddProjectModal" 
+                @mouseover="showTooltipAddProject = true" 
+                @mouseleave="showTooltipAddProject = false" 
+                style="margin-top: 15px;">
+                <v-icon class="button-icon">mdi-plus</v-icon>
+                <span v-if="showTooltipAddProject" class="button-text">Add Project</span>
+              </v-btn>
+            </v-container>
             <v-menu
               ref="menu"
               v-model="menu"
@@ -67,11 +69,17 @@
         </v-container>
       </v-card-text>
     </v-card>
+    <AddProjectModal
+      v-if="showAddProjectModal"
+      :addDialog.sync="showAddProjectModal"
+      @project-added="handleProjectAdded"
+    />
   </v-dialog>
 </template>
 
 <script>
 import axios from 'axios';
+import AddProjectModal from './AddProjectModal.vue';
 
 export default {
   props: {
@@ -79,14 +87,6 @@ export default {
       type: Boolean,
       required: true
     },
-    projects: {
-      type: Array,
-      required: true
-    },
-    clients: {
-      type: Array,
-      required: true
-    }
   },
   data() {
     return {
@@ -94,12 +94,20 @@ export default {
       localName: '',
       localDescription: '',
       localSelectedProject: null,
-      localSelectedClient: null,
       localDate: new Date().toISOString().substr(0, 10),
       localType: '',
       localAmount: 0,
       menu: false,
+      showTooltipAddProject: false,
+      showAddProjectModal: false,
+      projects: [],
     };
+  },
+  created() {
+    this.fetchProjects();
+  },
+  components: {
+    AddProjectModal,
   },
   watch: {
     addDialog: {
@@ -119,16 +127,10 @@ export default {
         name: project.name
       }));
     },
-    clientOptions() {
-      return this.clients.map(client => ({
-        id: client.id,
-        name: client.name
-      }));
-    }
   },
   methods: {
     addEstimation() {
-      if (!this.localName || !this.localSelectedProject || !this.localSelectedClient || !this.localDate || !this.localType || !this.localAmount) {
+      if (!this.localName || !this.localSelectedProject || !this.localDate || !this.localType || !this.localAmount) {
         this.$notify({
           title: 'Error',
           text: 'Please fill in all required fields.',
@@ -141,7 +143,6 @@ export default {
         name: this.localName,
         description: this.localDescription,
         project_id: this.localSelectedProject.id,
-        client_id: this.localSelectedClient.id,
         date: this.localDate,
         type: this.localType,
         amount: this.localAmount
@@ -172,7 +173,6 @@ export default {
       this.localName = '';
       this.localDescription = '';
       this.localSelectedProject = null;
-      this.localSelectedClient = null;
       this.localDate = new Date().toISOString().substr(0, 10);
       this.localType = '';
       this.localAmount = 0;
@@ -180,7 +180,33 @@ export default {
     cancel() {
       this.localAddDialog = false;
       this.$emit('update:addDialog', false);
-    }
+    },
+    openAddProjectModal() {
+      this.showAddProjectModal = true;
+    },
+    async fetchProjects() {
+      try {
+        const response = await axios.get('http://localhost:8000/api/projects');
+        this.projects = response.data;
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    },
+    async updateProjects() {
+      try {
+        const response = await axios.get('http://localhost:8000/api/projects');
+        this.projects = response.data;
+        if (response.data.length > 0) {
+          this.localSelectedProject = response.data[response.data.length - 1];
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    },
+    handleProjectAdded() {
+      this.updateProjects();
+      this.showAddProjectModal = false;
+    },
   }
 };
 </script>

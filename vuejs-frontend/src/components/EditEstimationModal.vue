@@ -4,18 +4,24 @@
       <v-card-title class="center-content">Edit Estimation</v-card-title>
       <v-card-text>
         <v-text-field v-model="localEditedEstimation.name" label="Name"></v-text-field>
-        <v-combobox
-          v-model="selectedProjectName"
-          :items="projectOptions.map(project => project.name)"
-          label="Project"
-          @input="updateProjectId"
-        ></v-combobox>
-        <v-combobox
-          v-model="selectedClientName"
-          :items="clientOptions.map(client => client.name)"
-          label="Client"
-          @input="updateClientId"
-        ></v-combobox>
+        <v-container class="center-content">
+          <v-combobox
+              v-model="selectedProjectName"
+              :items="projectOptions"
+              item-text="name"
+              item-value="id"
+              label="Project"
+              @input="updateProjectId"
+            ></v-combobox>
+          <v-btn class="button" 
+            @click="openAddProjectModal" 
+            @mouseover="showTooltipAddProject = true" 
+            @mouseleave="showTooltipAddProject = false" 
+            style="margin-top: 15px;">
+            <v-icon class="button-icon">mdi-plus</v-icon>
+            <span v-if="showTooltipAddProject" class="button-text">Add Project</span>
+          </v-btn>
+        </v-container>
         <v-combobox 
           v-model="localEditedEstimation.type" 
           :items="['hourly', 'fixed']" 
@@ -33,7 +39,7 @@
             min-width="auto">
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="localDate"
+                v-model="localEditedEstimation.date"
                 label="Date"
                 prepend-icon="mdi-calendar"
                 readonly
@@ -54,11 +60,19 @@
         <v-btn class="button" @click="cancelEdit">Cancel</v-btn>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+    <AddProjectModal
+      v-if="showAddProjectModal"
+      :addDialog.sync="showAddProjectModal"
+      :clients="clients"
+      @client-added="updateProjects"
+    />
+</v-dialog>
 </template>
 
 <script>
 import axios from 'axios';
+import AddProjectModal from './AddProjectModal.vue';
+
 
 export default {
   name: 'EditEstimationModal',
@@ -71,14 +85,6 @@ export default {
       type: Object,
       required: true,
     },
-    projects: {
-      type: Array,
-      required: true,
-    },
-    clients: {
-      type: Array,
-      required: true,
-    },
   },
   data() {
     return {
@@ -89,7 +95,19 @@ export default {
       selectedProjectId: null,
       selectedClientId: null,
       menu: false,
+      showTooltipAddProject: false,
+      showAddProjectModal: false,
+      projects: [],
+      clients: [],
+      countries: ['Poland', 'Germany', 'France', 'USA', 'UK', 'Spain', 'Italy', 
+      'Canada', 'Australia', 'Japan', 'China', 'Brazil', 'India', 'Russia'],
     };
+  },
+  created() {
+    this.fetchProjects();
+  },
+  components: {
+    AddProjectModal,
   },
   watch: {
     editDialog(val) {
@@ -98,7 +116,6 @@ export default {
     editedEstimation(val) {
       this.localEditedEstimation = { ...val };
       this.selectedProjectName = val.project_name;
-      this.selectedClientName = val.client_name;
       this.selectedProjectId = val.project_id;
       this.selectedClientId = val.client_id;
     },
@@ -108,12 +125,6 @@ export default {
       return this.projects.map(project => ({
         id: project.id,
         name: project.name,
-      }));
-    },
-    clientOptions() {
-      return this.clients.map(client => ({
-        id: client.id,
-        name: client.name,
       }));
     },
   },
@@ -128,18 +139,10 @@ export default {
         this.localEditedEstimation.project_id = selectedProject.id;
       }
     },
-    updateClientId() {
-      const selectedClient = this.clients.find(c => c.name === this.selectedClientName);
-      if (selectedClient) {
-        this.selectedClientId = selectedClient.id;
-        this.localEditedEstimation.client_id = selectedClient.id;
-      }
-    },
     saveChanges() {
       const estimationToSave = {
         ...this.localEditedEstimation,
         project_id: this.selectedProjectId,
-        client_id: this.selectedClientId,
       };
       console.log('Saving estimation:', estimationToSave);
 
@@ -158,6 +161,28 @@ export default {
     },
     cancelEdit() {
       this.updateDialog(false);
+    },
+    openAddProjectModal() {
+      this.showAddProjectModal = true;
+    },
+    async fetchProjects() {
+      try {
+        const response = await axios.get('http://localhost:8000/api/projects');
+        this.projects = response.data;
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    },
+    async updateProjects() {
+      try {
+        const response = await axios.get('http://localhost:8000/api/projects');
+        this.projects = response.data;
+        if (response.data.length > 0) {
+          this.localSelectedProject = response.data[response.data.length - 1];
+        }
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+      }
     },
   },
 };

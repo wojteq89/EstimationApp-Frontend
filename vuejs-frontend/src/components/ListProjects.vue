@@ -71,6 +71,7 @@
       :addDialog.sync="addDialog"
       :clients="clients"
       @project-added="fetchProjects"
+      @update-clients="updateClients"
     />
 
     <v-dialog v-model="deleteDialog" max-width="500">
@@ -160,6 +161,9 @@ export default {
       } catch (error) {
         console.error('Error fetching clients:', error);
       }
+    },
+    updateClients(newClients) {
+      this.clients = newClients;
     },
     goToHome() {
       this.$router.push('/home-page');

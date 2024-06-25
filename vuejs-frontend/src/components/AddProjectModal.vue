@@ -6,14 +6,24 @@
         <v-container>
           <v-form @submit.prevent="addProject">
             <v-text-field v-model="localName" label="Project Name" required></v-text-field>
-            <v-combobox
-              v-model="localSelectedClient"
-              :items="clientOptions"
-              item-text="name"
-              item-value="id"
-              label="Client"
-              required
-            ></v-combobox>
+            <v-container class="center-content">
+              <v-combobox
+                v-model="localSelectedClient"
+                :items="clients"
+                item-text="name"
+                item-value="id"
+                label="Client"
+                required
+              ></v-combobox>
+              <v-btn class="button" 
+                @click="openAddClientModal" 
+                @mouseover="showTooltipAddClient = true" 
+                @mouseleave="showTooltipAddClient = false" 
+                style="margin-top: 15px;">
+                <v-icon class="button-icon">mdi-plus</v-icon>
+                <span v-if="showTooltipAddClient" class="button-text">Add Client</span>
+              </v-btn>
+            </v-container>
             <v-textarea v-model="localDescription" label="Description"></v-textarea>
             <v-card-actions class="center-content">
               <v-btn type="submit" class="button">Add</v-btn>
@@ -23,11 +33,18 @@
         </v-container>
       </v-card-text>
     </v-card>
+    <AddClientModal
+      v-if="showAddClientModal"
+      :addDialog.sync="showAddClientModal"
+      :countries="countries"
+      @client-added="updateClients"
+    />
   </v-dialog>
 </template>
 
 <script>
 import axios from 'axios';
+import AddClientModal from './AddClientModal.vue';
 
 export default {
   props: {
@@ -35,18 +52,25 @@ export default {
       type: Boolean,
       required: true
     },
-    clients: {
-      type: Array,
-      required: true
-    }
+  },
+  components: {
+    AddClientModal,
   },
   data() {
     return {
-      localAddDialog: false,
+      showTooltipAddClient: false,
+      localAddDialog: this.addDialog,
       localName: '',
       localDescription: '',
       localSelectedClient: null,
+      showAddClientModal: false,
+      countries: ['Poland', 'Germany', 'France', 'USA', 'UK', 'Spain', 'Italy', 
+      'Canada', 'Australia', 'Japan', 'China', 'Brazil', 'India', 'Russia'],
+      clients: [],
     };
+  },
+  created() {
+    this.fetchClients();
   },
   watch: {
     addDialog: {
@@ -57,6 +81,9 @@ export default {
           this.resetForm();
         }
       }
+    },
+    localAddDialog(newVal) {
+      this.$emit('update:addDialog', newVal);
     }
   },
   computed: {
@@ -113,6 +140,28 @@ export default {
     cancel() {
       this.localAddDialog = false;
       this.$emit('update:addDialog', false);
+    },
+    openAddClientModal() {
+      this.showAddClientModal = true;
+    },
+    async fetchClients() {
+      try {
+        const response = await axios.get('http://localhost:8000/api/clients');
+        this.clients = response.data;
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+      }
+    },
+    async updateClients() {
+      try {
+        const response = await axios.get('http://localhost:8000/api/clients');
+        this.clients = response.data;
+        if (response.data.length > 0) {
+          this.localSelectedClient = response.data[response.data.length - 1]; 
+        }
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+      }
     }
   }
 };
