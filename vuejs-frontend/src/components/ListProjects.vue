@@ -2,7 +2,7 @@
   <div class="list">
     <v-data-table
       :headers="headers"
-      :items="projects"
+      :items="filteredProjects"
       item-key="name"
       class="elevation-1 data-table"
       :search="search"
@@ -89,6 +89,8 @@
 
 <script>
 import axios from 'axios';
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
 import EditProjectModal from './EditProjectModal.vue';
 import AddProjectModal from './AddProjectModal.vue';
 
@@ -111,6 +113,7 @@ export default {
       editedProject: {},
       projectToDelete: null,
       clients: [],
+      notyf: new Notyf()
     };
   },
   computed: {
@@ -123,6 +126,29 @@ export default {
         { text: 'Actions', value: 'actions', sortable: false }
       ];
     },
+    filteredProjects() {
+      let filtered = this.projects;
+
+      // Apply search filter
+      if (this.search) {
+        filtered = filtered.filter(item => this.filterCaseInsensitive(item.name, this.search) ||
+                                          this.filterCaseInsensitive(item.description, this.search) ||
+                                          this.filterCaseInsensitive(item.client_name, this.search) ||
+                                          this.filterCaseInsensitive(item.estimation.toString(), this.search));
+      }
+
+      // Apply client filter
+      if (this.clientFilter) {
+        filtered = filtered.filter(item => this.filterCaseInsensitive(item.client_name, this.clientFilter));
+      }
+
+      // Apply estimation filter
+      if (this.estimationFilter) {
+        filtered = filtered.filter(item => parseFloat(item.estimation) === parseFloat(this.estimationFilter));
+      }
+
+      return filtered;
+    }
   },
   created() {
     this.fetchProjects();
@@ -152,6 +178,7 @@ export default {
         this.projects = projects;
       } catch (error) {
         console.error('Error fetching projects:', error);
+        this.notyf.error('Failed to fetch projects.');
       }
     },
     async fetchClients() {
@@ -160,6 +187,7 @@ export default {
         this.clients = response.data;
       } catch (error) {
         console.error('Error fetching clients:', error);
+        this.notyf.error('Failed to fetch clients.');
       }
     },
     updateClients(newClients) {
@@ -181,8 +209,10 @@ export default {
         await axios.put(`http://localhost:8000/api/projects/${updatedProject.id}`, projectToSave);
         this.fetchProjects();
         this.editDialog = false;
+        this.notyf.success('Project updated successfully.');
       } catch (error) {
         console.error('Error saving changes:', error);
+        this.notyf.error('Failed to update project.');
       }
     },
     updateEditDialog(val) {
@@ -197,8 +227,10 @@ export default {
         await axios.delete(`http://localhost:8000/api/projects/${this.projectToDelete.id}`);
         this.fetchProjects();
         this.deleteDialog = false;
+        this.notyf.success('Project deleted successfully.');
       } catch (error) {
         console.error('Error deleting project:', error);
+        this.notyf.error('Failed to delete project.');
       }
     },
     cancelDelete() {

@@ -80,6 +80,8 @@
 
 <script>
 import axios from 'axios';
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
 import EditClientModal from './EditClientModal.vue';
 import AddClientModal from './AddClientModal.vue';
 
@@ -108,6 +110,7 @@ export default {
         email: ''
       },
       clientToDelete: null,
+      notyf: new Notyf()
     };
   },
   computed: {
@@ -144,6 +147,7 @@ export default {
         })
         .catch(error => {
           console.error('Error fetching clients:', error);
+          this.notyf.error('Failed to fetch clients.');
         });
     },
     editClient(client) {
@@ -155,8 +159,10 @@ export default {
         await axios.put(`http://localhost:8000/api/clients/${updatedClient.id}`, updatedClient);
         this.fetchClients();
         this.editDialog = false;
+        this.notyf.success('Client updated successfully.');
       } catch (error) {
         console.error('Error saving changes:', error);
+        this.notyf.error('Failed to update client.');
       }
     },
     cancelEdit() {
@@ -171,8 +177,10 @@ export default {
         await axios.delete(`http://localhost:8000/api/clients/${this.clientToDelete.id}`);
         this.fetchClients();
         this.deleteDialog = false;
+        this.notyf.success('Client deleted successfully.');
       } catch (error) {
         console.error('Error deleting client:', error);
+        this.notyf.error('Failed to delete client.');
       }
     },
     cancelDelete() {

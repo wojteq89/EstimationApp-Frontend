@@ -4,22 +4,23 @@
       <v-card-title class="center-content">Edit Client</v-card-title>
       <v-img v-if="previewImage" :src="previewImage" class="my-4 editLogo" contain></v-img>
       <v-card-text>
-        <v-text-field v-model="localEditedClient.name" label="Name"></v-text-field>
+        <v-text-field v-model="localEditedClient.name" label="Name" :rules="[v => !!v || 'Name is required']"></v-text-field>
         <v-file-input
-        v-model="localEditedClient.logo"
-        label="Logo"
+          v-model="localEditedClient.logo"
+          label="Logo"
           accept="image/*"
           @change="previewLogo"
           append-icon="mdi-paperclip"
-          ></v-file-input>
+        ></v-file-input>
         <v-combobox
           v-model="localEditedClient.country"
           :items="countries"
           label="Country"
           required
-          ></v-combobox>
-          <v-text-field v-model="localEditedClient.email" label="Email"></v-text-field>
-          <v-text-field v-model="localEditedClient.description" label="Description"></v-text-field>
+          :rules="[v => !!v || 'Country is required']"
+        ></v-combobox>
+        <v-text-field v-model="localEditedClient.email" label="Email"></v-text-field>
+        <v-text-field v-model="localEditedClient.description" label="Description"></v-text-field>
       </v-card-text>
       <v-card-actions class="center-content">
         <v-btn class="button" @click="saveChanges">Save</v-btn>
@@ -30,6 +31,9 @@
 </template>
 
 <script>
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
+
 export default {
   props: {
     editDialog: {
@@ -56,7 +60,8 @@ export default {
         country: '',
         email: ''
       },
-      previewImage: null
+      previewImage: null,
+      notyf: new Notyf()
     };
   },
   watch: {
@@ -119,11 +124,7 @@ export default {
           })
           .catch(error => {
             console.error('Error resizing image:', error);
-            this.$notify({
-              title: 'Error',
-              text: 'Failed to edit client.',
-              type: 'error'
-            });
+            this.notyf.error('Failed to edit client.');
           });
       } else {
         this.$emit('save-changes', clientData);
@@ -152,3 +153,22 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.my-4 {
+  margin: 16px 0;
+}
+.editLogo {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+}
+.button {
+  margin: 0 10px;
+}
+</style>

@@ -5,7 +5,12 @@
       <v-card-text>
         <v-container>
           <v-form @submit.prevent="addEstimation">
-            <v-text-field v-model="localName" label="Estimation Name" required></v-text-field>
+            <v-text-field 
+              v-model="localName" 
+              label="Estimation Name" 
+              required 
+              :rules="[v => !!v || 'Estimation Name is required']"
+            ></v-text-field>
             <v-container class="center-content">
               <v-combobox
                 v-model="localSelectedProject"
@@ -14,6 +19,7 @@
                 item-value="id"
                 label="Project"
                 required
+                :rules="[v => !!v || 'Project is required']"
               ></v-combobox>
               <v-btn class="button" 
                 @click="openAddProjectModal" 
@@ -40,6 +46,7 @@
                   readonly
                   v-bind="attrs"
                   v-on="on"
+                  :rules="[v => !!v || 'Date is required']"
                 ></v-text-field>
               </template>
               <v-date-picker
@@ -53,12 +60,14 @@
               type="number"
               step="1"
               required
+              :rules="[v => !!v || 'Amount is required', v => v > 0 || 'Amount must be positive']"
             ></v-text-field>
             <v-combobox 
               v-model="localType" 
               :items="['hourly', 'fixed']" 
               label="Type" 
               required
+              :rules="[v => !!v || 'Type is required']"
             ></v-combobox>
             <v-textarea v-model="localDescription" label="Description"></v-textarea>
             <v-container class="center-content">
@@ -80,6 +89,8 @@
 <script>
 import axios from 'axios';
 import AddProjectModal from './AddProjectModal.vue';
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
 
 export default {
   props: {
@@ -101,6 +112,7 @@ export default {
       showTooltipAddProject: false,
       showAddProjectModal: false,
       projects: [],
+      notyf: new Notyf()
     };
   },
   created() {
@@ -131,11 +143,7 @@ export default {
   methods: {
     addEstimation() {
       if (!this.localName || !this.localSelectedProject || !this.localDate || !this.localType || !this.localAmount) {
-        this.$notify({
-          title: 'Error',
-          text: 'Please fill in all required fields.',
-          type: 'error'
-        });
+        this.notyf.error('Please fill in all required fields.');
         return;
       }
 
@@ -151,22 +159,14 @@ export default {
       axios.post('http://localhost:8000/api/estimations', estimationData)
         .then(response => {
           console.log('Estimation added:', response.data);
-          this.$notify({
-            title: 'Success',
-            text: 'Estimation added successfully.',
-            type: 'success'
-          });
+          this.notyf.success('Estimation added successfully.');
           this.$emit('estimation-added');
           this.localAddDialog = false;
           this.resetForm();
         })
         .catch(error => {
           console.error('Error adding estimation:', error.response ? error.response.data : error.message);
-          this.$notify({
-            title: 'Error',
-            text: error.response?.data?.message || 'Failed to add estimation.',
-            type: 'error'
-          });
+          this.notyf.error(error.response?.data?.message || 'Failed to add estimation.');
         });
     },
     resetForm() {
@@ -190,6 +190,7 @@ export default {
         this.projects = response.data;
       } catch (error) {
         console.error('Error fetching projects:', error);
+        this.notyf.error('Failed to fetch projects.');
       }
     },
     async updateProjects() {
@@ -200,7 +201,8 @@ export default {
           this.localSelectedProject = response.data[response.data.length - 1];
         }
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        console.error('Error updating projects:', error);
+        this.notyf.error('Failed to update projects.');
       }
     },
     handleProjectAdded() {
@@ -210,3 +212,21 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.button {
+  margin: 0 10px;
+}
+.button-icon {
+  margin-right: 5px;
+}
+.button-text {
+  display: inline-block;
+  margin-left: 5px;
+}
+</style>

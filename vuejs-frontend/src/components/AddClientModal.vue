@@ -4,8 +4,18 @@
       <v-card-title class="center-content">Add Client</v-card-title>
       <v-img v-if="previewImage" :src="previewImage" class="addLogo" contain></v-img>
       <v-card-text>
-        <v-text-field v-model="localClient.name" label="Client Name" required></v-text-field>
-        <v-text-field v-model="localClient.email" label="Email" required></v-text-field>
+        <v-text-field
+          v-model="localClient.name"
+          label="Client Name"
+          required
+          :rules="[v => !!v || 'Name is required']"
+        ></v-text-field>
+        <v-text-field
+          v-model="localClient.email"
+          label="Email"
+          required
+          :rules="[v => !!v || 'Email is required', v => /.+@.+\..+/.test(v) || 'Email must be valid']"
+        ></v-text-field>
         <v-file-input
           v-model="localClient.logo"
           label="Logo"
@@ -18,6 +28,7 @@
           :items="countries"
           label="Country"
           required
+          :rules="[v => !!v || 'Country is required']"
         ></v-combobox>
         <v-textarea v-model="localClient.description" label="Description"></v-textarea>
       </v-card-text>
@@ -31,12 +42,8 @@
 
 <script>
 import axios from 'axios';
-import Vue from 'vue';
-import VueNotification from 'vue-notification';
-
-Vue.use(VueNotification, {
-  timer: 5000
-});
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
 
 export default {
   props: {
@@ -59,7 +66,8 @@ export default {
         country: '',
         email: ''
       },
-      previewImage: null
+      previewImage: null,
+      notyf: new Notyf()
     };
   },
   watch: {
@@ -100,17 +108,14 @@ export default {
             ctx.drawImage(img, 0, 0, 200, 200);
             resolve(canvas.toDataURL('image/jpeg'));
           };
+          img.onerror = () => reject(new Error('Image loading error'));
         };
-        reader.onerror = error => reject(error);
+        reader.onerror = () => reject(new Error('File reading error'));
       });
     },
     addClient() {
       if (!this.localClient.name || !this.localClient.country || !this.localClient.email) {
-        this.$notify({
-          title: 'Error',
-          text: 'Please fill in all required fields.',
-          type: 'error'
-        });
+        this.notyf.error('Please fill in all required fields.');
         return;
       }
 
@@ -128,11 +133,7 @@ export default {
           })
           .catch(error => {
             console.error('Error resizing image:', error);
-            this.$notify({
-              title: 'Error',
-              text: 'Failed to add client.',
-              type: 'error'
-            });
+            this.notyf.error('Failed to resize image.');
           });
       } else {
         this.sendFormData(formData);
@@ -142,21 +143,16 @@ export default {
       axios.post('http://localhost:8000/api/clients', formData)
         .then(response => {
           console.log('Client added:', response.data);
-          this.$notify({
-            title: 'Success',
-            text: 'Client added successfully.',
-            type: 'success'
-          });
+          this.notyf.success('Client added successfully.');
           this.resetForm();
           this.$emit('client-added');
         })
         .catch(error => {
           console.error('Error adding client:', error);
-          this.$notify({
-            title: 'Error',
-            text: 'Failed to add client.',
-            type: 'error'
-          });
+          const errorMessage = error.response && error.response.data && error.response.data.message
+            ? error.response.data.message
+            : 'Failed to add client.';
+          this.notyf.error(errorMessage);
         });
     },
     resetForm() {
@@ -172,7 +168,22 @@ export default {
     cancel() {
       this.localAddDialog = false;
       this.$emit('update:addDialog', false);
-    },
+    }
   }
 };
 </script>
+
+<style scoped>
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.addLogo {
+  max-height: 200px;
+  margin: auto;
+}
+.button {
+  margin: 0 10px;
+}
+</style>

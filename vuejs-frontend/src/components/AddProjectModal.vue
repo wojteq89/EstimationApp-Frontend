@@ -5,7 +5,12 @@
       <v-card-text>
         <v-container>
           <v-form @submit.prevent="addProject">
-            <v-text-field v-model="localName" label="Project Name" required></v-text-field>
+            <v-text-field 
+              v-model="localName" 
+              label="Project Name" 
+              required 
+              :rules="[v => !!v || 'Project Name is required']"
+            ></v-text-field>
             <v-container class="center-content">
               <v-combobox
                 v-model="localSelectedClient"
@@ -14,6 +19,7 @@
                 item-value="id"
                 label="Client"
                 required
+                :rules="[v => !!v || 'Client is required']"
               ></v-combobox>
               <v-btn class="button" 
                 @click="openAddClientModal" 
@@ -45,6 +51,8 @@
 <script>
 import axios from 'axios';
 import AddClientModal from './AddClientModal.vue';
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
 
 export default {
   props: {
@@ -67,6 +75,7 @@ export default {
       countries: ['Poland', 'Germany', 'France', 'USA', 'UK', 'Spain', 'Italy', 
       'Canada', 'Australia', 'Japan', 'China', 'Brazil', 'India', 'Russia'],
       clients: [],
+      notyf: new Notyf()
     };
   },
   created() {
@@ -97,11 +106,7 @@ export default {
   methods: {
     addProject() {
       if (!this.localName || !this.localSelectedClient) {
-        this.$notify({
-          title: 'Error',
-          text: 'Please fill in all required fields.',
-          type: 'error'
-        });
+        this.notyf.error('Please fill in all required fields.');
         return;
       }
 
@@ -114,22 +119,14 @@ export default {
       axios.post('http://localhost:8000/api/projects', projectData)
         .then(response => {
           console.log('Project added:', response.data);
-          this.$notify({
-            title: 'Success',
-            text: 'Project added successfully.',
-            type: 'success'
-          });
+          this.notyf.success('Project added successfully.');
           this.$emit('project-added');
           this.localAddDialog = false;
           this.resetForm();
         })
         .catch(error => {
           console.error('Error adding project:', error);
-          this.$notify({
-            title: 'Error',
-            text: error.response ? error.response.data.message : 'Failed to add project.',
-            type: 'error'
-          });
+          this.notyf.error(error.response?.data?.message || 'Failed to add project.');
         });
     },
     resetForm() {
@@ -150,6 +147,7 @@ export default {
         this.clients = response.data;
       } catch (error) {
         console.error('Error fetching clients:', error);
+        this.notyf.error('Failed to fetch clients.');
       }
     },
     async updateClients() {
@@ -160,9 +158,28 @@ export default {
           this.localSelectedClient = response.data[response.data.length - 1]; 
         }
       } catch (error) {
-        console.error('Error fetching clients:', error);
+        console.error('Error updating clients:', error);
+        this.notyf.error('Failed to update clients.');
       }
     }
   }
 };
 </script>
+
+<style scoped>
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.button {
+  margin: 0 10px;
+}
+.button-icon {
+  margin-right: 5px;
+}
+.button-text {
+  display: inline-block;
+  margin-left: 5px;
+}
+</style>

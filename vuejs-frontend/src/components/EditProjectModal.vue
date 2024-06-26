@@ -39,6 +39,8 @@
 
 <script>
 import axios from 'axios';
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
 import AddClientModal from './AddClientModal.vue';
 
 export default {
@@ -66,6 +68,7 @@ export default {
       countries: ['Poland', 'Germany', 'France', 'USA', 'UK', 'Spain', 'Italy', 
       'Canada', 'Australia', 'Japan', 'China', 'Brazil', 'India', 'Russia'],
       clients: [],
+      notyf: new Notyf()
     };
   },
   created() {
@@ -93,25 +96,23 @@ export default {
       this.$emit('update:editDialog', val);
     },
     updateClient(selectedClientName) {
-      console.log('Selected client:', selectedClientName);
-
       const client = this.clients.find(c => c.name === selectedClientName);
-      console.log('Found client:', client);
 
       if (client) {
         this.localEditedProject.client_id = client.id;
-        console.log('Updated client_id:', this.localEditedProject.client_id);
+        this.notyf.success('Client updated successfully.');
       }
     },
     saveChanges() {
       axios.put(`http://localhost:8000/api/projects/${this.localEditedProject.id}`, this.localEditedProject)
-        .then(response => {
-          console.log('Project updated:', response.data);
+        .then(() => {
+          this.notyf.success('Project updated successfully.');
           this.$emit('save-changes', this.localEditedProject);
           this.updateDialog(false);
         })
         .catch(error => {
           console.error('Error updating project:', error);
+          this.notyf.error('Failed to update project.');
           if (error.response) {
             console.error('Server responded with:', error.response.data);
           }
@@ -129,6 +130,7 @@ export default {
         this.clients = response.data;
       } catch (error) {
         console.error('Error fetching clients:', error);
+        this.notyf.error('Failed to fetch clients.');
       }
     },
     async updateClients() {
@@ -136,10 +138,12 @@ export default {
         const response = await axios.get('http://localhost:8000/api/clients');
         this.clients = response.data;
         if (response.data.length > 0) {
-          this.localSelectedClient = response.data[response.data.length - 1]; // Ustawienie wybranego klienta na ostatniego dodanego
+          this.localSelectedClient = response.data[response.data.length - 1];
         }
+        this.notyf.success('Clients updated successfully.');
       } catch (error) {
-        console.error('Error fetching clients:', error);
+        console.error('Error updating clients:', error);
+        this.notyf.error('Failed to update clients.');
       }
     }
   }

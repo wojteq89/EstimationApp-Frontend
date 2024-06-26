@@ -13,7 +13,7 @@
           <v-toolbar-title>Estimations</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn class="button" @click="goToHome"  @mouseover="showTooltipGoToHome = true" @mouseleave="showTooltipGoToHome = false">
+          <v-btn class="button" @click="goToHome" @mouseover="showTooltipGoToHome = true" @mouseleave="showTooltipGoToHome = false">
             <v-icon class="button-icon">mdi-arrow-left</v-icon>
             <span v-if="showTooltipGoToHome" class="button-text">Go to home</span>
           </v-btn>
@@ -83,6 +83,8 @@
 
 <script>
 import axios from 'axios';
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
 import EditEstimationModal from './EditEstimationModal.vue';
 import AddEstimationModal from './AddEstimationModal.vue';
 
@@ -104,6 +106,7 @@ export default {
       addDialog: false,
       projects: [],
       clients: [],
+      notyf: new Notyf()
     };
   },
   created() {
@@ -140,6 +143,7 @@ export default {
         }));
       } catch (error) {
         console.error('Error fetching estimations:', error);
+        this.notyf.error('Failed to fetch estimations.');
       }
     },
     async editEstimation(estimation) {
@@ -156,8 +160,10 @@ export default {
         await axios.put(`http://localhost:8000/api/estimations/${updatedEstimation.id}`, estimationToSave);
         this.fetchEstimations();
         this.editDialog = false;
+        this.notyf.success('Estimation updated successfully.');
       } catch (error) {
         console.error('Error saving changes:', error);
+        this.notyf.error('Failed to update estimation.');
       }
     },
     updateEditDialog(val) {
@@ -176,8 +182,10 @@ export default {
         const index = this.estimations.findIndex((item) => item.id === this.estimationToDelete.id);
         this.estimations.splice(index, 1);
         this.deleteDialog = false;
+        this.notyf.success('Estimation deleted successfully.');
       } catch (error) {
         console.error('Error deleting estimation:', error);
+        this.notyf.error('Failed to delete estimation.');
       }
     },
     cancelDelete() {
@@ -201,6 +209,7 @@ export default {
         this.projects = response.data;
       } catch (error) {
         console.error('Error fetching projects:', error);
+        this.notyf.error('Failed to fetch projects.');
       }
     },
     async fetchClients() {
@@ -209,6 +218,7 @@ export default {
         this.clients = response.data;
       } catch (error) {
         console.error('Error fetching clients:', error);
+        this.notyf.error('Failed to fetch clients.');
       }
     },
   },
