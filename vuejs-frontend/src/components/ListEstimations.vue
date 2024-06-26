@@ -63,7 +63,7 @@
       :addDialog.sync="addDialog"
       :projects="projects"
       :clients="clients"
-      @estimation-added="fetchEstimations; addDialog = false"
+      @estimation-added="handleEstimationAdded"
     />
 
     <v-dialog v-model="deleteDialog" max-width="500">
@@ -144,6 +144,10 @@ export default {
         this.notyf.error('Failed to fetch estimations.');
       }
     },
+    async handleEstimationAdded() {
+      await this.fetchEstimations();
+      this.addDialog = false;
+    },
     async editEstimation(estimation) {
       this.editedEstimation = { ...estimation };
       this.editDialog = true;
@@ -181,6 +185,7 @@ export default {
         this.estimations.splice(index, 1);
         this.deleteDialog = false;
         this.notyf.success('Estimation deleted successfully.');
+        this.fetchEstimations();
       } catch (error) {
         console.error('Error deleting estimation:', error);
         this.notyf.error('Failed to delete estimation.');
