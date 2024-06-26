@@ -28,7 +28,6 @@
       <template v-slot:item="{ item }">
         <tr class="table-row">
           <td>{{ item.name }}</td>
-          <td>{{ item.description }}</td>
           <td>{{ item.project_name }}</td>
           <td>{{ item.client_name }}</td>
           <td>{{ item.type }}</td>
@@ -64,7 +63,7 @@
       :addDialog.sync="addDialog"
       :projects="projects"
       :clients="clients"
-      @estimation-added="fetchEstimations"
+      @estimation-added="fetchEstimations; addDialog = false"
     />
 
     <v-dialog v-model="deleteDialog" max-width="500">
@@ -118,7 +117,6 @@ export default {
     headers() {
       return [
         { text: 'Name', value: 'name' },
-        { text: 'Description', value: 'description' },
         { text: 'Project', value: 'project_name' },
         { text: 'Client', value: 'client_name' },
         { text: 'Type', value: 'type' },

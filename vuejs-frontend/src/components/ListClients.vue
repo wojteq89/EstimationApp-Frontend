@@ -29,7 +29,6 @@
         <tr class="table-row">
           <td><img :src="item.logo" class="logo" alt="Logo" style="max-width: 60px; max-height: 60px;"></td>
           <td>{{ item.name }}</td>
-          <td>{{ item.description }}</td>
           <td>{{ item.country }}</td>
           <td>{{ item.email }}</td>
           <td>
@@ -104,7 +103,6 @@ export default {
       editedClient: {
         id: null,
         name: '',
-        description: '',
         logo: '',
         country: '',
         email: ''
@@ -118,7 +116,6 @@ export default {
       return [
         { text: 'Logo', value: 'logo' },
         { text: 'Name', value: 'name' },
-        { text: 'Description', value: 'description' },
         { text: 'Country', value: 'country' },
         { text: 'Email', value: 'email' },
         { text: 'Actions', value: 'actions', sortable: false }

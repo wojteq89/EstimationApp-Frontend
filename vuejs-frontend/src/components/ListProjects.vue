@@ -39,7 +39,6 @@
       <template v-slot:item="{ item }">
         <tr class="table-row">
           <td>{{ item.name }}</td>
-          <td>{{ item.description }}</td>
           <td>{{ item.client_name }}</td>
           <td>{{ item.estimation }}</td>
           <td>
@@ -120,7 +119,6 @@ export default {
     headers() {
       return [
         { text: 'Name', value: 'name' },
-        { text: 'Description', value: 'description' },
         { text: 'Client', value: 'client_name' },
         { text: 'Estimation', value: 'estimation' },
         { text: 'Actions', value: 'actions', sortable: false }
@@ -129,20 +127,16 @@ export default {
     filteredProjects() {
       let filtered = this.projects;
 
-      // Apply search filter
       if (this.search) {
         filtered = filtered.filter(item => this.filterCaseInsensitive(item.name, this.search) ||
-                                          this.filterCaseInsensitive(item.description, this.search) ||
                                           this.filterCaseInsensitive(item.client_name, this.search) ||
                                           this.filterCaseInsensitive(item.estimation.toString(), this.search));
       }
 
-      // Apply client filter
       if (this.clientFilter) {
         filtered = filtered.filter(item => this.filterCaseInsensitive(item.client_name, this.clientFilter));
       }
 
-      // Apply estimation filter
       if (this.estimationFilter) {
         filtered = filtered.filter(item => parseFloat(item.estimation) === parseFloat(this.estimationFilter));
       }
