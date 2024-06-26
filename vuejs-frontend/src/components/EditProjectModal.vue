@@ -68,7 +68,9 @@ export default {
       countries: ['Poland', 'Germany', 'France', 'USA', 'UK', 'Spain', 'Italy', 
       'Canada', 'Australia', 'Japan', 'China', 'Brazil', 'India', 'Russia'],
       clients: [],
-      notyf: new Notyf()
+      notyf: new Notyf({
+        position: {x: 'center', y:'bottom'},
+      })
     };
   },
   created() {

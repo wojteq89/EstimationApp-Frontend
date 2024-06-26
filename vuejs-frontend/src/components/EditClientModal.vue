@@ -61,7 +61,9 @@ export default {
         email: ''
       },
       previewImage: null,
-      notyf: new Notyf()
+      notyf: new Notyf({
+        position: {x: 'center', y:'bottom'},
+      })
     };
   },
   watch: {

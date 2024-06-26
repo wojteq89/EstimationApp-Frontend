@@ -112,7 +112,9 @@ export default {
       editedProject: {},
       projectToDelete: null,
       clients: [],
-      notyf: new Notyf()
+      notyf: new Notyf({
+        position: {x: 'center', y:'bottom'},
+      })
     };
   },
   computed: {

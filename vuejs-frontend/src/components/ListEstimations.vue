@@ -105,7 +105,9 @@ export default {
       addDialog: false,
       projects: [],
       clients: [],
-      notyf: new Notyf()
+      notyf: new Notyf({
+        position: {x: 'center', y:'bottom'},
+      })
     };
   },
   created() {

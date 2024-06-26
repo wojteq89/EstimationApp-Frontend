@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="localAddDialog" max-width="600" @click:outside="cancel">
+  <v-dialog v-model="localAddDialog" max-width="500" @click:outside="cancel">
     <v-card class="card">
       <v-card-title class="center-content">Add Project</v-card-title>
       <v-card-text>
@@ -75,7 +75,9 @@ export default {
       countries: ['Poland', 'Germany', 'France', 'USA', 'UK', 'Spain', 'Italy', 
       'Canada', 'Australia', 'Japan', 'China', 'Brazil', 'India', 'Russia'],
       clients: [],
-      notyf: new Notyf()
+      notyf: new Notyf({
+        position: {x: 'center', y:'bottom'},
+      })
     };
   },
   created() {

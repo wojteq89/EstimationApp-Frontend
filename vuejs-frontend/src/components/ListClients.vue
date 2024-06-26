@@ -108,7 +108,9 @@ export default {
         email: ''
       },
       clientToDelete: null,
-      notyf: new Notyf()
+      notyf: new Notyf({
+        position: {x: 'center', y:'bottom'},
+      })
     };
   },
   computed: {
