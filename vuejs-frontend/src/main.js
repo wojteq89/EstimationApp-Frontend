@@ -7,7 +7,6 @@ import '@mdi/font/css/materialdesignicons.css';
 import '@/styles/style.scss';
 
 Vue.use(Vuetify);
-Vue.use(VueNotification);
 
 new Vue({
   vuetify: new Vuetify(),
