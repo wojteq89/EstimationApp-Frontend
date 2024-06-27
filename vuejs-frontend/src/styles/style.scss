@@ -187,18 +187,40 @@ body {
   color: $bookmarks-font;
 }
 
-nav {
-  padding-top: 20px;
-  padding-bottom: 20px;
+.nav-container {
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 15px;
   background-color: $primary-color;
   box-shadow: $shadow;
 }
 
+#user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 200px;
+  height: 100px;
+}
+
+#account-button {
+  width: 80px;
+  height: 80px;
+  border-radius: 50px;
+  border: 2px solid $user-profile-photo-border;
+}
+
+#nickname {
+    margin-left: 10px;
+}
+
 .bookmarks {
   display: flex;
-  flex-direction: row;  flex-wrap: wrap;
-  justify-content: center;
-  width: 100% !important;
+  flex-direction: row;  
+  flex-wrap: wrap;
+  justify-content: right;
+  align-items: center;
 }
 
 .bookmarks a {
@@ -207,7 +229,8 @@ nav {
   padding: 10px;
   border-radius: 10px;
   text-decoration: none;
-  margin-left: 10px;
+  margin-left: 5px;
+  margin-bottom: 5px;
   transition: color 0.3s ease, font-size 0.3s ease, background-color 0.3s ease, margin 0.3s ease;
 }
 
@@ -223,13 +246,16 @@ nav {
   color: $bookmarks-font-active;
   background-color: $bookmarks-background-active;
 }
-  
-  @media (max-width: 500px) {
+
+  @media (max-width: 550px) {
     .bookmarks {
       flex-direction: column;
     }
     .bookmarks a {
         margin-bottom: 5px;
+    }
+    .nav-container {
+        flex-direction: column;
     }
   }
 
