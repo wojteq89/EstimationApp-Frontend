@@ -1,61 +1,74 @@
 <template>
-  <div class="container">
+  <div class="list">
     <v-data-table
       :headers="headers"
       :items="clients"
       item-key="name"
-      class="elevation-1"
+      class="elevation-1 data-table"
       :search="search"
       :custom-filter="filterCaseInsensitive"
     >
       <template v-slot:top>
-        <v-toolbar flat>
+        <v-toolbar flat class="table-toolbar">
           <v-toolbar-title>Clients</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn @click="goToHome">↩</v-btn>
-          <v-btn @click="addClient">Add Client</v-btn>
+          <v-btn class="button" @click="goToHome" @mouseover="showTooltipGoToHome = true" @mouseleave="showTooltipGoToHome = false">
+            <v-icon class="button-icon">mdi-arrow-left</v-icon>
+            <span v-if="showTooltipGoToHome" class="button-text" >Go to home</span>
+          </v-btn>
+          <v-btn class="button" @click="openAddClientModal" @mouseover="showTooltipAddClient = true" @mouseleave="showTooltipAddClient = false">
+            <v-icon class="button-icon">mdi-plus</v-icon>
+            <span v-if="showTooltipAddClient" class="button-text" >Add Client</span>
+          </v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Clients" class="mx-4"></v-text-field>
       </template>
 
       <template v-slot:item="{ item }">
         <tr class="table-row">
+          <td><img :src="item.logo" class="logo" alt="Logo" style="max-width: 60px; max-height: 60px;"></td>
           <td>{{ item.name }}</td>
-          <td>{{ item.description }}</td>
-          <td><img :src="item.logo" alt="Logo" style="max-width: 60px; max-height: 60px;"></td>
           <td>{{ item.country }}</td>
           <td>{{ item.email }}</td>
           <td>
-            <v-btn class="button" @click="editClient(item)">Edit</v-btn>
-            <v-btn class="button" @click="confirmDeleteClient(item)">Delete</v-btn>
+            <v-icon 
+              class="action-edit-button" 
+              @click="editClient(item)" 
+              title="Edit"
+            >mdi-pencil</v-icon>
+            <v-icon 
+              class="action-delete-button" 
+              @click="confirmDeleteClient(item)" 
+              title="Delete"
+            >mdi-delete</v-icon>
           </td>
         </tr>
       </template>
     </v-data-table>
 
-    <v-dialog v-model="editDialog" max-width="500">
-      <v-card>
-        <v-card-title>Edit Client</v-card-title>
-        <v-card-text>
-          <v-text-field v-model="editedClient.name" label="Name"></v-text-field>
-          <v-text-field v-model="editedClient.description" label="Description"></v-text-field>
-          <v-text-field v-model="editedClient.logo" label="Logo"></v-text-field>
-          <v-text-field v-model="editedClient.country" label="Country"></v-text-field>
-          <v-text-field v-model="editedClient.email" label="Email"></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn class="button" @click="saveChanges">Save</v-btn>
-          <v-btn class="button" @click="cancelEdit">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <EditClientModal
+      v-if="editDialog"
+      :editDialog.sync="editDialog"
+      :editedClient="editedClient"
+      :countries="countries"
+      @save-changes="handleSaveChanges"
+      @cancel-edit="cancelEdit"
+    />
+
+    <AddClientModal
+      v-if="addDialog"
+      :addDialog.sync="addDialog"
+      :countries="countries"
+      @client-added="fetchClients"
+    />
 
     <v-dialog v-model="deleteDialog" max-width="500">
-      <v-card>
-        <v-card-title>Confirm Delete</v-card-title>
-        <v-card-text>Are you sure you want to delete this client?</v-card-text>
-        <v-card-actions>
+      <v-card class="card">
+        <v-card-title class="center-content">Confirm Delete</v-card-title>
+        <v-card-text>Are you sure you want to delete this client? This action will 
+          remove all customer-related projects and estimations.</v-card-text>
+        <v-card-actions class="center-content">
           <v-btn class="button" @click="deleteClient">Yes</v-btn>
           <v-btn class="button" @click="cancelDelete">No</v-btn>
         </v-card-actions>
@@ -66,30 +79,45 @@
 
 <script>
 import axios from 'axios';
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
+import EditClientModal from './EditClientModal.vue';
+import AddClientModal from './AddClientModal.vue';
 
 export default {
+  components: {
+    EditClientModal,
+    AddClientModal,
+  },
   data() {
     return {
+      showTooltipGoToHome: false,
+      showTooltipAddClient: false,
       search: '',
       clients: [],
       editDialog: false,
+      addDialog: false,
       deleteDialog: false,
+      countries: ['Poland', 'Germany', 'France', 'USA', 'UK', 'Spain', 'Italy', 
+      'Canada', 'Australia', 'Japan', 'China', 'Brazil', 'India', 'Russia'],
       editedClient: {
+        id: null,
         name: '',
-        description: '',
         logo: '',
         country: '',
         email: ''
       },
       clientToDelete: null,
+      notyf: new Notyf({
+        position: {x: 'center', y:'bottom'},
+      })
     };
   },
   computed: {
     headers() {
       return [
-        { text: 'Name', value: 'name' },
-        { text: 'Description', value: 'description' },
         { text: 'Logo', value: 'logo' },
+        { text: 'Name', value: 'name' },
         { text: 'Country', value: 'country' },
         { text: 'Email', value: 'email' },
         { text: 'Actions', value: 'actions', sortable: false }
@@ -108,9 +136,6 @@ export default {
         value.toLowerCase().indexOf(search.toLowerCase()) !== -1
       );
     },
-    addClient() {
-      this.$router.push('/add-client');
-    },
     goToHome() {
       this.$router.push("/home-page");
     },
@@ -121,20 +146,22 @@ export default {
         })
         .catch(error => {
           console.error('Error fetching clients:', error);
+          this.notyf.error('Failed to fetch clients.');
         });
     },
     editClient(client) {
       this.editedClient = { ...client };
       this.editDialog = true;
     },
-    async saveChanges() {
+    async handleSaveChanges(updatedClient) {
       try {
-        const clientToSave = { ...this.editedClient };
-        await axios.put(`http://localhost:8000/api/clients/${this.editedClient.id}`, clientToSave);
+        await axios.put(`http://localhost:8000/api/clients/${updatedClient.id}`, updatedClient);
         this.fetchClients();
         this.editDialog = false;
+        this.notyf.success('Client updated successfully.');
       } catch (error) {
         console.error('Error saving changes:', error);
+        this.notyf.error('Failed to update client.');
       }
     },
     cancelEdit() {
@@ -149,25 +176,18 @@ export default {
         await axios.delete(`http://localhost:8000/api/clients/${this.clientToDelete.id}`);
         this.fetchClients();
         this.deleteDialog = false;
+        this.notyf.success('Client deleted successfully.');
       } catch (error) {
         console.error('Error deleting client:', error);
+        this.notyf.error('Failed to delete client.');
       }
     },
     cancelDelete() {
       this.deleteDialog = false;
     },
+    openAddClientModal() {
+      this.addDialog = true;
+    },
   },
 };
 </script>
-
-<style>
-.container {
-  padding: 25px;
-}
-.table-row {
-  height: 100px;
-}
-.button {
-  margin-bottom: 5px;
-}
-</style>

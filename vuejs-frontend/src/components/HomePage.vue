@@ -1,122 +1,119 @@
 <template>
-  <v-container>
-    <v-row>
-        <v-col>
-            <v-card class="clients-card">
-                <v-img
-                    src="@/assets/clients.svg"
-                    alt="Client Icon"
-                    class="icon"
-              ></v-img>
-              <v-card-text class="title">Clients</v-card-text>
-              <v-card-text class="description">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                  Commodi, ratione debitis quis est labore voluptatibus! Eaque 
-                  cupiditate minima, at placeat totam, magni doloremque veniam 
-                  neque porro libero rerum unde voluptatem!
-              </v-card-text>
-              <v-card-actions class="buttons">
-                <v-btn @click="goToClients" class="button">Search Clients</v-btn>
-                <v-btn @click="addClient" class="button">Add Client</v-btn>
-              </v-card-actions>
-            </v-card>
-        </v-col>
-        <v-col>
-            <v-card class="clients-card">
-                <v-img
-                    src="@/assets/projects.svg"
-                    alt="Client Icon"
-                    class="icon"
-              ></v-img>
-              <v-card-text class="title">Projects</v-card-text>
-              <v-card-text class="description">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                  Commodi, ratione debitis quis est labore voluptatibus! Eaque 
-                  cupiditate minima, at placeat totam, magni doloremque veniam 
-                  neque porro libero rerum unde voluptatem!
-              </v-card-text>
-              <v-card-actions class="buttons">
-                <v-btn @click="goToProjects" class="button">Search Projects</v-btn>
-                <v-btn @click="addProject" class="button">Add Project</v-btn>
-              </v-card-actions>
-            </v-card>
-        </v-col>
-    </v-row>
-    <v-row>
-        <v-col>
-            <v-card class="clients-card">
-                <v-img
-                    src="@/assets/estimations.svg"
-                    alt="Client Icon"
-                    class="icon"
-              ></v-img>
-              <v-card-text class="title">Estimations</v-card-text>
-              <v-card-text class="description">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                  Commodi, ratione debitis quis est labore voluptatibus! Eaque 
-                  cupiditate minima, at placeat totam, magni doloremque veniam 
-                  neque porro libero rerum unde voluptatem!
-              </v-card-text>
-              <v-card-actions class="buttons">
-                <v-btn @click="goToEstimations" class="button">Search Estimations</v-btn>
-                <v-btn @click="addEstimation" class="button">Add Estimation</v-btn>
-              </v-card-actions>
-            </v-card>
-        </v-col>
-    </v-row>
-  </v-container>
-  </template>
+    <div class="panels">
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <v-card class="card">
+                    <v-img
+                        src="@/assets/clients.svg"
+                        alt="Client Icon"
+                        class="icon"
+                    ></v-img>
+                    <v-card-text class="title">Clients</v-card-text>
+                    <v-card-text class="description">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                        Commodi, ratione debitis quis est labore voluptatibus! Eaque 
+                        cupiditate minima, at placeat totam, magni doloremque veniam 
+                        neque porro libero rerum unde voluptatem!
+                    </v-card-text>
+                    <v-card-actions class="buttons">
+                        <v-btn @mouseover="showTooltipClients = true" @mouseleave="showTooltipClients = false" class="button" @click="goToClients">
+                            <v-icon class="button-icon">mdi-magnify</v-icon>
+                            <span v-if="showTooltipClients" class="button-text">Search Clients</span>
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </div>
+            <div class="col-md-6 mb-4">
+                <v-card class="card">
+                    <v-img
+                        src="@/assets/projects.svg"
+                        alt="Project Icon"
+                        class="icon"
+                    ></v-img>
+                    <v-card-text class="title">Projects</v-card-text>
+                    <v-card-text class="description">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                        Commodi, ratione debitis quis est labore voluptatibus! Eaque 
+                        cupiditate minima, at placeat totam, magni doloremque veniam 
+                        neque porro libero rerum unde voluptatem!
+                    </v-card-text>
+                    <v-card-actions class="buttons">
+                        <v-btn @mouseover="showTooltipProjects = true" @mouseleave="showTooltipProjects = false" class="button" @click="goToProjects">
+                            <v-icon class="button-icon">mdi-magnify</v-icon>
+                            <span v-if="showTooltipProjects" class="button-text">Search Projects</span>
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </div>
+        </div>  
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <v-card class="card">
+                    <v-img
+                        src="@/assets/estimations.svg"
+                        alt="Estimation Icon"
+                        class="icon"
+                    ></v-img>
+                    <v-card-text class="title">Estimations</v-card-text>
+                    <v-card-text class="description">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                        Commodi, ratione debitis quis est labore voluptatibus! Eaque 
+                        cupiditate minima, at placeat totam, magni doloremque veniam 
+                        neque porro libero rerum unde voluptatem!
+                    </v-card-text>
+                    <v-card-actions class="buttons">
+                        <v-btn @mouseover="showTooltipEstimations = true" @mouseleave="showTooltipEstimations = false" class="button" @click="goToEstimations">
+                            <v-icon class="button-icon">mdi-magnify</v-icon>
+                            <span v-if="showTooltipEstimations" class="button-text">Search Estimations</span>
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </div>
+            <div class="col-md-6 mb-4">
+                <v-card class="card">
+                    <v-img
+                        src="@/assets/estimations.svg"
+                        alt="Admin Icon"
+                        class="icon"
+                    ></v-img>
+                    <v-card-text class="title">Admin Panel</v-card-text>
+                    <v-card-text class="description">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                        Commodi, ratione debitis quis est labore voluptatibus! Eaque 
+                        cupiditate minima, at placeat totam, magni doloremque veniam 
+                        neque porro libero rerum unde voluptatem!
+                    </v-card-text>
+                    <v-card-actions class="buttons">
+                        <v-btn @mouseover="showTooltipEstimations = true" @mouseleave="showTooltipEstimations = false" class="button" @click="goToEstimations">
+                            <v-icon class="button-icon">mdi-magnify</v-icon>
+                            <span v-if="showTooltipEstimations" class="button-text">Search Estimations</span>
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </div>
+        </div>
+    </div>
+</template>
   
   <script>
   export default {
-    methods: {
-        goToClients() {
-            this.$router.push('/clients');
-        },
-        addClient() {
-            this.$router.push('/add-client');
-        },
-        goToProjects() {
-            this.$router.push('/projects');
-        },
-        addProject() {
-            this.$router.push('/add-project');
-        },
-        goToEstimations() {
-            this.$router.push('/estimations');
-        },
-        addEstimation() {
-            this.$router.push('/add-estimation');
-        }
+    data() {
+      return {
+        showTooltipClients: false,
+        showTooltipProjects: false,
+        showTooltipEstimations: false,
+      };
     },
-}
+    methods: {
+      goToClients() {
+        this.$router.push('/clients');
+      },
+      goToProjects() {
+        this.$router.push('/projects');
+      },
+      goToEstimations() {
+        this.$router.push('/estimations');
+      }
+    }
+  };
   </script>
-  
-  <style>
-    .clients-card .title {
-        font-size: x-large;
-        font-weight: bold;
-    }
-    .clients-card .description {
-        padding-left: 20%;
-        padding-right: 20%
-    }
-    .icon {
-        width: 100px;
-        margin: 0 auto;
-    }
-    .buttons {
-        justify-content: center;
-    }
-    .button {
-        margin-left: 10px;
-    }
-    .buttons-text {
-        text-decoration: none;
-    }
-    .clients-card {
-        padding: 15px
-    }
-
-  </style>
-  

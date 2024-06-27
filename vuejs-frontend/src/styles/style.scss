@@ -1,0 +1,246 @@
+@charset "UTF-8";
+@import 'variables';
+
+body {
+    background-color: $primary-color;
+}
+
+.v-btn {
+    margin-left: 15px;
+}
+
+.addLogo {
+    height: 200px;
+    width: 200px;
+    border-radius: 100px;
+    border: 1px solid $add-logo-border;
+    margin: auto;
+    background-color: $add-logo;
+}  
+
+.editLogo {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    border-radius: 100px;
+}
+
+.panels {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    margin: 20px;
+}
+
+.card {
+    border-radius: 50px !important;
+    background-color: $card-background !important;
+    padding: 25px;
+    overflow: hidden;
+}
+
+.card .title {
+    font-size: x-large;
+    font-weight: bold;
+    color: $card-title !important;
+}
+
+.card .description {
+    color: $card-description !important;
+}
+
+.icon {
+    width: 100px;
+    margin: 0 auto;
+    border-radius: 0 !important;
+}
+
+.buttons {
+    justify-content: center;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    text-decoration: none;
+    background-color: transparent !important;
+    color: $button-font !important;
+    width: 20px;
+    transition: background-color 0.6s ease, color 0.6s ease, width 0.6s ease-in-out !important;
+    border-radius: 50px;
+    text-transform: none;
+}
+
+.button:hover {
+    background-color: $button-hover !important;
+    color:$button-hover-font !important;
+    width: 170px;
+}
+
+.button-text {
+    text-align: center;
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.6s ease-in-out;
+    width: 100%;
+    padding: 45px;
+}
+
+.button-text:hover{
+    opacity: 1;
+}
+
+.button-icon {
+    display: block;
+}
+
+.button:hover .button-icon {
+    display: none;
+}
+
+.list {
+    padding: 50px;
+}
+
+.table-toolbar {
+    background-color: $data-table-toolbar !important;
+    color: $data-table-toolbar-font !important;
+}
+
+.data-table {
+    border-radius: 50px !important;
+    background-color: $data-table !important;
+    box-shadow: $shadow;
+    overflow: hidden;
+    padding: 20px
+}
+
+.logo {
+    border-radius: 30px;
+}
+
+.table-row {
+    height: 100px;
+}
+
+.action-edit-button {
+    border-radius: 50px;
+    margin-left: 10px;
+    text-decoration: none;
+    background-color: transparent !important;
+    color: $action-edit-button !important;
+    transition: background-color 0.3s ease, color 0.3s ease !important;
+    padding: 5px;
+}
+
+.action-edit-button:hover {
+    background-color: $action-edit-button-hover !important;
+    color: $action-button-hover-font !important;
+}
+
+.action-delete-button {
+    border-radius: 50px;
+    margin-left: 10px;
+    text-decoration: none;
+    background-color: transparent !important;
+    color: $action-delete-button !important;
+    transition: background-color 0.3s ease, color 0.3s ease !important;
+    padding: 5px;
+}
+
+.action-delete-button:hover {
+    background-color: $action-delete-button-hover !important;
+    color: $action-button-hover-font !important;
+}
+
+.add-page {
+    padding: 50px;
+    background-color: $add-page-background !important;
+}
+
+.add-form {
+    margin:auto;
+    margin-top: 0px;
+    border-radius: 50px !important;
+    background-color: $add-page-form-background !important;
+    box-shadow: $shadow;
+    overflow: hidden;
+    padding: 20px
+}
+
+.center-content {
+    display: flex;
+    justify-content: center;
+}
+
+.v-dialog {
+    box-shadow: none;
+}
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: $bookmarks-font;
+}
+
+nav {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: $primary-color;
+  box-shadow: $shadow;
+}
+
+.bookmarks {
+  display: flex;
+  flex-direction: row;  flex-wrap: wrap;
+  justify-content: center;
+  width: 100% !important;
+}
+
+.bookmarks a {
+  font-weight: bold;
+  color: $bookmarks-font;
+  padding: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  margin-left: 10px;
+  transition: color 0.3s ease, font-size 0.3s ease, background-color 0.3s ease, margin 0.3s ease;
+}
+
+.bookmarks a:hover {
+  color: $bookmarks-font-hover;
+  background-color: $bookmarks-background-hover;
+  font-size: 25px;
+}
+
+.bookmarks a.router-link-exact-active {
+  color: $card-title;
+  font-size: 25px;
+  color: $bookmarks-font-active;
+  background-color: $bookmarks-background-active;
+}
+  
+  @media (max-width: 500px) {
+    .bookmarks {
+      flex-direction: column;
+    }
+    .bookmarks a {
+        margin-bottom: 5px;
+    }
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.4s ease;
+  }
+  
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
+  
+  .notyf {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+}
