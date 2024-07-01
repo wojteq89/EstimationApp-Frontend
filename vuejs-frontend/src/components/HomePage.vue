@@ -95,25 +95,51 @@
     </div>
 </template>
   
-  <script>
-  export default {
-    data() {
-      return {
-        showTooltipClients: false,
-        showTooltipProjects: false,
-        showTooltipEstimations: false,
-      };
-    },
-    methods: {
-      goToClients() {
-        this.$router.push('/clients');
-      },
-      goToProjects() {
-        this.$router.push('/projects');
-      },
-      goToEstimations() {
-        this.$router.push('/estimations');
-      }
-    }
-  };
-  </script>
+<script>
+    import axios from 'axios';
+    //import { Notyf } from 'notyf';
+    import 'notyf/notyf.min.css';
+
+    export default {
+        data() {
+            return {
+                showTooltipClients: false,
+                showTooltipProjects: false,
+                showTooltipEstimations: false,
+            };
+        },
+        methods: {
+            goToClients() {
+                this.$router.push('/clients');
+            },
+            goToProjects() {
+                this.$router.push('/projects');
+            },
+            goToEstimations() {
+                this.$router.push('/estimations');
+            },
+            getUser() {
+                axios.get('/api/user', { headers:{Authorization: 'Bearer ' + localStorage.getItem('token')}})
+                .then((r) => {
+                    this.user = r.data;
+                    return r
+                })
+                .catch((e) => {
+                    return e
+                });
+            },
+            
+            logoutAction () {
+                axios.post('/api/logout',{}, { headers:{Authorization: 'Bearer ' + localStorage.getItem('token')}})
+                .then((r) => {
+                    localStorage.setItem('token', "")
+                    this.$router.push('/')
+                    return r
+                })
+                .catch((e) => {
+                    return e
+                });
+            }
+        }
+    };
+</script>
