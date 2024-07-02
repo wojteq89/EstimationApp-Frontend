@@ -205,10 +205,11 @@ body {
 }
 
 #account-button {
-  width: 80px;
-  height: 80px;
+  width: 20px;
+  height:60px;
   border-radius: 50px;
-  border: 2px solid $user-profile-photo-border;
+  background-color: transparent !important;
+  color: $button-font;
 }
 
 #nickname {

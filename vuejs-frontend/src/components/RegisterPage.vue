@@ -1,27 +1,23 @@
 <template>
-    <v-container class="mt-5">
-      <v-row justify="center">
-        <v-col cols="12" sm="8" md="6">
-          <v-card>
-            <v-card-title class="text-center">
-              <h2 class="headline">Register</h2>
-            </v-card-title>
-            <v-card-text>
-              <v-form @submit.prevent="registerAction">
-                <v-text-field v-model="name" label="Name" required></v-text-field>
-                <v-text-field v-model="email" label="Email address" type="email" required></v-text-field>
-                <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
-                <v-text-field v-model="confirmPassword" label="Confirm Password" type="password" required></v-text-field>
-                <v-btn :loading="isSubmitting" :disabled="isSubmitting" color="primary" block type="submit">Register Now</v-btn>
-                <p class="text-center">Already have an account? <router-link to="/">Login here</router-link></p>
-                <p v-if="Object.keys(validationErrors).length !== 0" class="text-center">
-                  <small class="text-danger">{{ validationErrors[Object.keys(validationErrors)[0]][0] }}</small>
-                </p>
-              </v-form>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
+    <v-container style="width: 85%; margin-top: 50px;">
+      <v-card class="card">
+        <v-card-title class="text-center">
+          <h2 class="headline">Register</h2>
+        </v-card-title>
+        <v-card-text>
+          <v-form @submit.prevent="registerAction">
+            <v-text-field v-model="name" label="Name" required></v-text-field>
+            <v-text-field v-model="email" label="Email address" type="email" required></v-text-field>
+            <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
+            <v-text-field v-model="confirmPassword" label="Confirm Password" type="password" required></v-text-field>
+            <v-btn class="button" :loading="isSubmitting" :disabled="isSubmitting" color="primary" block type="submit">Register</v-btn>
+            <p class="text-center">Already have an account? <router-link to="/login-page">Login here</router-link></p>
+            <p v-if="Object.keys(validationErrors).length !== 0" class="text-center">
+              <small class="text-danger">{{ validationErrors[Object.keys(validationErrors)[0]][0] }}</small>
+            </p>
+          </v-form>
+        </v-card-text>
+      </v-card>
     </v-container>
   </template>
   

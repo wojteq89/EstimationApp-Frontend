@@ -1,25 +1,21 @@
 <template>
-    <v-container class="mt-5">
-      <v-row justify="center">
-        <v-col cols="12" sm="8" md="6">
-          <v-card>
-            <v-card-title class="text-center">
-              <h2 class="headline">Login</h2>
-            </v-card-title>
-            <v-card-text>
-              <v-form @submit.prevent='loginAction'>
-                <v-text-field v-model="email" label="Email address" type="email" required></v-text-field>
-                <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
-                <v-btn :loading="isSubmitting" :disabled="isSubmitting" color="primary" block type="submit">Login</v-btn>
-                <p class="text-center">Don't have an account? <router-link to="/register">Register here</router-link></p>
-                <p v-if="errorMessage" class="text-center">
-                  <small class="text-danger">{{ errorMessage }}</small>
-                </p>
-              </v-form>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
+    <v-container style="width: 85%; margin-top: 50px;">
+      <v-card class="card">
+        <v-card-title class="text-center">
+          <h2 class="headline">Login</h2>
+        </v-card-title>
+        <v-card-text>
+          <v-form @submit.prevent='loginAction'>
+            <v-text-field v-model="email" label="Email address" type="email" required></v-text-field>
+            <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
+            <v-btn class="button" :loading="isSubmitting" :disabled="isSubmitting" color="primary" block type="submit">Login</v-btn>
+            <p class="text-center">Don't have an account? <router-link to="/register-page">Register here</router-link></p>
+            <p v-if="errorMessage" class="text-center">
+              <small class="text-danger">{{ errorMessage }}</small>
+            </p>
+          </v-form>
+        </v-card-text>
+      </v-card>
     </v-container>
   </template>
   

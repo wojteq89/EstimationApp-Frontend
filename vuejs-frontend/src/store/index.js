@@ -1,3 +1,4 @@
+// Vuex store.js
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
@@ -9,16 +10,17 @@ export default new Vuex.Store({
     token: localStorage.getItem('token') || '',
     status: '',
     errorMessage: '',
-    user: null,
+    user: JSON.parse(localStorage.getItem('user')) || null,
   },
   mutations: {
     auth_request(state) {
       state.status = 'loading';
       state.errorMessage = '';
     },
-    auth_success(state, token) {
+    auth_success(state, { token, user }) {
       state.status = 'success';
       state.token = token;
+      state.user = user;
     },
     auth_error(state, message) {
       state.status = 'error';
@@ -41,15 +43,18 @@ export default new Vuex.Store({
         axios.post('http://127.0.0.1:8000/api/login', credentials)
           .then(response => {
             const token = response.data.token;
+            const user = { nickname: response.data.nickname };
             localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(user));
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-            commit('auth_success', token);
+            commit('auth_success', { token, user });
             resolve(response);
           })
           .catch(error => {
             const message = error.response && error.response.data.error ? error.response.data.error : 'An error occurred. Please try again.';
             commit('auth_error', message);
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
             reject(error);
           });
       });
@@ -58,6 +63,7 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         commit('logout');
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         delete axios.defaults.headers.common['Authorization'];
         resolve();
       });
