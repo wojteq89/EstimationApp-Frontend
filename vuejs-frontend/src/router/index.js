@@ -6,6 +6,7 @@ import ListEstimations from '@/components/ListEstimations.vue';
 import HomePage from '@/components/HomePage.vue';
 import LoginPage from '@/components/LoginPage.vue';
 import RegisterPage from '@/components/RegisterPage.vue';
+import SettingsPage from '@/components/AccountSettingsPage.vue'
 
 Vue.use(Router);
 
@@ -18,6 +19,7 @@ export default new Router({
     { path: '/estimations', name: 'ListEstimations', component: ListEstimations },
     { path: '/login-page', name: 'LoginPage', component: LoginPage },
     { path: '/register-page', name: 'RegisterPage', component: RegisterPage },
+    { path: '/settings-page', name: 'SettingsPage', component: SettingsPage },
     { path: '*', redirect: '/home-page' }
   ]
 });

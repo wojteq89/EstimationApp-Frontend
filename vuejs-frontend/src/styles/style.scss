@@ -199,8 +199,7 @@ body {
 #user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
-  max-width: 200px;
+  max-width: 25%;
   height: 100px;
 }
 
@@ -210,6 +209,12 @@ body {
   border-radius: 50px;
   background-color: transparent !important;
   color: $button-font;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+#account-button:hover {
+    color: $bookmarks-font-hover;
+    background-color: $bookmarks-background-hover !important;
 }
 
 #nickname {
@@ -248,9 +253,14 @@ body {
   background-color: $bookmarks-background-active;
 }
 
-  @media (max-width: 550px) {
+#account-settings {
+    margin: 50px;
+}
+
+  @media (max-width: 630px) {
     .bookmarks {
-      flex-direction: column;
+      flex-direction: row;
+      justify-content: center;
     }
     .bookmarks a {
         margin-bottom: 5px;
@@ -260,6 +270,19 @@ body {
     }
   }
 
+  @media (max-width: 550px) {
+    .bookmarks {
+      flex-direction: column;
+      justify-content: right;
+    }
+    .bookmarks a {
+        margin-bottom: 5px;
+    }
+    .nav-container {
+        flex-direction: column;
+    }
+  }
+  
   .fade-enter-active, .fade-leave-active {
     transition: opacity 0.4s ease;
   }
@@ -270,4 +293,4 @@ body {
   
   .notyf {
     font-family: Avenir, Helvetica, Arial, sans-serif;
-}
+  }

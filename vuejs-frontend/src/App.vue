@@ -4,23 +4,20 @@
       <v-container id="user-info">
         <v-menu offset-y :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn class="button" 
-                   @mouseover="showTooltipSettings = true" 
-                   @mouseleave="showTooltipSettings = false" 
+            <v-btn id="account-button" 
                    v-bind="attrs" 
                    v-on="on"
-                   style="height: 60px;">
-              <v-icon class="button-icon">mdi-cog</v-icon>
-              <span v-if="showTooltipSettings" class="button-text">Settings</span>
+                   title="Account Settins">
+              <v-icon class="button-icon">mdi-account</v-icon>
             </v-btn>
           </template>
           <v-list>
-            <v-list-item v-if="isLoggedIn">
-              <v-list-item-title>
-                <router-link to="/">Account Settings</router-link>
-              </v-list-item-title>
+            <v-list-item v-if="isLoggedIn" to="/settings-page">
+              <v-icon class="button-icon">mdi-cog</v-icon>
+              <v-list-item-title>Settings</v-list-item-title>
             </v-list-item>
             <v-list-item @click="logoutAction" v-if="isLoggedIn">
+              <v-icon class="button-icon">mdi-logout</v-icon>
               <v-list-item-title>Logout</v-list-item-title>
             </v-list-item>
           </v-list>
@@ -49,11 +46,6 @@ export default {
   name: 'App',
   computed: {
     ...mapGetters(['isLoggedIn', 'user']),
-  },
-  data(){
-    return {
-      showTooltipSettings: false,
-    }
   },
   methods: {
     ...mapActions(['logout']),
