@@ -17,7 +17,7 @@
             <v-icon class="button-icon">mdi-arrow-left</v-icon>
             <span v-if="showTooltipGoToHome" class="button-text" >Go to home</span>
           </v-btn>
-          <v-btn class="button" @click="openAddClientModal" @mouseover="showTooltipAddClient = true" @mouseleave="showTooltipAddClient = false">
+          <v-btn v-if="isAdmin" class="button" @click="openAddClientModal" @mouseover="showTooltipAddClient = true" @mouseleave="showTooltipAddClient = false">
             <v-icon class="button-icon">mdi-plus</v-icon>
             <span v-if="showTooltipAddClient" class="button-text" >Add Client</span>
           </v-btn>
@@ -31,7 +31,7 @@
           <td>{{ item.name }}</td>
           <td>{{ item.country }}</td>
           <td>{{ item.email }}</td>
-          <td>
+          <td v-if="isAdmin"> 
             <v-icon 
               class="action-edit-button" 
               @click="editClient(item)" 
@@ -79,10 +79,12 @@
 
 <script>
 import axios from 'axios';
+import { mapGetters } from 'vuex';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import EditClientModal from './EditClientModal.vue';
 import AddClientModal from './AddClientModal.vue';
+
 
 export default {
   components: {
@@ -115,14 +117,20 @@ export default {
   },
   computed: {
     headers() {
-      return [
+      const headers = [
         { text: 'Logo', value: 'logo' },
         { text: 'Name', value: 'name' },
         { text: 'Country', value: 'country' },
-        { text: 'Email', value: 'email' },
-        { text: 'Actions', value: 'actions', sortable: false }
+        { text: 'Email', value: 'email' }
       ];
+      
+      if (this.isAdmin) {
+        headers.push({ text: 'Actions', value: 'actions', sortable: false });
+      }
+
+      return headers;
     },
+    ...mapGetters(['isAdmin']),
   },
   created() {
     this.fetchClients();

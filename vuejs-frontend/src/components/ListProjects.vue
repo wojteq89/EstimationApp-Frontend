@@ -17,7 +17,7 @@
             <v-icon class="button-icon">mdi-arrow-left</v-icon>
             <span v-if="showTooltipGoToHome" class="button-text">Go to home</span>
           </v-btn>
-          <v-btn class="button" @click="openAddProjectModal" @mouseover="showTooltipAddProject = true" @mouseleave="showTooltipAddProject = false">
+          <v-btn v-if="isAdmin" class="button" @click="openAddProjectModal" @mouseover="showTooltipAddProject = true" @mouseleave="showTooltipAddProject = false">
             <v-icon class="button-icon">mdi-plus</v-icon>
             <span v-if="showTooltipAddProject" class="button-text">Add Project</span>
           </v-btn>
@@ -41,7 +41,7 @@
           <td>{{ item.name }}</td>
           <td>{{ item.client_name }}</td>
           <td>{{ item.estimation }}</td>
-          <td>
+          <td v-if="isAdmin">
             <v-icon 
               class="action-edit-button" 
               @click="editProject(item)"
@@ -88,6 +88,7 @@
 
 <script>
 import axios from 'axios';
+import { mapGetters } from 'vuex';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import EditProjectModal from './EditProjectModal.vue';
@@ -119,13 +120,19 @@ export default {
   },
   computed: {
     headers() {
-      return [
+      const headers = [
         { text: 'Name', value: 'name' },
         { text: 'Client', value: 'client_name' },
         { text: 'Estimation', value: 'estimation' },
-        { text: 'Actions', value: 'actions', sortable: false }
       ];
+      
+      if (this.isAdmin) {
+        headers.push({ text: 'Actions', value: 'actions', sortable: false });
+      }
+
+      return headers;
     },
+
     filteredProjects() {
       let filtered = this.projects;
 
@@ -144,7 +151,8 @@ export default {
       }
 
       return filtered;
-    }
+    },
+    ...mapGetters(['isAdmin']),
   },
   created() {
     this.fetchProjects();

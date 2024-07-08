@@ -17,7 +17,7 @@
             <v-icon class="button-icon">mdi-arrow-left</v-icon>
             <span v-if="showTooltipGoToHome" class="button-text">Go to home</span>
           </v-btn>
-          <v-btn class="button" @click="openAddEstimationModal" @mouseover="showTooltipAddEstimation = true" @mouseleave="showTooltipAddEstimation = false">
+          <v-btn v-if="isAdmin" class="button" @click="openAddEstimationModal" @mouseover="showTooltipAddEstimation = true" @mouseleave="showTooltipAddEstimation = false">
             <v-icon class="button-icon">mdi-plus</v-icon>
             <span v-if="showTooltipAddEstimation" class="button-text">Add Estimation</span>
           </v-btn>
@@ -33,7 +33,7 @@
           <td>{{ item.type }}</td>
           <td>{{ item.amount }}</td>
           <td>{{ item.date }}</td>
-          <td>
+          <td v-if="isAdmin">
             <v-icon 
               class="action-edit-button" 
               @click="editEstimation(item)"
@@ -82,6 +82,7 @@
 
 <script>
 import axios from 'axios';
+import { mapGetters } from 'vuex';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import EditEstimationModal from './EditEstimationModal.vue';
@@ -117,16 +118,23 @@ export default {
   },
   computed: {
     headers() {
-      return [
+      const headers = [
         { text: 'Name', value: 'name' },
         { text: 'Project', value: 'project_name' },
         { text: 'Client', value: 'client_name' },
         { text: 'Type', value: 'type' },
         { text: 'Amount', value: 'amount' },
         { text: 'Date', value: 'date' },
-        { text: 'Actions', value: 'actions', sortable: false },
       ];
+      
+      if (this.isAdmin) {
+        headers.push({ text: 'Actions', value: 'actions', sortable: false });
+      }
+
+      return headers;
     },
+
+    ...mapGetters(['isLoggedIn', 'user', 'isAdmin']),
   },
   methods: {
     async fetchEstimations() {
