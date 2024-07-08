@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import { Notyf } from 'notyf';
+import CryptoJS from 'crypto-js';
 import 'notyf/notyf.min.css';
 
 Vue.use(Vuex);
@@ -10,13 +11,30 @@ const notyf = new Notyf({
   position: { x: 'center', y: 'bottom' },
 });
 
+const ENCRYPTION_KEY = 'EncryptionKey123';
+
+const encryptData = (data) => {
+  return CryptoJS.AES.encrypt(JSON.stringify(data), ENCRYPTION_KEY).toString();
+};
+
+const decryptData = (encryptedData) => {
+  try {
+    const bytes = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY);
+    const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+    return JSON.parse(decryptedData);
+  } catch (error) {
+    console.error('Error while decrypting data:', error);
+    return null;
+  }
+};
+
 export default new Vuex.Store({
   state: {
-    token: localStorage.getItem('token') || '',
+    token: localStorage.getItem('token') ? decryptData(localStorage.getItem('token')) : '',
     status: '',
     errorMessage: '',
-    user: JSON.parse(localStorage.getItem('user')) || null,
-    role: localStorage.getItem('role') || '',
+    user: localStorage.getItem('user') ? decryptData(localStorage.getItem('user')) : null,
+    role: localStorage.getItem('role') ? decryptData(localStorage.getItem('role')) : '',
   },
   mutations: {
     auth_request(state) {
@@ -28,6 +46,9 @@ export default new Vuex.Store({
       state.token = token;
       state.user = user;
       state.role = role;
+      localStorage.setItem('token', encryptData(token));
+      localStorage.setItem('user', encryptData(user));
+      localStorage.setItem('role', encryptData(role));
       notyf.success('Login successful.');
     },
     auth_error(state, message) {
@@ -37,10 +58,11 @@ export default new Vuex.Store({
     },
     set_user(state, user) {
       state.user = user;
+      localStorage.setItem('user', encryptData(user));
     },
     set_role(state, role) {
       state.role = role;
-      localStorage.setItem('role', role);
+      localStorage.setItem('role', encryptData(role));
     },
     logout(state) {
       state.status = '';
@@ -63,10 +85,6 @@ export default new Vuex.Store({
             const token = response.data.token;
             const user = { nickname: response.data.nickname };
             const role = response.data.role;
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('role', role);
-            axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
             commit('auth_success', { token, user, role });
             resolve(response);
           })
