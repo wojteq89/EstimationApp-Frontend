@@ -1,9 +1,14 @@
-// Vuex store.js
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css';
 
 Vue.use(Vuex);
+
+const notyf = new Notyf({
+  position: { x: 'center', y: 'bottom' },
+});
 
 export default new Vuex.Store({
   state: {
@@ -11,29 +16,42 @@ export default new Vuex.Store({
     status: '',
     errorMessage: '',
     user: JSON.parse(localStorage.getItem('user')) || null,
+    role: localStorage.getItem('role') || '',
   },
   mutations: {
     auth_request(state) {
       state.status = 'loading';
       state.errorMessage = '';
     },
-    auth_success(state, { token, user }) {
+    auth_success(state, { token, user, role }) {
       state.status = 'success';
       state.token = token;
       state.user = user;
+      state.role = role;
+      notyf.success('Login successful.');
     },
     auth_error(state, message) {
       state.status = 'error';
       state.errorMessage = message;
+      notyf.error('Email or password is incorrect');
     },
     set_user(state, user) {
       state.user = user;
+    },
+    set_role(state, role) {
+      state.role = role;
+      localStorage.setItem('role', role);
     },
     logout(state) {
       state.status = '';
       state.token = '';
       state.errorMessage = '';
       state.user = null;
+      state.role = '';
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('role');
+      notyf.success('Logout successful.');
     },
   },
   actions: {
@@ -44,10 +62,12 @@ export default new Vuex.Store({
           .then(response => {
             const token = response.data.token;
             const user = { nickname: response.data.nickname };
+            const role = response.data.role;
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('role', role);
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-            commit('auth_success', { token, user });
+            commit('auth_success', { token, user, role });
             resolve(response);
           })
           .catch(error => {
@@ -55,6 +75,7 @@ export default new Vuex.Store({
             commit('auth_error', message);
             localStorage.removeItem('token');
             localStorage.removeItem('user');
+            localStorage.removeItem('role');
             reject(error);
           });
       });
@@ -64,6 +85,7 @@ export default new Vuex.Store({
         commit('logout');
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('role');
         delete axios.defaults.headers.common['Authorization'];
         resolve();
       });
@@ -74,5 +96,7 @@ export default new Vuex.Store({
     authStatus: state => state.status,
     errorMessage: state => state.errorMessage,
     user: state => state.user,
+    role: state => state.role,
+    isAdmin: state => state.role === 'admin',
   },
 });
