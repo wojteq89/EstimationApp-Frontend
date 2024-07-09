@@ -108,6 +108,28 @@ export default new Vuex.Store({
         resolve();
       });
     },
+    resetPasswordRequest(_, { email }) {
+      return new Promise((resolve, reject) => {
+          axios.post('http://localhost:8000/api/password/reset-request', { email })
+              .then(response => {
+                  resolve(response);
+              })
+              .catch(error => {
+                  reject(error);
+              });
+      });
+    },
+    resetPassword(_, { token, email, password, password_confirmation }) {
+        return new Promise((resolve, reject) => {
+            axios.post('http://localhost:8000/api/password/reset', { token, email, password, password_confirmation })
+                .then(response => {
+                    resolve(response);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+    },
   },
   getters: {
     isLoggedIn: state => !!state.token,

@@ -14,7 +14,7 @@
                 neque porro libero rerum unde voluptatem!
             </v-card-text>
             <v-card-actions class="buttons">
-                <v-btn @mouseover="showTooltipChangePassword = true" @mouseleave="showTooltipChangePassword = false" class="button">
+                <v-btn @click=resetPassword @mouseover="showTooltipChangePassword = true" @mouseleave="showTooltipChangePassword = false" class="button">
                     <v-icon class="button-icon">mdi-pencil</v-icon>
                     <span v-if="showTooltipChangePassword" class="button-text">Change Password</span>
                 </v-btn>
@@ -51,6 +51,9 @@ export default {
         .catch(() => {
         });
     },
+    resetPassword (){
+      this.$router.push('/reset-password')
+    }
   },
 };
 </script>

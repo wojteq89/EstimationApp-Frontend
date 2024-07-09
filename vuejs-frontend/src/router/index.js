@@ -8,6 +8,7 @@ import LoginPage from '@/components/LoginPage.vue';
 import RegisterPage from '@/components/RegisterPage.vue';
 import SettingsPage from '@/components/AccountSettingsPage.vue';
 import ListUsers from '@/components/ListUsers.vue';
+import PasswordReset from '@/components/PasswordReset.vue';
 import store from '@/store';
 
 Vue.use(Router);
@@ -23,6 +24,8 @@ const router = new Router({
     { path: '/register-page', name: 'RegisterPage', component: RegisterPage },
     { path: '/settings-page', name: 'SettingsPage', component: SettingsPage },
     { path: '/admin-panel', name: 'ListUsers', component: ListUsers },
+    { path: '/password-reset', name: 'PasswordReset', component: PasswordReset },
+
     { path: '*', redirect: '/login-page' }
   ]
 });
