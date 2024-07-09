@@ -12,6 +12,7 @@
             item-value="id"
             label="Project"
             @input="updateProjectId"
+            :rules="[v => !!v || 'Project is required']"
           ></v-combobox>
           <v-btn class="button" 
             @click="openAddProjectModal" 
@@ -135,10 +136,11 @@ export default {
       this.$emit('update:editDialog', val);
     },
     updateProjectId() {
-      const selectedProject = this.projects.find(p => p.name === this.selectedProjectName);
+      const selectedProject = this.projects.find(p => p.name === this.selectedProjectName.__ob__.value.name);
+      
       if (selectedProject) {
         this.selectedProjectId = selectedProject.id;
-        this.localEditedEstimation.project_id = selectedProject.id;
+        this.$set(this.localEditedEstimation, 'project_id', selectedProject.id);
       }
     },
     saveChanges() {

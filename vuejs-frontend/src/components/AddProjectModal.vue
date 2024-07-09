@@ -9,7 +9,7 @@
               v-model="localName" 
               label="Project Name" 
               required 
-              :rules="[v => !!v || 'Project Name is required']"
+              :rules="[v => !!v || 'Project name is required']"
             ></v-text-field>
             <v-container class="center-content">
               <v-combobox

@@ -19,7 +19,10 @@
           required
           :rules="[v => !!v || 'Country is required']"
         ></v-combobox>
-        <v-text-field v-model="localEditedClient.email" label="Email"></v-text-field>
+        <v-text-field v-model="localEditedClient.email" 
+          label="Email"
+          :rules="[v => !!v || 'Email is required', v => /.+@.+\..+/.test(v) || 'Email must be valid']"
+        />
         <v-text-field v-model="localEditedClient.description" label="Description"></v-text-field>
       </v-card-text>
       <v-card-actions class="center-content">

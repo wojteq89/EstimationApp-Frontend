@@ -3,14 +3,18 @@
     <v-card class="card">
       <v-card-title class="center-content">Edit Project</v-card-title>
       <v-card-text>
-        <v-text-field v-model="localEditedProject.name" label="Name"></v-text-field>
+        <v-text-field 
+        v-model="localEditedProject.name" 
+        label="Name"
+        :rules="[v => !!v || 'Project name is required']"
+        ></v-text-field>
         <v-container class="center-content">
           <v-combobox
             v-model="selectedClientName"
             :items="clientOptions.map(client => client.name)"
             label="Client"
             @change="updateClient"
-            required  
+            :rules="[v => !!v || 'Client is required']"
           ></v-combobox>
           <v-btn class="button" 
               @click="openAddClientModal" 
