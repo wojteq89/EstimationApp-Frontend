@@ -17,6 +17,10 @@
             <v-icon class="button-icon">mdi-arrow-left</v-icon>
             <span v-if="showTooltipGoToHome" class="button-text">Go to home</span>
           </v-btn>
+          <v-btn v-if="isAdmin" class="button" @click="openAddUserModal" @mouseover="showTooltipAddUser = true" @mouseleave="showTooltipAddUser = false">
+            <v-icon class="button-icon">mdi-plus</v-icon>
+            <span v-if="showTooltipAddUser" class="button-text" >Add User</span>
+          </v-btn>
         </v-toolbar>
         <v-text-field v-model="search" label="Search Users" class="mx-4"></v-text-field>
       </template>
@@ -51,6 +55,13 @@
       @cancel-edit="cancelEdit"
     />
 
+    <AddUserModal
+      v-if="addDialog"
+      :addDialog.sync="addDialog"
+      :roles="roles"
+      @user-added="fetchUsers"
+    />
+
     <v-dialog v-model="deleteDialog" max-width="500">
       <v-card class="card">
         <v-card-title class="center-content">Confirm Delete</v-card-title>
@@ -70,18 +81,22 @@ import { mapGetters } from 'vuex';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import EditUserModal from './EditUserModal.vue';
+import AddUserModal from './AddUserModal.vue';
 
 export default {
   components: {
     EditUserModal,
+    AddUserModal,
   },
   data() {
     return {
       showTooltipGoToHome: false,
+      showTooltipAddUser: false,
       search: '',
       users: [],
       editDialog: false,
       deleteDialog: false,
+      addDialog: false,
       roles: ['user', 'admin'],
       editedUser: {
         id: null,
@@ -178,6 +193,9 @@ export default {
     },
     cancelDelete() {
       this.deleteDialog = false;
+    },
+    openAddUserModal() {
+      this.addDialog = true;
     },
   },
 };
