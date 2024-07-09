@@ -174,18 +174,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.center-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.addLogo {
-  max-height: 200px;
-  margin: auto;
-}
-.button {
-  margin: 0 10px;
-}
-</style>

@@ -155,22 +155,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.center-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.my-4 {
-  margin: 16px 0;
-}
-.editLogo {
-  width: 100%;
-  max-height: 200px;
-  object-fit: contain;
-}
-.button {
-  margin: 0 10px;
-}
-</style>

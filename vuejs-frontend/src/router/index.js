@@ -8,7 +8,7 @@ import LoginPage from '@/components/LoginPage.vue';
 import RegisterPage from '@/components/RegisterPage.vue';
 import SettingsPage from '@/components/AccountSettingsPage.vue';
 import ListUsers from '@/components/ListUsers.vue';
-import store from '@/store'; // Import Vuex store
+import store from '@/store';
 
 Vue.use(Router);
 

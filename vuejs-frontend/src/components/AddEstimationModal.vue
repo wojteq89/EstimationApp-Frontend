@@ -214,21 +214,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.center-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.button {
-  margin: 0 10px;
-}
-.button-icon {
-  margin-right: 5px;
-}
-.button-text {
-  display: inline-block;
-  margin-left: 5px;
-}
-</style>
