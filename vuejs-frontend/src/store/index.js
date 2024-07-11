@@ -110,7 +110,7 @@ export default new Vuex.Store({
     },
     resetPasswordRequest(_, { email }) {
       return new Promise((resolve, reject) => {
-          axios.post('http://localhost:8000/api/password/reset-request', { email })
+          axios.post('http://localhost:8000/api/reset-request', { email })
               .then(response => {
                   resolve(response);
               })
@@ -119,16 +119,18 @@ export default new Vuex.Store({
               });
       });
     },
-    resetPassword(_, { token, email, password, password_confirmation }) {
-        return new Promise((resolve, reject) => {
-            axios.post('http://localhost:8000/api/password/reset', { token, email, password, password_confirmation })
-                .then(response => {
-                    resolve(response);
-                })
-                .catch(error => {
-                    reject(error);
-                });
-        });
+    resetPassword({ commit }, { token, email, password, password_confirmation }) {
+      return new Promise((resolve, reject) => {
+        axios.post('http://localhost:8000/api/reset-password', { token, email, password, password_confirmation })
+          .then(response => {
+            commit('auth_succes');
+            resolve(response);
+          })
+          .catch(error => {
+            commit('auth_error');
+            reject(error);
+          });
+      });
     },
   },
   getters: {

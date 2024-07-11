@@ -10,7 +10,7 @@
             <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
             <v-btn class="button" :loading="isSubmitting" :disabled="isSubmitting" color="primary" block type="submit">Login</v-btn> <br>
             <p class="text-center">Don't have an account? <router-link to="/register-page">Register here</router-link></p>
-            <p class="text-center"><router-link to="/password-reset">Forgot password?</router-link></p>
+            <p class="text-center"><router-link to="/forgot-password">Forgot password?</router-link></p>
             <p v-if="errorMessage" class="text-center">
               <small class="text-danger">{{ errorMessage }}</small>
             </p>
