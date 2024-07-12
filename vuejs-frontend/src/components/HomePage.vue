@@ -96,7 +96,7 @@
 </template>
   
 <script>
-    import axios from 'axios';
+    import axiosInstance from '@/config';
     import { mapGetters } from 'vuex';
 
     export default {
@@ -125,7 +125,7 @@
                 this.$router.push('/admin-panel');
             },
             getUser() {
-                axios.get('/api/user', { headers:{Authorization: 'Bearer ' + localStorage.getItem('token')}})
+                axiosInstance.get('/user', { headers:{Authorization: 'Bearer ' + localStorage.getItem('token')}})
                 .then((r) => {
                     this.user = r.data;
                     return r

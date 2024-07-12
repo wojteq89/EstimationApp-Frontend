@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/config';
 import { mapGetters } from 'vuex';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
@@ -139,10 +139,10 @@ export default {
   methods: {
     async fetchEstimations() {
       try {
-        const response = await axios.get('http://localhost:8000/api/estimations');
+        const response = await axiosInstance.get('/estimations');
         this.estimations = await Promise.all(response.data.map(async (estimation) => {
-          const projectResponse = await axios.get(`http://localhost:8000/api/projects/${estimation.project_id}`);
-          const clientResponse = await axios.get(`http://localhost:8000/api/clients/${estimation.client_id}`);
+          const projectResponse = await axiosInstance.get(`/projects/${estimation.project_id}`);
+          const clientResponse = await axiosInstance.get(`/clients/${estimation.client_id}`);
           return {
             ...estimation,
             project_name: projectResponse.data.name,
@@ -169,7 +169,7 @@ export default {
           project_id: updatedEstimation.project_id,
           client_id: updatedEstimation.client_id,
         };
-        await axios.put(`http://localhost:8000/api/estimations/${updatedEstimation.id}`, estimationToSave);
+        await axiosInstance.put(`/estimations/${updatedEstimation.id}`, estimationToSave);
         this.fetchEstimations();
         this.editDialog = false;
         this.notyf.success('Estimation updated successfully.');
@@ -190,7 +190,7 @@ export default {
     },
     async deleteEstimation() {
       try {
-        await axios.delete(`http://localhost:8000/api/estimations/${this.estimationToDelete.id}`);
+        await axiosInstance.delete(`/estimations/${this.estimationToDelete.id}`);
         const index = this.estimations.findIndex((item) => item.id === this.estimationToDelete.id);
         this.estimations.splice(index, 1);
         this.deleteDialog = false;
@@ -218,7 +218,7 @@ export default {
     },
     async fetchProjects() {
       try {
-        const response = await axios.get('http://localhost:8000/api/projects');
+        const response = await axiosInstance.get('/projects');
         this.projects = response.data;
       } catch (error) {
         console.error('Error fetching projects:', error);
@@ -227,7 +227,7 @@ export default {
     },
     async fetchClients() {
       try {
-        const response = await axios.get('http://localhost:8000/api/clients');
+        const response = await axiosInstance.get('/clients');
         this.clients = response.data;
       } catch (error) {
         console.error('Error fetching clients:', error);

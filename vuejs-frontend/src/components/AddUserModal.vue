@@ -2,6 +2,7 @@
     <v-dialog v-model="localAddDialog" max-width="500" @click:outside="cancel">
       <v-card class="card">
         <v-card-title class="center-content">Add User</v-card-title>
+        <p>Default password is: "Password123"</p>
         <v-card-text>
           <v-text-field
             v-model="localUser.name"
@@ -23,7 +24,6 @@
             :rules="[v => !!v || 'Role is required']"
           ></v-select>
         </v-card-text>
-        <v-text>Default password is: "Password123"</v-text>
         <v-card-actions class="center-content">
           <v-btn class="button" @click="addUser">Add</v-btn>
           <v-btn class="button" @click="cancel">Cancel</v-btn>
@@ -33,7 +33,7 @@
   </template>
   
   <script>
-  import axios from 'axios';
+  import axiosInstance from '@/config';
   import { Notyf } from 'notyf';
   import 'notyf/notyf.min.css';
   
@@ -85,12 +85,13 @@
           return;
         }
   
-        axios.post('http://localhost:8000/api/users', this.localUser)
+        axiosInstance.post('/users', this.localUser)
           .then(response => {
             console.log('User added:', response.data);
             this.notyf.success('User added successfully.');
             this.resetForm();
             this.$emit('user-added');
+            this.localAddDialog = false;
           })
           .catch(error => {
             console.error('Error adding user:', error);

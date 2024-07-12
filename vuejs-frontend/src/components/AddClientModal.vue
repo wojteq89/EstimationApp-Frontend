@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/config';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 
@@ -67,6 +67,7 @@ export default {
         email: ''
       },
       previewImage: null,
+      defaultLogo: require('@/assets/clients.svg'),
       notyf: new Notyf({
         position: {x: 'center', y:'bottom'},
       })
@@ -138,16 +139,18 @@ export default {
             this.notyf.error('Failed to resize image.');
           });
       } else {
+        formData.append('logo', this.defaultLogo);
         this.sendFormData(formData);
       }
     },
     sendFormData(formData) {
-      axios.post('http://localhost:8000/api/clients', formData)
+      axiosInstance.post('/clients', formData)
         .then(response => {
           console.log('Client added:', response.data);
           this.notyf.success('Client added successfully.');
           this.resetForm();
           this.$emit('client-added');
+          this.localAddDialog = false;
         })
         .catch(error => {
           console.error('Error adding client:', error);

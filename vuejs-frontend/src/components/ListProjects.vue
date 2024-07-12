@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/config';
 import { mapGetters } from 'vuex';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
@@ -167,10 +167,10 @@ export default {
     },
     async fetchProjects() {
       try {
-        const response = await axios.get('http://localhost:8000/api/projects');
+        const response = await axiosInstance.get('/projects');
         let projects = response.data;
         const clientRequests = projects.map(project => {
-          return axios.get(`http://localhost:8000/api/clients/${project.client_id}`);
+          return axiosInstance.get(`/clients/${project.client_id}`);
         });
 
         const clientResponses = await Promise.all(clientRequests);
@@ -187,7 +187,7 @@ export default {
     },
     async fetchClients() {
       try {
-        const response = await axios.get('http://localhost:8000/api/clients');
+        const response = await axiosInstance.get('/clients');
         this.clients = response.data;
       } catch (error) {
         console.error('Error fetching clients:', error);
@@ -210,7 +210,7 @@ export default {
           ...updatedProject,
           client_id: updatedProject.client_id
         };
-        await axios.put(`http://localhost:8000/api/projects/${updatedProject.id}`, projectToSave);
+        await axiosInstance.put(`/projects/${updatedProject.id}`, projectToSave);
         this.fetchProjects();
         this.editDialog = false;
         this.notyf.success('Project updated successfully.');
@@ -228,7 +228,7 @@ export default {
     },
     async deleteProject() {
       try {
-        await axios.delete(`http://localhost:8000/api/projects/${this.projectToDelete.id}`);
+        await axiosInstance.delete(`/projects/${this.projectToDelete.id}`);
         this.fetchProjects();
         this.deleteDialog = false;
         this.notyf.success('Project deleted successfully.');

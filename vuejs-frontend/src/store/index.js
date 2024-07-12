@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import axios from 'axios';
+import axiosInstance from '@/config';
 import { Notyf } from 'notyf';
 import CryptoJS from 'crypto-js';
 import 'notyf/notyf.min.css';
@@ -77,10 +77,28 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    register({ commit }, { name, email, password, password_confirmation }) {
+      commit('auth_request');
+      return new Promise((resolve, reject) => {
+        axiosInstance.post('/register', { name, email, password, password_confirmation })
+          .then(response => {
+            const token = response.data.token;
+            localStorage.setItem('token', token);
+            commit('auth_success', { token });
+            resolve(response);
+          })
+          .catch(error => {
+            const message = error.response && error.response.data.errors ? Object.values(error.response.data.errors)[0][0] : 'Registration failed.';
+            commit('auth_error', message);
+            localStorage.removeItem('token');
+            reject(error);
+          });
+      });
+    },
     login({ commit }, credentials) {
       commit('auth_request');
       return new Promise((resolve, reject) => {
-        axios.post('http://127.0.0.1:8000/api/login', credentials)
+        axiosInstance.post('/login', credentials)
           .then(response => {
             const token = response.data.token;
             const user = { nickname: response.data.nickname };
@@ -104,13 +122,13 @@ export default new Vuex.Store({
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('role');
-        delete axios.defaults.headers.common['Authorization'];
+        delete axiosInstance.defaults.headers.common['Authorization'];
         resolve();
       });
     },
     resetPasswordRequest(_, { email }) {
       return new Promise((resolve, reject) => {
-          axios.post('http://localhost:8000/api/reset-request', { email })
+          axiosInstance.post('/reset-request', { email })
               .then(response => {
                   resolve(response);
               })
@@ -121,7 +139,7 @@ export default new Vuex.Store({
     },
     resetPassword({ commit }, { token, email, password, password_confirmation }) {
       return new Promise((resolve, reject) => {
-        axios.post('http://localhost:8000/api/reset-password', { token, email, password, password_confirmation })
+        axiosInstance.post('/reset-password', { token, email, password, password_confirmation })
           .then(response => {
             commit('auth_succes');
             resolve(response);

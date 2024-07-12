@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/config';
 import AddClientModal from './AddClientModal.vue';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
@@ -118,7 +118,7 @@ export default {
         client_id: this.localSelectedClient.id,
       };
 
-      axios.post('http://localhost:8000/api/projects', projectData)
+      axiosInstance.post('/projects', projectData)
         .then(response => {
           console.log('Project added:', response.data);
           this.notyf.success('Project added successfully.');
@@ -145,7 +145,7 @@ export default {
     },
     async fetchClients() {
       try {
-        const response = await axios.get('http://localhost:8000/api/clients');
+        const response = await axiosInstance.get('/clients');
         this.clients = response.data;
       } catch (error) {
         console.error('Error fetching clients:', error);
@@ -154,7 +154,7 @@ export default {
     },
     async updateClients() {
       try {
-        const response = await axios.get('http://localhost:8000/api/clients');
+        const response = await axiosInstance.get('/clients');
         this.clients = response.data;
         if (response.data.length > 0) {
           this.localSelectedClient = response.data[response.data.length - 1]; 

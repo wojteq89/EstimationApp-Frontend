@@ -6,22 +6,25 @@
 </template>
 
 <script>
-export default {
-    data() {
-        return {
-            email: ''
-        };
-    },
-    methods: {
-        resetPassword() {
-            this.$store.dispatch('resetPasswordRequest', { email: this.email })
-                .then(response => {
-                    console.log(response.data.message);
-                })
-                .catch(error => {
-                    console.error(error.response.data.message);
-                });
+    import { mapActions } from 'vuex';
+
+    export default {
+        data() {
+            return {
+                email: ''
+            };
+        },
+        methods: {
+            ...mapActions(['resetPasswordRequest']),
+            resetPassword() {
+                this.resetPasswordRequest({ email: this.email })
+                    .then(response => {
+                        console.log(response.data.message);
+                    })
+                    .catch(error => {
+                        console.error(error.response.data.message);
+                    });
+            }
         }
     }
-}
 </script>

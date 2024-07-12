@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/config';
 import { mapGetters } from 'vuex';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
@@ -148,7 +148,7 @@ export default {
     },
     async fetchUsers() {
       try {
-        const response = await axios.get('http://localhost:8000/api/users');
+        const response = await axiosInstance.get('/users');
         this.users = response.data;
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -164,7 +164,7 @@ export default {
     },
     async handleSaveChanges(updatedUser) {
       try {
-        await axios.put(`http://localhost:8000/api/users/${updatedUser.id}`, updatedUser);
+        await axiosInstance.put(`/users/${updatedUser.id}`, updatedUser);
         this.fetchUsers();
         this.editDialog = false;
         this.notyf.success('User updated successfully.');
@@ -182,7 +182,7 @@ export default {
     },
     async deleteUser() {
       try {
-        await axios.delete(`http://localhost:8000/api/users/${this.userToDelete.id}`);
+        await axiosInstance.delete(`/users/${this.userToDelete.id}`);
         this.fetchUsers();
         this.deleteDialog = false;
         this.notyf.success('User deleted successfully.');

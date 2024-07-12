@@ -59,13 +59,13 @@ export default {
         id: null,
         name: '',
         description: '',
-        logo: '',
+        logo: null,
         country: '',
         email: ''
       },
       previewImage: null,
       notyf: new Notyf({
-        position: {x: 'center', y:'bottom'},
+        position: { x: 'center', y: 'bottom' },
       })
     };
   },
@@ -82,7 +82,7 @@ export default {
     editedClient: {
       immediate: true,
       handler(newVal) {
-        this.localEditedClient = { ...newVal };
+        this.localEditedClient = { ...newVal, logo: null };
         this.previewImage = newVal.logo || null;
       }
     },
@@ -149,7 +149,7 @@ export default {
         id: null,
         name: '',
         description: '',
-        logo: '',
+        logo: null,
         country: '',
         email: ''
       };

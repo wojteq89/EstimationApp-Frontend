@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/config';
 import { mapGetters } from 'vuex';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
@@ -148,7 +148,7 @@ export default {
       this.$router.push("/home-page");
     },
     fetchClients() {
-      axios.get('http://localhost:8000/api/clients')
+      axiosInstance.get('/clients')
         .then(response => {
           this.clients = response.data;
         })
@@ -163,7 +163,7 @@ export default {
     },
     async handleSaveChanges(updatedClient) {
       try {
-        await axios.put(`http://localhost:8000/api/clients/${updatedClient.id}`, updatedClient);
+        await axiosInstance.put(`/clients/${updatedClient.id}`, updatedClient);
         this.fetchClients();
         this.editDialog = false;
         this.notyf.success('Client updated successfully.');
@@ -181,7 +181,7 @@ export default {
     },
     async deleteClient() {
       try {
-        await axios.delete(`http://localhost:8000/api/clients/${this.clientToDelete.id}`);
+        await axiosInstance.delete(`/clients/${this.clientToDelete.id}`);
         this.fetchClients();
         this.deleteDialog = false;
         this.notyf.success('Client deleted successfully.');
