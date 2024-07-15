@@ -155,5 +155,6 @@ export default new Vuex.Store({
     user: state => state.user,
     role: state => state.role,
     isAdmin: state => state.role === 'admin',
+    accessToken: state => state.token,
   },
 });
