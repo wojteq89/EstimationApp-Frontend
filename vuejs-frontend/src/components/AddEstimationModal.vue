@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import axiosInstance from '@/config';
+import axiosInstance from '@/axiosAuthConfig';
 import AddProjectModal from './AddProjectModal.vue';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';

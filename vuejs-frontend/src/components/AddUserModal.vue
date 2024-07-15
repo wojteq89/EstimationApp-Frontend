@@ -33,7 +33,7 @@
   </template>
   
   <script>
-  import axiosInstance from '@/config';
+  import axiosInstance from '@/axiosAuthConfig';
   import { Notyf } from 'notyf';
   import 'notyf/notyf.min.css';
   

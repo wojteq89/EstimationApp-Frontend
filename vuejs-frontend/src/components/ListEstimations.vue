@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import axiosInstance from '@/config';
+import axiosInstance from '@/axiosAuthConfig';
 import { mapGetters } from 'vuex';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';

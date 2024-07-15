@@ -96,7 +96,7 @@
 </template>
   
 <script>
-    import axiosInstance from '@/config';
+    import axiosInstance from '@/axiosAuthConfig';
     import { mapGetters } from 'vuex';
 
     export default {

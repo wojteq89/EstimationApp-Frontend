@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import axiosInstance from '@/config';
+import axiosInstance from '@/axiosAuthConfig';
+import axiosPasswordResetInstance from '@/axiosPasswordResetConfig';
 import { Notyf } from 'notyf';
 import CryptoJS from 'crypto-js';
 import 'notyf/notyf.min.css';
@@ -125,7 +126,7 @@ export default new Vuex.Store({
     },
     resetPasswordRequest(_, { email }) {
       return new Promise((resolve, reject) => {
-          axiosInstance.post('/reset-request', { email })
+        axiosPasswordResetInstance.post('/reset-request', { email })
               .then(response => {
                   resolve(response);
               })
@@ -136,7 +137,7 @@ export default new Vuex.Store({
     },
     resetPassword({ commit }, { token, email, password, password_confirmation }) {
       return new Promise((resolve, reject) => {
-        axiosInstance.post('/reset-password', { token, email, password, password_confirmation })
+        axiosPasswordResetInstance.post('/reset-password', { token, email, password, password_confirmation })
           .then(response => {
             commit('auth_succes');
             resolve(response);

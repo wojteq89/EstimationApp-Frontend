@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import axiosInstance from '@/config';
+import axiosPasswordResetInstance from '@/axiosPasswordResetConfig';
 
 export default {
     data() {
@@ -16,7 +16,7 @@ export default {
     },
     methods: {
         resetPassword() {
-            axiosInstance.post('/reset-request', { email: this.email })
+            axiosPasswordResetInstance.post('/reset-request', { email: this.email })
                 .then(response => {
                     console.log(response.data.message);
                 })
