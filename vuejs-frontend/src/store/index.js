@@ -82,15 +82,12 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axiosInstance.post('/register', { name, email, password, password_confirmation })
           .then(response => {
-            const token = response.data.token;
-            localStorage.setItem('token', token);
-            commit('auth_success', { token });
+            notyf.success('Register successful.');
             resolve(response);
           })
           .catch(error => {
             const message = error.response && error.response.data.errors ? Object.values(error.response.data.errors)[0][0] : 'Registration failed.';
             commit('auth_error', message);
-            localStorage.removeItem('token');
             reject(error);
           });
       });
