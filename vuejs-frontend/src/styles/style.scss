@@ -187,18 +187,46 @@ body {
   color: $bookmarks-font;
 }
 
-nav {
-  padding-top: 20px;
-  padding-bottom: 20px;
+.nav-container {
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 15px;
   background-color: $primary-color;
   box-shadow: $shadow;
 }
 
+#user-info {
+  display: flex;
+  align-items: center;
+  max-width: 25%;
+  height: 100px;
+}
+
+#account-button {
+  width: 20px;
+  height:60px;
+  border-radius: 50px;
+  background-color: transparent !important;
+  color: $button-font;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+#account-button:hover {
+    color: $bookmarks-font-hover;
+    background-color: $bookmarks-background-hover !important;
+}
+
+#nickname {
+    margin-left: 10px;
+}
+
 .bookmarks {
   display: flex;
-  flex-direction: row;  flex-wrap: wrap;
-  justify-content: center;
-  width: 100% !important;
+  flex-direction: row;  
+  flex-wrap: wrap;
+  justify-content: right;
+  align-items: center;
 }
 
 .bookmarks a {
@@ -207,7 +235,8 @@ nav {
   padding: 10px;
   border-radius: 10px;
   text-decoration: none;
-  margin-left: 10px;
+  margin-left: 5px;
+  margin-bottom: 5px;
   transition: color 0.3s ease, font-size 0.3s ease, background-color 0.3s ease, margin 0.3s ease;
 }
 
@@ -223,16 +252,46 @@ nav {
   color: $bookmarks-font-active;
   background-color: $bookmarks-background-active;
 }
-  
-  @media (max-width: 500px) {
+
+#account-settings {
+    margin: 50px;
+}
+
+.card-container {
+    width: 85%;
+    margin-top: 50px;
+}
+
+.card-title {
+    color: $card-title;
+}
+
+  @media (max-width: 750px) {
     .bookmarks {
-      flex-direction: column;
+      flex-direction: row;
+      justify-content: center;
     }
     .bookmarks a {
         margin-bottom: 5px;
     }
+    .nav-container {
+        flex-direction: column;
+    }
   }
 
+  @media (max-width: 550px) {
+    .bookmarks {
+      flex-direction: column;
+      justify-content: right;
+    }
+    .bookmarks a {
+        margin-bottom: 5px;
+    }
+    .nav-container {
+        flex-direction: column;
+    }
+  }
+  
   .fade-enter-active, .fade-leave-active {
     transition: opacity 0.4s ease;
   }
@@ -243,4 +302,4 @@ nav {
   
   .notyf {
     font-family: Avenir, Helvetica, Arial, sans-serif;
-}
+  }

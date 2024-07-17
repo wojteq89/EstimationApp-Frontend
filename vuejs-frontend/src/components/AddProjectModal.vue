@@ -9,7 +9,7 @@
               v-model="localName" 
               label="Project Name" 
               required 
-              :rules="[v => !!v || 'Project Name is required']"
+              :rules="[v => !!v || 'Project name is required']"
             ></v-text-field>
             <v-container class="center-content">
               <v-combobox
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/axiosAuthConfig';
 import AddClientModal from './AddClientModal.vue';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
@@ -118,7 +118,7 @@ export default {
         client_id: this.localSelectedClient.id,
       };
 
-      axios.post('http://localhost:8000/api/projects', projectData)
+      axiosInstance.post('/projects', projectData)
         .then(response => {
           console.log('Project added:', response.data);
           this.notyf.success('Project added successfully.');
@@ -145,7 +145,7 @@ export default {
     },
     async fetchClients() {
       try {
-        const response = await axios.get('http://localhost:8000/api/clients');
+        const response = await axiosInstance.get('/clients');
         this.clients = response.data;
       } catch (error) {
         console.error('Error fetching clients:', error);
@@ -154,7 +154,7 @@ export default {
     },
     async updateClients() {
       try {
-        const response = await axios.get('http://localhost:8000/api/clients');
+        const response = await axiosInstance.get('/clients');
         this.clients = response.data;
         if (response.data.length > 0) {
           this.localSelectedClient = response.data[response.data.length - 1]; 
@@ -167,21 +167,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.center-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.button {
-  margin: 0 10px;
-}
-.button-icon {
-  margin-right: 5px;
-}
-.button-text {
-  display: inline-block;
-  margin-left: 5px;
-}
-</style>

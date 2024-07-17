@@ -12,6 +12,7 @@
             item-value="id"
             label="Project"
             @input="updateProjectId"
+            :rules="[v => !!v || 'Project is required']"
           ></v-combobox>
           <v-btn class="button" 
             @click="openAddProjectModal" 
@@ -71,7 +72,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/axiosAuthConfig';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import AddProjectModal from './AddProjectModal.vue';
@@ -135,10 +136,11 @@ export default {
       this.$emit('update:editDialog', val);
     },
     updateProjectId() {
-      const selectedProject = this.projects.find(p => p.name === this.selectedProjectName);
+      const selectedProject = this.projects.find(p => p.name === this.selectedProjectName.__ob__.value.name);
+      
       if (selectedProject) {
         this.selectedProjectId = selectedProject.id;
-        this.localEditedEstimation.project_id = selectedProject.id;
+        this.$set(this.localEditedEstimation, 'project_id', selectedProject.id);
       }
     },
     saveChanges() {
@@ -152,7 +154,7 @@ export default {
         project_id: this.selectedProjectId,
       };
 
-      axios.put(`http://localhost:8000/api/estimations/${this.localEditedEstimation.id}`, estimationToSave)
+      axiosInstance.put(`/estimations/${this.localEditedEstimation.id}`, estimationToSave)
         .then(() => {
           this.notyf.success('Estimation updated successfully.');
           this.$emit('save-changes', this.localEditedEstimation);
@@ -174,7 +176,7 @@ export default {
     },
     async fetchProjects() {
       try {
-        const response = await axios.get('http://localhost:8000/api/projects');
+        const response = await axiosInstance.get('/projects');
         this.projects = response.data;
       } catch (error) {
         console.error('Error fetching projects:', error);
@@ -183,7 +185,7 @@ export default {
     },
     async updateProjects() {
       try {
-        const response = await axios.get('http://localhost:8000/api/projects');
+        const response = await axiosInstance.get('/projects');
         this.projects = response.data;
       } catch (error) {
         console.error('Error fetching projects:', error);

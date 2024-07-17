@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/axiosAuthConfig';
 import AddProjectModal from './AddProjectModal.vue';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
@@ -158,7 +158,7 @@ export default {
         amount: this.localAmount
       };
 
-      axios.post('http://localhost:8000/api/estimations', estimationData)
+      axiosInstance.post('/estimations', estimationData)
         .then(response => {
           console.log('Estimation added:', response.data);
           this.notyf.success('Estimation added successfully.');
@@ -188,7 +188,7 @@ export default {
     },
     async fetchProjects() {
       try {
-        const response = await axios.get('http://localhost:8000/api/projects');
+        const response = await axiosInstance.get('/projects');
         this.projects = response.data;
       } catch (error) {
         console.error('Error fetching projects:', error);
@@ -197,7 +197,7 @@ export default {
     },
     async updateProjects() {
       try {
-        const response = await axios.get('http://localhost:8000/api/projects');
+        const response = await axiosInstance.get('/projects');
         this.projects = response.data;
         if (response.data.length > 0) {
           this.localSelectedProject = response.data[response.data.length - 1];
@@ -214,21 +214,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.center-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.button {
-  margin: 0 10px;
-}
-.button-icon {
-  margin-right: 5px;
-}
-.button-text {
-  display: inline-block;
-  margin-left: 5px;
-}
-</style>

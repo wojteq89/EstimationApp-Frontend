@@ -17,7 +17,7 @@
             <v-icon class="button-icon">mdi-arrow-left</v-icon>
             <span v-if="showTooltipGoToHome" class="button-text">Go to home</span>
           </v-btn>
-          <v-btn class="button" @click="openAddEstimationModal" @mouseover="showTooltipAddEstimation = true" @mouseleave="showTooltipAddEstimation = false">
+          <v-btn v-if="isAdmin" class="button" @click="openAddEstimationModal" @mouseover="showTooltipAddEstimation = true" @mouseleave="showTooltipAddEstimation = false">
             <v-icon class="button-icon">mdi-plus</v-icon>
             <span v-if="showTooltipAddEstimation" class="button-text">Add Estimation</span>
           </v-btn>
@@ -33,7 +33,7 @@
           <td>{{ item.type }}</td>
           <td>{{ item.amount }}</td>
           <td>{{ item.date }}</td>
-          <td>
+          <td v-if="isAdmin">
             <v-icon 
               class="action-edit-button" 
               @click="editEstimation(item)"
@@ -81,7 +81,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/axiosAuthConfig';
+import { mapGetters } from 'vuex';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import EditEstimationModal from './EditEstimationModal.vue';
@@ -117,24 +118,31 @@ export default {
   },
   computed: {
     headers() {
-      return [
+      const headers = [
         { text: 'Name', value: 'name' },
         { text: 'Project', value: 'project_name' },
         { text: 'Client', value: 'client_name' },
         { text: 'Type', value: 'type' },
         { text: 'Amount', value: 'amount' },
         { text: 'Date', value: 'date' },
-        { text: 'Actions', value: 'actions', sortable: false },
       ];
+      
+      if (this.isAdmin) {
+        headers.push({ text: 'Actions', value: 'actions', sortable: false });
+      }
+
+      return headers;
     },
+
+    ...mapGetters(['isLoggedIn', 'user', 'isAdmin']),
   },
   methods: {
     async fetchEstimations() {
       try {
-        const response = await axios.get('http://localhost:8000/api/estimations');
+        const response = await axiosInstance.get('/estimations');
         this.estimations = await Promise.all(response.data.map(async (estimation) => {
-          const projectResponse = await axios.get(`http://localhost:8000/api/projects/${estimation.project_id}`);
-          const clientResponse = await axios.get(`http://localhost:8000/api/clients/${estimation.client_id}`);
+          const projectResponse = await axiosInstance.get(`/projects/${estimation.project_id}`);
+          const clientResponse = await axiosInstance.get(`/clients/${estimation.client_id}`);
           return {
             ...estimation,
             project_name: projectResponse.data.name,
@@ -161,7 +169,7 @@ export default {
           project_id: updatedEstimation.project_id,
           client_id: updatedEstimation.client_id,
         };
-        await axios.put(`http://localhost:8000/api/estimations/${updatedEstimation.id}`, estimationToSave);
+        await axiosInstance.put(`/estimations/${updatedEstimation.id}`, estimationToSave);
         this.fetchEstimations();
         this.editDialog = false;
         this.notyf.success('Estimation updated successfully.');
@@ -182,7 +190,7 @@ export default {
     },
     async deleteEstimation() {
       try {
-        await axios.delete(`http://localhost:8000/api/estimations/${this.estimationToDelete.id}`);
+        await axiosInstance.delete(`/estimations/${this.estimationToDelete.id}`);
         const index = this.estimations.findIndex((item) => item.id === this.estimationToDelete.id);
         this.estimations.splice(index, 1);
         this.deleteDialog = false;
@@ -210,7 +218,7 @@ export default {
     },
     async fetchProjects() {
       try {
-        const response = await axios.get('http://localhost:8000/api/projects');
+        const response = await axiosInstance.get('/projects');
         this.projects = response.data;
       } catch (error) {
         console.error('Error fetching projects:', error);
@@ -219,7 +227,7 @@ export default {
     },
     async fetchClients() {
       try {
-        const response = await axios.get('http://localhost:8000/api/clients');
+        const response = await axiosInstance.get('/clients');
         this.clients = response.data;
       } catch (error) {
         console.error('Error fetching clients:', error);

@@ -17,7 +17,7 @@
             <v-icon class="button-icon">mdi-arrow-left</v-icon>
             <span v-if="showTooltipGoToHome" class="button-text" >Go to home</span>
           </v-btn>
-          <v-btn class="button" @click="openAddClientModal" @mouseover="showTooltipAddClient = true" @mouseleave="showTooltipAddClient = false">
+          <v-btn v-if="isAdmin" class="button" @click="openAddClientModal" @mouseover="showTooltipAddClient = true" @mouseleave="showTooltipAddClient = false">
             <v-icon class="button-icon">mdi-plus</v-icon>
             <span v-if="showTooltipAddClient" class="button-text" >Add Client</span>
           </v-btn>
@@ -31,7 +31,7 @@
           <td>{{ item.name }}</td>
           <td>{{ item.country }}</td>
           <td>{{ item.email }}</td>
-          <td>
+          <td v-if="isAdmin"> 
             <v-icon 
               class="action-edit-button" 
               @click="editClient(item)" 
@@ -78,11 +78,13 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/axiosAuthConfig';
+import { mapGetters } from 'vuex';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import EditClientModal from './EditClientModal.vue';
 import AddClientModal from './AddClientModal.vue';
+
 
 export default {
   components: {
@@ -115,14 +117,20 @@ export default {
   },
   computed: {
     headers() {
-      return [
+      const headers = [
         { text: 'Logo', value: 'logo' },
         { text: 'Name', value: 'name' },
         { text: 'Country', value: 'country' },
-        { text: 'Email', value: 'email' },
-        { text: 'Actions', value: 'actions', sortable: false }
+        { text: 'Email', value: 'email' }
       ];
+      
+      if (this.isAdmin) {
+        headers.push({ text: 'Actions', value: 'actions', sortable: false });
+      }
+
+      return headers;
     },
+    ...mapGetters(['isAdmin']),
   },
   created() {
     this.fetchClients();
@@ -140,7 +148,7 @@ export default {
       this.$router.push("/home-page");
     },
     fetchClients() {
-      axios.get('http://localhost:8000/api/clients')
+      axiosInstance.get('/clients')
         .then(response => {
           this.clients = response.data;
         })
@@ -155,7 +163,7 @@ export default {
     },
     async handleSaveChanges(updatedClient) {
       try {
-        await axios.put(`http://localhost:8000/api/clients/${updatedClient.id}`, updatedClient);
+        await axiosInstance.put(`/clients/${updatedClient.id}`, updatedClient);
         this.fetchClients();
         this.editDialog = false;
         this.notyf.success('Client updated successfully.');
@@ -173,7 +181,7 @@ export default {
     },
     async deleteClient() {
       try {
-        await axios.delete(`http://localhost:8000/api/clients/${this.clientToDelete.id}`);
+        await axiosInstance.delete(`/clients/${this.clientToDelete.id}`);
         this.fetchClients();
         this.deleteDialog = false;
         this.notyf.success('Client deleted successfully.');

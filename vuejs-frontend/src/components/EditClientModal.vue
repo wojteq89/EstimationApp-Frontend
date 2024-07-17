@@ -19,7 +19,10 @@
           required
           :rules="[v => !!v || 'Country is required']"
         ></v-combobox>
-        <v-text-field v-model="localEditedClient.email" label="Email"></v-text-field>
+        <v-text-field v-model="localEditedClient.email" 
+          label="Email"
+          :rules="[v => !!v || 'Email is required', v => /.+@.+\..+/.test(v) || 'Email must be valid']"
+        />
         <v-text-field v-model="localEditedClient.description" label="Description"></v-text-field>
       </v-card-text>
       <v-card-actions class="center-content">
@@ -56,13 +59,13 @@ export default {
         id: null,
         name: '',
         description: '',
-        logo: '',
+        logo: null,
         country: '',
         email: ''
       },
       previewImage: null,
       notyf: new Notyf({
-        position: {x: 'center', y:'bottom'},
+        position: { x: 'center', y: 'bottom' },
       })
     };
   },
@@ -79,7 +82,7 @@ export default {
     editedClient: {
       immediate: true,
       handler(newVal) {
-        this.localEditedClient = { ...newVal };
+        this.localEditedClient = { ...newVal, logo: null };
         this.previewImage = newVal.logo || null;
       }
     },
@@ -121,17 +124,23 @@ export default {
         this.resizeImage(this.localEditedClient.logo)
           .then(base64Image => {
             clientData.logo = base64Image;
-            this.$emit('save-changes', clientData);
-            this.localEditDialog = false;
+            this.emitSaveChanges(clientData);
           })
           .catch(error => {
             console.error('Error resizing image:', error);
             this.notyf.error('Failed to edit client.');
           });
       } else {
-        this.$emit('save-changes', clientData);
-        this.localEditDialog = false;
+        if (this.editedClient.logo) {
+          clientData.logo = this.editedClient.logo;
+        }
+        this.emitSaveChanges(clientData);
       }
+    },
+
+    emitSaveChanges(clientData) {
+      this.$emit('save-changes', clientData);
+      this.localEditDialog = false;
     },
     cancelEdit() {
       this.$emit('cancel-edit');
@@ -146,7 +155,7 @@ export default {
         id: null,
         name: '',
         description: '',
-        logo: '',
+        logo: this.localEditedClient.logo,
         country: '',
         email: ''
       };
@@ -155,22 +164,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.center-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.my-4 {
-  margin: 16px 0;
-}
-.editLogo {
-  width: 100%;
-  max-height: 200px;
-  object-fit: contain;
-}
-.button {
-  margin: 0 10px;
-}
-</style>

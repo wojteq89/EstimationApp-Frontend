@@ -3,14 +3,18 @@
     <v-card class="card">
       <v-card-title class="center-content">Edit Project</v-card-title>
       <v-card-text>
-        <v-text-field v-model="localEditedProject.name" label="Name"></v-text-field>
+        <v-text-field 
+        v-model="localEditedProject.name" 
+        label="Name"
+        :rules="[v => !!v || 'Project name is required']"
+        ></v-text-field>
         <v-container class="center-content">
           <v-combobox
             v-model="selectedClientName"
             :items="clientOptions.map(client => client.name)"
             label="Client"
             @change="updateClient"
-            required  
+            :rules="[v => !!v || 'Client is required']"
           ></v-combobox>
           <v-btn class="button" 
               @click="openAddClientModal" 
@@ -38,7 +42,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axiosInstance from '@/axiosAuthConfig';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import AddClientModal from './AddClientModal.vue';
@@ -106,7 +110,7 @@ export default {
       }
     },
     saveChanges() {
-      axios.put(`http://localhost:8000/api/projects/${this.localEditedProject.id}`, this.localEditedProject)
+      axiosInstance.put(`/projects/${this.localEditedProject.id}`, this.localEditedProject)
         .then(() => {
           this.notyf.success('Project updated successfully.');
           this.$emit('save-changes', this.localEditedProject);
@@ -128,7 +132,7 @@ export default {
     },
     async fetchClients() {
       try {
-        const response = await axios.get('http://localhost:8000/api/clients');
+        const response = await axiosInstance.get('/clients');
         this.clients = response.data;
       } catch (error) {
         console.error('Error fetching clients:', error);
@@ -137,7 +141,7 @@ export default {
     },
     async updateClients() {
       try {
-        const response = await axios.get('http://localhost:8000/api/clients');
+        const response = await axiosInstance.get('/clients');
         this.clients = response.data;
         if (response.data.length > 0) {
           this.localSelectedClient = response.data[response.data.length - 1];
