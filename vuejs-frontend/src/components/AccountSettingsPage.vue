@@ -14,10 +14,6 @@
                 neque porro libero rerum unde voluptatem!
             </v-card-text>
             <v-card-actions class="buttons">
-                <v-btn @click=resetPassword @mouseover="showTooltipChangePassword = true" @mouseleave="showTooltipChangePassword = false" class="button">
-                    <v-icon class="button-icon">mdi-pencil</v-icon>
-                    <span v-if="showTooltipChangePassword" class="button-text">Change Password</span>
-                </v-btn>
                 <v-btn @mouseover="showTooltipLogout = true" @mouseleave="showTooltipLogout = false" class="button" @click="logoutAction">
                     <v-icon class="button-icon">mdi-logout</v-icon>
                     <span v-if="showTooltipLogout" class="button-text">Logout</span>
@@ -37,7 +33,6 @@ export default {
   },
   data() {
     return {
-      showTooltipChangePassword: false,
       showTooltipLogout: false,
     };
   },
@@ -51,9 +46,6 @@ export default {
         .catch(() => {
         });
     },
-    resetPassword (){
-      this.$router.push('/reset-password')
-    }
   },
 };
 </script>

@@ -124,17 +124,23 @@ export default {
         this.resizeImage(this.localEditedClient.logo)
           .then(base64Image => {
             clientData.logo = base64Image;
-            this.$emit('save-changes', clientData);
-            this.localEditDialog = false;
+            this.emitSaveChanges(clientData);
           })
           .catch(error => {
             console.error('Error resizing image:', error);
             this.notyf.error('Failed to edit client.');
           });
       } else {
-        this.$emit('save-changes', clientData);
-        this.localEditDialog = false;
+        if (this.editedClient.logo) {
+          clientData.logo = this.editedClient.logo;
+        }
+        this.emitSaveChanges(clientData);
       }
+    },
+
+    emitSaveChanges(clientData) {
+      this.$emit('save-changes', clientData);
+      this.localEditDialog = false;
     },
     cancelEdit() {
       this.$emit('cancel-edit');
@@ -149,7 +155,7 @@ export default {
         id: null,
         name: '',
         description: '',
-        logo: null,
+        logo: this.localEditedClient.logo,
         country: '',
         email: ''
       };

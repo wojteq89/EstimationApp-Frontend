@@ -257,6 +257,15 @@ body {
     margin: 50px;
 }
 
+.card-container {
+    width: 85%;
+    margin-top: 50px;
+}
+
+.card-title {
+    color: $card-title;
+}
+
   @media (max-width: 750px) {
     .bookmarks {
       flex-direction: row;

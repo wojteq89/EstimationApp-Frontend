@@ -2,7 +2,7 @@
   <v-container style="width: 85%; margin-top: 50px;">
     <v-card class="card">
       <v-card-title class="text-center">
-        <h2 class="headline">Register</h2>
+        <h2 class="card-title">Register</h2>
       </v-card-title>
       <v-card-text>
         <v-form @submit.prevent="registerAction">

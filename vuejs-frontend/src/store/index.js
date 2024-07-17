@@ -127,25 +127,12 @@ export default new Vuex.Store({
     resetPasswordRequest(_, { email }) {
       return new Promise((resolve, reject) => {
         axiosPasswordResetInstance.post('/reset-request', { email })
-              .then(response => {
-                  resolve(response);
-              })
-              .catch(error => {
-                  reject(error);
-              });
-      });
-    },
-    resetPassword({ commit }, { token, email, password, password_confirmation }) {
-      return new Promise((resolve, reject) => {
-        axiosPasswordResetInstance.post('/reset-password', { token, email, password, password_confirmation })
-          .then(response => {
-            commit('auth_succes');
-            resolve(response);
-          })
-          .catch(error => {
-            commit('auth_error');
-            reject(error);
-          });
+            .then(response => {
+                resolve(response);
+            })
+            .catch(error => {
+                reject(error);
+            });
       });
     },
   },
